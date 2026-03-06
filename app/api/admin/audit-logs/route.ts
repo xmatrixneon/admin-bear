@@ -1,37 +1,18 @@
+// app/api/admin/audit-logs/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "better-auth/next";
-import { auth } from "@/lib/auth";
+import { verifyAdminToken } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
-/**
- * Admin middleware
- */
-async function requireAdmin(req: NextRequest) {
-  const session = await getServerSession(req);
-  const userId = session?.user?.id;
-
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { prisma } = await import("@/lib/db");
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { isAdmin: true },
-  });
-
-  if (!user?.isAdmin) {
-    return NextResponse.json({ error: "Forbidden: Admin access required" }, { status: 403 });
-  }
-
-  return null;
+function requireAdmin(req: NextRequest): boolean {
+  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+  if (!token) return false;
+  return verifyAdminToken(token);
 }
 
-/**
- * GET /api/admin/audit-logs - List audit logs
- */
 export async function GET(req: NextRequest) {
-  const authError = await requireAdmin(req);
-  if (authError) return authError;
+  if (!requireAdmin(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get("userId") || undefined;
@@ -39,35 +20,19 @@ export async function GET(req: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "25");
 
-  const { prisma } = await import("@/lib/db");
-
   const where: any = {};
-  if (userId) {
-    where.userId = userId;
-  }
-  if (action) {
-    where.action = action;
-  }
+  if (userId) where.userId = userId;
+  if (action) where.action = action;
 
   const [logs, total] = await Promise.all([
     prisma.userAuditLog.findMany({
       where,
       include: {
         user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            telegramUsername: true,
-          },
+          select: { id: true, firstName: true, lastName: true, telegramUsername: true },
         },
         admin: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            telegramUsername: true,
-          },
+          select: { id: true, firstName: true, lastName: true, telegramUsername: true },
         },
       },
       orderBy: { createdAt: "desc" },
@@ -79,11 +44,6 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     logs,
-    pagination: {
-      total,
-      page,
-      pageSize,
-      totalPages: Math.ceil(total / pageSize),
-    },
+    pagination: { total, page, pageSize, totalPages: Math.ceil(total / pageSize) },
   });
 }

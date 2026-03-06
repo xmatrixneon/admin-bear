@@ -5,7 +5,7 @@
 
 class ApiClient {
   private baseUrl: string;
-  private getHeaders: () => Headers;
+  private getHeaders: () => Record<string, string>;
 
   constructor() {
     this.baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -27,7 +27,7 @@ class ApiClient {
       ...options,
       headers: {
         ...this.getHeaders(),
-        ...options.headers,
+        ...(options.headers as Record<string, string>),
       },
     });
 
@@ -40,11 +40,14 @@ class ApiClient {
   }
 
   // Auth
-  async login(email: string, password: string) {
-    return this.request<{ success: boolean; data?: { token: string; user: any }>("/api/auth/admin/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-    });
+  async login(username: string, password: string) {
+    return this.request<{ success: boolean; data?: { token: string; user: any } }>(
+      "/api/auth/admin/login",
+      {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+      }
+    );
   }
 
   async logout() {

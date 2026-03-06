@@ -1,38 +1,17 @@
+// app/api/admin/users/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "better-auth/next";
-import { auth } from "@/lib/auth";
-import { z } from "zod";
-
-/**
- * Admin middleware
- */
-async function requireAdmin(req: NextRequest) {
-  const session = await getServerSession(req);
-  const userId = session?.user?.id;
-
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const { prisma } = await import("@/lib/db");
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { isAdmin: true },
-  });
-
-  if (!user?.isAdmin) {
-    return NextResponse.json({ error: "Forbidden: Admin access required" }, { status: 403 });
-  }
-
-  return null;
+import { verifyAdminToken } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+function requireAdmin(req: NextRequest): boolean {
+  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+  if (!token) return false;
+  return verifyAdminToken(token);
 }
 
-/**
- * GET /api/admin/users - List users with filters
- */
 export async function GET(req: NextRequest) {
-  const authError = await requireAdmin(req);
-  if (authError) return authError;
+  if (!requireAdmin(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search") || undefined;
@@ -42,33 +21,25 @@ export async function GET(req: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const pageSize = parseInt(searchParams.get("pageSize") || "20");
 
-  const { prisma } = await import("@/lib/db");
-
-  // Build where clause
   const where: any = {
     deletedAt: filter === "deleted" ? { not: null } : null,
-    isAdmin: filter === "admin" ? { equals: true } : filter === "regular" ? { equals: false } : undefined,
+    isAdmin: filter === "admin" ? true : filter === "regular" ? false : undefined,
   };
 
-  // Add search
   if (search && search.length >= 2) {
     where.OR = [
       { email: { contains: search, mode: "insensitive" } },
-      { "telegramId": { contains: search } },
-      { "telegramUsername": { contains: search, mode: "insensitive" } },
+      { telegramId: { contains: search } },
+      { telegramUsername: { contains: search, mode: "insensitive" } },
       { firstName: { contains: search, mode: "insensitive" } },
       { lastName: { contains: search, mode: "insensitive" } },
     ];
   }
 
-  // Get users with pagination
   const [users, total] = await Promise.all([
     prisma.user.findMany({
       where,
-      include: {
-        wallet: true,
-        userData: true,
-      },
+      include: { wallet: true, userData: true },
       orderBy: { [sortBy]: sortOrder === "asc" ? "asc" : "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
@@ -87,22 +58,16 @@ export async function GET(req: NextRequest) {
   });
 }
 
-/**
- * PATCH /api/admin/users - Update user
- */
 export async function PATCH(req: NextRequest) {
-  const authError = await requireAdmin(req);
-  if (authError) return authError;
+  if (!requireAdmin(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const body = await req.json();
-  const { prisma } = await import("@/lib/db");
 
   if (body.action === "setAdmin") {
     const { userId, isAdmin } = body;
-    await prisma.user.update({
-      where: { id: userId },
-      data: { isAdmin },
-    });
+    await prisma.user.update({ where: { id: userId }, data: { isAdmin } });
     return NextResponse.json({ success: true });
   }
 
@@ -125,24 +90,30 @@ export async function PATCH(req: NextRequest) {
 
       if (!wallet) {
         await tx.wallet.create({
-          data: { userId, balance: amountNum, totalSpent: 0, totalOtp: 0, totalRecharge: 0 },
+          data: {
+            userId,
+            balance: amountNum,
+            totalSpent: 0,
+            totalOtp: 0,
+            totalRecharge: 0,
+          },
         });
       } else {
-        const newBalance = type === "debit"
-          ? Number(wallet.balance) - amountNum
-          : Number(wallet.balance) + amountNum;
+        const newBalance =
+          type === "debit"
+            ? Number(wallet.balance) - amountNum
+            : Number(wallet.balance) + amountNum;
 
         await tx.wallet.update({
           where: { userId },
           data: { balance: newBalance },
         });
 
-        // Create transaction record
         await tx.transaction.create({
           data: {
             walletId: wallet.id,
-            type: type === "credit" ? "ADJUSTMENT" : "ADJUSTMENT",
-            amount: new Decimal(type === "debit" ? -amountNum : amountNum),
+            type: "ADJUSTMENT",
+            amount: type === "debit" ? -amountNum : amountNum,
             status: "COMPLETED",
             description: reason,
           },
@@ -156,6 +127,11 @@ export async function PATCH(req: NextRequest) {
   if (body.action === "delete") {
     const { userId, permanent, reason } = body;
 
+    // Get admin user from token
+    const token = req.headers.get("Authorization")?.replace("Bearer ", "") || "";
+    const decoded = JSON.parse(Buffer.from(token, "base64").toString());
+    const adminId = decoded.id;
+
     if (permanent) {
       await prisma.user.delete({ where: { id: userId } });
     } else {
@@ -165,17 +141,12 @@ export async function PATCH(req: NextRequest) {
       });
     }
 
-    // Create audit log
-    const session = await getServerSession(req);
     await prisma.userAuditLog.create({
-      data: {
-        userId,
-        adminId: session.user.id,
-        action: "DELETE",
-        reason,
-      },
+      data: { userId, adminId, action: "DELETE", reason },
     });
 
     return NextResponse.json({ success: true });
   }
+
+  return NextResponse.json({ error: "Unknown action" }, { status: 400 });
 }

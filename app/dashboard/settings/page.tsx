@@ -1,86 +1,310 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Settings, Loader2, RefreshCw, Save } from "lucide-react";
+import {
+  Loader2,
+  RefreshCw,
+  Save,
+  Settings2,
+  CreditCard,
+  Clock,
+  MessageCircle,
+  ChevronRight,
+  CheckCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
+import { api } from "@/lib/api";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type SettingsData = {
+  currency: string;
+  minRechargeAmount: number | string;
+  maxRechargeAmount: number | string;
+  referralPercent: number | string;
+  minRedeem: number | string;
+  numberExpiryMinutes: number | string;
+  minCancelMinutes: number | string;
+  maintenanceMode: boolean;
+  upiId: string;
+  bharatpeMerchantId: string;
+  bharatpeToken: string;
+  bharatpeQrImage: string;
+  telegramSupportUsername: string;
+  apiDocsBaseUrl: string;
+};
+
+type SectionKey = "general" | "limits" | "timing" | "payment" | "support";
+
+// ─── Animation ────────────────────────────────────────────────────────────────
 
 const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 14 },
+  initial: { opacity: 0, y: 16 },
   animate: { opacity: 1, y: 0 },
-  transition: { type: "spring" as const, stiffness: 280, damping: 24, delay },
+  transition: { type: "spring" as const, stiffness: 300, damping: 26, delay },
 });
 
-export default function SettingsPage() {
-  const [formData, setFormData] = useState({
-    currency: "INR",
-    minRechargeAmount: "10",
-    maxRechargeAmount: "5000",
-    referralPercent: "0",
-    minRedeem: "0",
-    numberExpiryMinutes: "20",
-    minCancelMinutes: "2",
-    maintenanceMode: false,
-    upiId: "",
-    bharatpeMerchantId: "",
-    bharatpeToken: "",
-    bharatpeQrImage: "",
-    telegramSupportUsername: "",
-    apiDocsBaseUrl: "",
-  });
+// ─── Field config — each section declares its own fields ─────────────────────
 
-  const { data: settings, isLoading, refetch } = trpc.admin.settings.get.useQuery();
+const SECTIONS: {
+  key: SectionKey;
+  title: string;
+  icon: React.ReactNode;
+  description: string;
+  fields: {
+    key: keyof SettingsData;
+    label: string;
+    type?: "text" | "number" | "password" | "url" | "switch";
+    placeholder?: string;
+    hint?: string;
+  }[];
+}[] = [
+  {
+    key: "general",
+    title: "General",
+    icon: <Settings2 size={16} />,
+    description: "Platform-wide defaults",
+    fields: [
+      { key: "currency", label: "Currency", placeholder: "INR", hint: "3-letter ISO code" },
+      { key: "maintenanceMode", label: "Maintenance Mode", type: "switch", hint: "Blocks all user activity when enabled" },
+    ],
+  },
+  {
+    key: "limits",
+    title: "Recharge & Redeem",
+    icon: <CreditCard size={16} />,
+    description: "Amounts and referral settings",
+    fields: [
+      { key: "minRechargeAmount", label: "Min Recharge (₹)", type: "number", placeholder: "10" },
+      { key: "maxRechargeAmount", label: "Max Recharge (₹)", type: "number", placeholder: "5000" },
+      { key: "minRedeem", label: "Min Redeem (₹)", type: "number", placeholder: "0" },
+      { key: "referralPercent", label: "Referral %", type: "number", placeholder: "0", hint: "Percentage credited on referral recharge" },
+    ],
+  },
+  {
+    key: "timing",
+    title: "Timing",
+    icon: <Clock size={16} />,
+    description: "Expiry and cancellation windows",
+    fields: [
+      { key: "numberExpiryMinutes", label: "Number Expiry (min)", type: "number", placeholder: "20" },
+      { key: "minCancelMinutes", label: "Min Cancel Window (min)", type: "number", placeholder: "2" },
+    ],
+  },
+  {
+    key: "payment",
+    title: "Payment / BharatPe",
+    icon: <CreditCard size={16} />,
+    description: "UPI and BharatPe credentials",
+    fields: [
+      { key: "upiId", label: "UPI ID", placeholder: "BHARATPE.xxx@fbpe" },
+      { key: "bharatpeMerchantId", label: "Merchant ID", placeholder: "57113736" },
+      { key: "bharatpeToken", label: "BharatPe Token", type: "password", placeholder: "••••••••••••" },
+      { key: "bharatpeQrImage", label: "QR Image URL", type: "url", placeholder: "https://i.ibb.co/..." },
+    ],
+  },
+  {
+    key: "support",
+    title: "Support & API",
+    icon: <MessageCircle size={16} />,
+    description: "Telegram and developer settings",
+    fields: [
+      { key: "telegramSupportUsername", label: "Telegram Username", placeholder: "meowsmsxbot", hint: "Without the @ sign" },
+      { key: "apiDocsBaseUrl", label: "API Docs Base URL", type: "url", placeholder: "https://yourdomain.com" },
+    ],
+  },
+];
 
-  const updateMutation = trpc.admin.settings.update.useMutation({
-    onSuccess: () => {
-      toast.success("Settings updated successfully");
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to update settings");
-    },
-  });
+// ─── Individual Section Card ──────────────────────────────────────────────────
 
+function SettingSection({
+  section,
+  globalSettings,
+  onSave,
+  delay,
+}: {
+  section: (typeof SECTIONS)[number];
+  globalSettings: SettingsData;
+  onSave: (fields: Partial<SettingsData>) => Promise<void>;
+  delay: number;
+}) {
+  // Local state — only this section's fields
+  const initialLocal = useCallback(() => {
+    const obj: Partial<SettingsData> = {};
+    section.fields.forEach(({ key }) => {
+      (obj as Record<string, unknown>)[key] = globalSettings[key];
+    });
+    return obj;
+  }, [globalSettings, section.fields]);
+
+  const [local, setLocal] = useState<Partial<SettingsData>>(initialLocal);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  // Re-sync when global settings change (e.g. after refresh)
   useEffect(() => {
-    if (settings) {
-      setFormData({
-        currency: settings.currency || "INR",
-        minRechargeAmount: settings.minRechargeAmount?.toString() || "10",
-        maxRechargeAmount: settings.maxRechargeAmount?.toString() || "5000",
-        referralPercent: settings.referralPercent?.toString() || "0",
-        minRedeem: settings.minRedeem?.toString() || "0",
-        numberExpiryMinutes: settings.numberExpiryMinutes?.toString() || "20",
-        minCancelMinutes: settings.minCancelMinutes?.toString() || "2",
-        maintenanceMode: settings.maintenanceMode || false,
-        upiId: settings.upiId || "",
-        bharatpeMerchantId: settings.bharatpeMerchantId || "",
-        bharatpeToken: settings.bharatpeToken || "",
-        bharatpeQrImage: settings.bharatpeQrImage || "",
-        telegramSupportUsername: settings.telegramSupportUsername || "",
-        apiDocsBaseUrl: settings.apiDocsBaseUrl || "",
-      });
-    }
-  }, [settings]);
+    setLocal(initialLocal());
+  }, [initialLocal]);
 
-  const handleSave = () => {
-    updateMutation.mutate(formData as any);
+  const isDirty = section.fields.some(
+    ({ key }) => String(local[key]) !== String(globalSettings[key])
+  );
+
+  const handleChange = (key: keyof SettingsData, value: string | boolean) => {
+    setSaved(false);
+    setLocal((prev) => ({ ...prev, [key]: value }));
   };
 
-  if (isLoading) {
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await onSave(local);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <motion.div {...fadeUp(delay)}>
+      <Card className="overflow-hidden border-border/60 shadow-sm">
+        <CardHeader className="pb-3 border-b border-border/40 bg-muted/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="text-muted-foreground">{section.icon}</span>
+              <div>
+                <CardTitle className="text-sm font-semibold leading-none">{section.title}</CardTitle>
+                <p className="text-xs text-muted-foreground mt-1">{section.description}</p>
+              </div>
+            </div>
+            {isDirty && (
+              <Badge variant="outline" className="text-[10px] text-amber-600 border-amber-300 bg-amber-50">
+                Unsaved
+              </Badge>
+            )}
+          </div>
+        </CardHeader>
+
+        <CardContent className="pt-4 pb-4 space-y-4">
+          {section.fields.map(({ key, label, type = "text", placeholder, hint }) => {
+            const value = local[key];
+
+            if (type === "switch") {
+              return (
+                <div key={key} className="flex items-center justify-between py-1">
+                  <div>
+                    <Label className="text-sm font-medium">{label}</Label>
+                    {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+                  </div>
+                  <Switch
+                    checked={!!value}
+                    onCheckedChange={(checked) => handleChange(key, checked)}
+                  />
+                </div>
+              );
+            }
+
+            return (
+              <div key={key} className="space-y-1.5">
+                <Label className="text-xs font-medium text-foreground/80">{label}</Label>
+                <Input
+                  type={type}
+                  value={value !== undefined && value !== null ? String(value) : ""}
+                  onChange={(e) => handleChange(key, e.target.value)}
+                  placeholder={placeholder}
+                  className="h-8 text-sm"
+                />
+                {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
+              </div>
+            );
+          })}
+        </CardContent>
+
+        <div className="px-6 pb-4 flex justify-end">
+          <Button
+            size="sm"
+            variant={isDirty ? "default" : "outline"}
+            onClick={handleSave}
+            disabled={saving || !isDirty}
+            className="h-8 text-xs gap-1.5 min-w-[110px]"
+          >
+            {saving ? (
+              <>
+                <Loader2 size={12} className="animate-spin" />
+                Saving…
+              </>
+            ) : saved ? (
+              <>
+                <CheckCircle2 size={12} className="text-green-500" />
+                Saved
+              </>
+            ) : (
+              <>
+                <Save size={12} />
+                Save {section.title}
+              </>
+            )}
+          </Button>
+        </div>
+      </Card>
+    </motion.div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function SettingsPage() {
+  const [settings, setSettings] = useState<SettingsData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchSettings = async (silent = false) => {
+    if (!silent) setIsLoading(true);
+    else setIsRefreshing(true);
+    try {
+      const result = await api.getSettings() as SettingsData;
+      setSettings(result);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to fetch settings");
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  // Called by each section with only its own changed fields
+  const handleSectionSave = async (partial: Partial<SettingsData>) => {
+    try {
+      const updated = await api.updateSettings(partial as any) as SettingsData;
+      // Merge updated fields back so all sections stay in sync
+      setSettings((prev) => (prev ? { ...prev, ...updated } : updated));
+      toast.success("Saved successfully");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save");
+      throw err;
+    }
+  };
+
+  if (isLoading || !settings) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-8 w-48" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <Skeleton key={i} className="h-20" />
+        <Skeleton className="h-9 w-52" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-48" />
           ))}
         </div>
       </div>
@@ -88,207 +312,44 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl">
       {/* Header */}
-      <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-xl font-bold text-foreground">Settings</h1>
+          </div>
           <p className="text-sm text-muted-foreground">
-            Manage platform-wide settings
+            Edit any section and save independently — no need to fill everything.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Loader2 size={16} className="animate-spin mr-2" />
-            ) : (
-              <RefreshCw size={16} className="mr-2" />
-            )}
-            Refresh
-          </Button>
-          <Button size="sm" onClick={handleSave} disabled={updateMutation.isPending}>
-            {updateMutation.isPending ? (
-              <>
-                <Loader2 size={16} className="mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save size={16} className="mr-2" />
-                Save Changes
-              </>
-            )}
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => fetchSettings(true)}
+          disabled={isRefreshing}
+          className="h-8 text-xs gap-1.5 shrink-0"
+        >
+          {isRefreshing ? (
+            <Loader2 size={12} className="animate-spin" />
+          ) : (
+            <RefreshCw size={12} />
+          )}
+          Refresh
+        </Button>
       </motion.div>
 
+      {/* Sections grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* General Settings */}
-        <motion.div {...fadeUp(0.1)}>
-          <Card>
-            <CardHeader>
-              <CardTitle>General Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Currency</Label>
-                <Input
-                  value={formData.currency}
-                  onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                  placeholder="INR"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Min Recharge Amount</Label>
-                <Input
-                  type="number"
-                  value={formData.minRechargeAmount}
-                  onChange={(e) => setFormData({ ...formData, minRechargeAmount: e.target.value })}
-                  placeholder="10"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Max Recharge Amount</Label>
-                <Input
-                  type="number"
-                  value={formData.maxRechargeAmount}
-                  onChange={(e) => setFormData({ ...formData, maxRechargeAmount: e.target.value })}
-                  placeholder="5000"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Referral Percent</Label>
-                <Input
-                  type="number"
-                  value={formData.referralPercent}
-                  onChange={(e) => setFormData({ ...formData, referralPercent: e.target.value })}
-                  placeholder="0"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Number Settings */}
-        <motion.div {...fadeUp(0.15)}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Number Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Number Expiry (minutes)</Label>
-                <Input
-                  type="number"
-                  value={formData.numberExpiryMinutes}
-                  onChange={(e) => setFormData({ ...formData, numberExpiryMinutes: e.target.value })}
-                  placeholder="20"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Min Cancel Time (minutes)</Label>
-                <Input
-                  type="number"
-                  value={formData.minCancelMinutes}
-                  onChange={(e) => setFormData({ ...formData, minCancelMinutes: e.target.value })}
-                  placeholder="2"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Min Redeem Amount</Label>
-                <Input
-                  type="number"
-                  value={formData.minRedeem}
-                  onChange={(e) => setFormData({ ...formData, minRedeem: e.target.value })}
-                  placeholder="0"
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label>Maintenance Mode</Label>
-                <Switch
-                  checked={formData.maintenanceMode}
-                  onCheckedChange={(checked) => setFormData({ ...formData, maintenanceMode: checked })}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Payment Settings */}
-        <motion.div {...fadeUp(0.2)}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Payment Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>UPI ID</Label>
-                <Input
-                  value={formData.upiId}
-                  onChange={(e) => setFormData({ ...formData, upiId: e.target.value })}
-                  placeholder="yourname@upi"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>BharatPe Merchant ID</Label>
-                <Input
-                  value={formData.bharatpeMerchantId}
-                  onChange={(e) => setFormData({ ...formData, bharatpeMerchantId: e.target.value })}
-                  placeholder="merchant_id"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>BharatPe Token</Label>
-                <Input
-                  type="password"
-                  value={formData.bharatpeToken}
-                  onChange={(e) => setFormData({ ...formData, bharatpeToken: e.target.value })}
-                  placeholder="••••••••"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>BharatPe QR Image URL</Label>
-                <Input
-                  value={formData.bharatpeQrImage}
-                  onChange={(e) => setFormData({ ...formData, bharatpeQrImage: e.target.value })}
-                  placeholder="https://example.com/qr.png"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Support & API Settings */}
-        <motion.div {...fadeUp(0.25)}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Support & API</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Telegram Support Username</Label>
-                <Input
-                  value={formData.telegramSupportUsername}
-                  onChange={(e) => setFormData({ ...formData, telegramSupportUsername: e.target.value })}
-                  placeholder="@support_bot"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>API Docs Base URL</Label>
-                <Input
-                  value={formData.apiDocsBaseUrl}
-                  onChange={(e) => setFormData({ ...formData, apiDocsBaseUrl: e.target.value })}
-                  placeholder="https://docs.example.com"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        {SECTIONS.map((section, i) => (
+          <SettingSection
+            key={section.key}
+            section={section}
+            globalSettings={settings}
+            onSave={handleSectionSave}
+            delay={0.05 * (i + 1)}
+          />
+        ))}
       </div>
     </div>
   );

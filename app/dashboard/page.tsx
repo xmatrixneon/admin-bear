@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
+import { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -75,17 +76,17 @@ function StatCard({
 
 export default function DashboardPage() {
   // Stats queries
-  const { data: generalStats, isLoading: generalStatsLoading, refetch } = useApiQuery(
+  const { data: generalStats, isLoading: generalStatsLoading, refetch } = useApiQuery<any>(
     () => api.getStats(),
     { revalidateOnMount: false }
   );
 
-  const { data: transactionStats, isLoading: transactionStatsLoading } = useApiQuery(
+  const { data: transactionStats, isLoading: transactionStatsLoading } = useApiQuery<any>(
     () => api.getTransactionStats(),
     { revalidateOnMount: false }
   );
 
-  const { data: otpStats, isLoading: otpStatsLoading } = useApiQuery(
+  const { data: otpStats, isLoading: otpStatsLoading } = useApiQuery<any>(
     () => api.getStats(),
     { revalidateOnMount: false }
   );
@@ -97,8 +98,8 @@ export default function DashboardPage() {
   const totalServices = generalStats?.totalServices || 0;
   const totalServers = generalStats?.totalServers || 0;
   const totalTransactions = transactionStats?.total || 0;
-  const totalDeposits = transactionStats?.byType?.DEPOSIT?.amount || 0;
-  const totalOtpSold = otpStats?.total || 0;
+  const totalRecharge = generalStats?.totalRecharge || 0;
+  const totalOtpSold = generalStats?.otpRevenue || 0;
   const totalRevenue = generalStats?.totalRevenue || 0;
 
   // Generate mock data for charts
@@ -175,12 +176,12 @@ export default function DashboardPage() {
           loading={transactionStatsLoading}
         />
         <StatCard
-          title="Total Deposits"
-          value={formatCurrency(totalDeposits)}
+          title="Total Recharge"
+          value={formatCurrency(totalRecharge)}
           icon={CreditCard}
           color="text-green-500"
           bgColor="bg-green-500/5"
-          loading={transactionStatsLoading}
+          loading={generalStatsLoading}
         />
         <StatCard
           title="OTP Sold"
@@ -352,7 +353,7 @@ function useApiQuery<T>(
     return () => {
       mounted = false;
     };
-  }, [...Object.values(options), queryFn]);
+  }, [options.revalidateOnMount]);
 
   const refetch = () => {
     setIsLoading(true);

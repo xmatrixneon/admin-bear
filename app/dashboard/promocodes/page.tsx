@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { formatCurrency, formatDate, toNumber } from "@/lib/utils";
 import {
   Tag,
   Plus,
@@ -50,8 +51,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { api } from "@/lib/api";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },
@@ -71,64 +71,68 @@ export default function PromocodesPage() {
     maxUses: "1",
   });
 
-  const { data: promocodes, isLoading, refetch } = trpc.admin.promo.list.useQuery();
+  const [promocodes, setPromocodes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mutations
-  const generateMutation = trpc.admin.promo.generate.useMutation({
-    onSuccess: (data) => {
-      toast.success(`Generated ${data.length} promocode${data.length > 1 ? "s" : ""} successfully`);
+  const fetchPromocodes = async () => {
+    setIsLoading(true);
+    try {
+      const result = await api.getPromocodes();
+      setPromocodes(result as any);
+    } catch (err: any) {
+      console.error("Failed to fetch promocodes:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPromocodes();
+  }, []);
+
+  const handleGenerate = async () => {
+    try {
+      const result = await api.generatePromocodes(
+        parseFloat(formData.amount),
+        parseInt(formData.count),
+        parseInt(formData.maxUses),
+      );
+      const promoArray = Array.isArray(result) ? result : [];
+      toast.success(
+        `Generated ${promoArray.length} promocode${promoArray.length > 1 ? "s" : ""} successfully`,
+      );
       setCreateDialogOpen(false);
       setFormData({ amount: "", count: "1", maxUses: "1" });
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to generate promocodes");
-    },
-  });
+      fetchPromocodes();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to generate promocodes");
+    }
+  };
 
-  const activateMutation = trpc.admin.promo.activate.useMutation({
-    onSuccess: () => {
-      toast.success("Promocode activated");
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to activate promocode");
-    },
-  });
+  const handleToggleStatus = async (id: string, isActive: boolean) => {
+    try {
+      await api.updatePromocode(id, isActive ? "deactivate" : "activate");
+      toast.success(`Promocode ${isActive ? "deactivated" : "activated"}`);
+      fetchPromocodes();
+    } catch (err: any) {
+      toast.error(
+        err.message ||
+          `Failed to ${isActive ? "deactivate" : "activate"} promocode`,
+      );
+    }
+  };
 
-  const deactivateMutation = trpc.admin.promo.deactivate.useMutation({
-    onSuccess: () => {
-      toast.success("Promocode deactivated");
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to deactivate promocode");
-    },
-  });
-
-  const deleteMutation = trpc.admin.promo.delete.useMutation({
-    onSuccess: () => {
+  const handleDelete = async () => {
+    if (!selectedPromo) return;
+    try {
+      await api.deletePromocode(selectedPromo.id);
       toast.success("Promocode deleted successfully");
       setDeleteDialogOpen(false);
       setSelectedPromo(null);
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to delete promocode");
-    },
-  });
-
-  const handleGenerate = () => {
-    generateMutation.mutate({
-      amount: parseFloat(formData.amount),
-      count: parseInt(formData.count),
-      maxUses: parseInt(formData.maxUses),
-    });
-  };
-
-  const handleDelete = () => {
-    if (!selectedPromo) return;
-    deleteMutation.mutate({ id: selectedPromo.id });
+      fetchPromocodes();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete promocode");
+    }
   };
 
   const copyCode = (code: string) => {
@@ -137,12 +141,16 @@ export default function PromocodesPage() {
   };
 
   const activeCount = promocodes?.filter((p) => p.isActive).length || 0;
-  const totalUses = promocodes?.reduce((sum, p) => sum + p.usedCount, 0) || 0;
+  const totalUses =
+    promocodes?.reduce((sum, p) => sum + (p.usedCount || 0), 0) || 0;
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <motion.div
+        {...fadeUp()}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
         <div>
           <h1 className="text-2xl font-bold text-foreground">Promocodes</h1>
           <p className="text-sm text-muted-foreground">
@@ -153,7 +161,7 @@ export default function PromocodesPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => refetch()}
+            onClick={fetchPromocodes}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -171,14 +179,19 @@ export default function PromocodesPage() {
       </motion.div>
 
       {/* Stats */}
-      <motion.div {...fadeUp(0.05)} className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <motion.div
+        {...fadeUp(0.05)}
+        className="grid grid-cols-2 md:grid-cols-4 gap-3"
+      >
         <div className="bg-card border border-border rounded-xl p-4">
           <div className="flex items-center gap-3">
             <div className="bg-blue-500/10 p-2 rounded-lg">
               <Tag size={18} className="text-blue-500" />
             </div>
             <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">Total Codes</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-medium">
+                Total Codes
+              </p>
               <p className="text-xl font-bold">{promocodes?.length || 0}</p>
             </div>
           </div>
@@ -189,7 +202,9 @@ export default function PromocodesPage() {
               <Power size={18} className="text-green-500" />
             </div>
             <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">Active</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-medium">
+                Active
+              </p>
               <p className="text-xl font-bold">{activeCount}</p>
             </div>
           </div>
@@ -200,7 +215,9 @@ export default function PromocodesPage() {
               <Tag size={18} className="text-amber-500" />
             </div>
             <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">Total Uses</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-medium">
+                Total Uses
+              </p>
               <p className="text-xl font-bold">{totalUses}</p>
             </div>
           </div>
@@ -211,12 +228,17 @@ export default function PromocodesPage() {
               <Tag size={18} className="text-purple-500" />
             </div>
             <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">Avg Discount</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-medium">
+                Avg Discount
+              </p>
               <p className="text-xl font-bold">
                 {formatCurrency(
                   promocodes && promocodes.length > 0
-                    ? promocodes.reduce((sum, p) => sum + p.amount.toNumber(), 0) / promocodes.length
-                    : 0
+                    ? promocodes.reduce(
+                        (sum, p) => sum + toNumber(p.amount),
+                        0,
+                      ) / promocodes.length
+                    : 0,
                 )}
               </p>
             </div>
@@ -244,13 +266,27 @@ export default function PromocodesPage() {
                 {isLoading ? (
                   Array.from({ length: 8 }).map((_, i) => (
                     <TableRow key={i}>
-                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-16" /></TableCell>
-                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                      <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-16" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-6 w-16" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-24" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-8 w-8 ml-auto" />
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : promocodes?.length === 0 ? (
@@ -258,8 +294,13 @@ export default function PromocodesPage() {
                     <TableCell colSpan={7} className="text-center py-12">
                       <div className="flex flex-col items-center gap-3">
                         <Tag size={48} className="text-muted-foreground/40" />
-                        <p className="text-muted-foreground">No promocodes found</p>
-                        <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
+                        <p className="text-muted-foreground">
+                          No promocodes found
+                        </p>
+                        <Button
+                          size="sm"
+                          onClick={() => setCreateDialogOpen(true)}
+                        >
                           <Plus size={16} className="mr-2" />
                           Generate First Code
                         </Button>
@@ -302,12 +343,16 @@ export default function PromocodesPage() {
                         <div className="flex items-center gap-2">
                           <span className="text-sm">{promo.usedCount}</span>
                           {promo.usedCount >= promo.maxUses && (
-                            <Badge variant="outline" className="text-xs">Exhausted</Badge>
+                            <Badge variant="outline" className="text-xs">
+                              Exhausted
+                            </Badge>
                           )}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={promo.isActive ? "default" : "secondary"}>
+                        <Badge
+                          variant={promo.isActive ? "default" : "secondary"}
+                        >
                           {promo.isActive ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
@@ -319,21 +364,29 @@ export default function PromocodesPage() {
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                            >
                               <MoreVertical size={14} />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             {promo.isActive ? (
                               <DropdownMenuItem
-                                onClick={() => activateMutation.mutate({ id: promo.id })}
+                                onClick={() =>
+                                  handleToggleStatus(promo.id, promo.isActive)
+                                }
                               >
                                 <PowerOff size={14} className="mr-2" />
                                 Deactivate
                               </DropdownMenuItem>
                             ) : (
                               <DropdownMenuItem
-                                onClick={() => deactivateMutation.mutate({ id: promo.id })}
+                                onClick={() =>
+                                  handleToggleStatus(promo.id, promo.isActive)
+                                }
                               >
                                 <Power size={14} className="mr-2" />
                                 Activate
@@ -375,7 +428,9 @@ export default function PromocodesPage() {
                 placeholder="10.00"
                 step="0.01"
                 value={formData.amount}
-                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, amount: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -386,7 +441,9 @@ export default function PromocodesPage() {
                 min="1"
                 max="100"
                 value={formData.count}
-                onChange={(e) => setFormData({ ...formData, count: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, count: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -396,7 +453,9 @@ export default function PromocodesPage() {
                 placeholder="1"
                 min="1"
                 value={formData.maxUses}
-                onChange={(e) => setFormData({ ...formData, maxUses: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, maxUses: e.target.value })
+                }
               />
             </div>
           </div>
@@ -410,11 +469,8 @@ export default function PromocodesPage() {
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleGenerate}
-              disabled={generateMutation.isPending}
-            >
-              {generateMutation.isPending ? "Generating..." : "Generate Codes"}
+            <Button onClick={handleGenerate} disabled={isLoading}>
+              {isLoading ? "Generating..." : "Generate Codes"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -426,18 +482,18 @@ export default function PromocodesPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Promocode</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete promocode <strong>{selectedPromo?.code}</strong>?
-              This action cannot be undone.
+              Are you sure you want to delete promocode{" "}
+              <strong>{selectedPromo?.code}</strong>? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              disabled={deleteMutation.isPending}
               className="bg-destructive hover:bg-destructive/90"
             >
-              {deleteMutation.isPending ? "Deleting..." : "Delete Promocode"}
+              Delete Promocode
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -75,8 +75,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { api } from "@/lib/api";
+import { formatCurrency, formatDateTime } from "@/lib/utils";
 
 // Animation helper
 const fadeUp = (delay = 0) => ({
@@ -153,66 +153,33 @@ export default function UsersListPage() {
   const [statusReason, setStatusReason] = useState("");
 
   // Queries
-  const { data, isLoading, refetch, isFetching } = trpc.admin.user.list.useQuery(
-    {
-      search: search || undefined,
-      filter,
-      sortBy,
-      sortOrder,
-      page,
-      pageSize: 20,
+  const [data, setData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    try {
+      const result = await api.getUsers({
+        search: search || undefined,
+        filter,
+        sortBy,
+        sortOrder,
+        page,
+        pageSize: 20,
+      });
+      setData(result);
+    } catch (err: any) {
+      console.error("Failed to fetch users:", err);
+    } finally {
+      setIsLoading(false);
+      setIsFetching(false);
     }
-  );
+  };
 
-  // Mutations
-  const deleteMutation = trpc.admin.user.delete.useMutation({
-    onSuccess: () => {
-      toast.success("User deleted successfully");
-      setDeleteDialogOpen(false);
-      setUserToDelete(null);
-      setDeleteReason("");
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to delete user");
-    },
-  });
-
-  const setAdminMutation = trpc.admin.user.setAdmin.useMutation({
-    onSuccess: () => {
-      toast.success("User admin status updated");
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to update admin status");
-    },
-  });
-
-  const balanceAdjustMutation = trpc.admin.user.balanceAdjust.useMutation({
-    onSuccess: () => {
-      toast.success("Balance adjusted successfully");
-      setBalanceDialogOpen(false);
-      setSelectedUser(null);
-      setBalanceAmount("");
-      setBalanceReason("");
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to adjust balance");
-    },
-  });
-
-  const setStatusMutation = trpc.admin.user.setUserStatus.useMutation({
-    onSuccess: () => {
-      toast.success(`User ${statusAction === "block" ? "blocked" : "unlocked"} successfully`);
-      setStatusDialogOpen(false);
-      setStatusReason("");
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to update user status");
-    },
-  });
+  useEffect(() => {
+    fetchUsers();
+  }, [search, filter, sortBy, sortOrder, page]);
 
   // Handlers
   const handleSearch = (value: string) => {
@@ -246,38 +213,56 @@ export default function UsersListPage() {
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!userToDelete) return;
-    deleteMutation.mutate({
-      id: userToDelete.id,
-      permanent: false,
-      reason: deleteReason || "Deleted by admin",
-    });
+    try {
+      await api.deleteUser(userToDelete.id, false, deleteReason || "Deleted by admin");
+      toast.success("User deleted successfully");
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
+      setDeleteReason("");
+      fetchUsers();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete user");
+    }
   };
 
-  const handleToggleAdmin = (userId: string, currentIsAdmin: boolean) => {
-    setAdminMutation.mutate({
-      userId,
-      isAdmin: !currentIsAdmin,
-    });
+  const handleToggleAdmin = async (userId: string, isAdmin: boolean) => {
+    try {
+      await api.updateUser(userId, { action: "setAdmin", userId, isAdmin: !isAdmin });
+      toast.success("User admin status updated");
+      fetchUsers();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update admin status");
+    }
   };
 
-  const handleBalanceAdjust = () => {
+  const handleBalanceAdjust = async () => {
     if (!selectedUser || !balanceAmount || !balanceReason) return;
-    balanceAdjustMutation.mutate({
-      userId: selectedUser.id,
-      amount: parseFloat(balanceAmount),
-      reason: balanceReason,
-      type: balanceType,
-    });
+    try {
+      await api.adjustBalance(selectedUser.id, parseFloat(balanceAmount), balanceReason, balanceType);
+      toast.success("Balance adjusted successfully");
+      setBalanceDialogOpen(false);
+      setSelectedUser(null);
+      setBalanceAmount("");
+      setBalanceReason("");
+      fetchUsers();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to adjust balance");
+    }
   };
 
-  const handleStatusAction = () => {
+  const handleStatusAction = async () => {
     if (!selectedUser || !statusReason) return;
-    setStatusMutation.mutate({
-      userId: selectedUser.id,
-      status: statusAction === "block" ? "BANNED" : "ACTIVE",
-    });
+    try {
+      await api.setUserStatus(selectedUser.id, statusAction === "block" ? "BANNED" : "ACTIVE");
+      toast.success(`User ${statusAction === "block" ? "blocked" : "unlocked"} successfully`);
+      setStatusDialogOpen(false);
+      setStatusReason("");
+      fetchUsers();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update user status");
+    }
   };
 
   const totalPages = data?.pagination.totalPages || 1;
@@ -296,7 +281,7 @@ export default function UsersListPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => refetch()}
+            onClick={fetchUsers}
             disabled={isFetching}
           >
             {isFetching ? (
@@ -330,7 +315,7 @@ export default function UsersListPage() {
             <div>
               <p className="text-[10px] text-muted-foreground uppercase font-medium">Admins</p>
               <p className="text-xl font-bold text-foreground">
-                {data?.users.filter((u) => u.isAdmin).length || 0}
+                {data?.users.filter((u: any) => u.isAdmin).length || 0}
               </p>
             </div>
           </div>
@@ -345,7 +330,7 @@ export default function UsersListPage() {
               <p className="text-xl font-bold text-foreground">
                 {data?.users.length
                   ? formatCurrency(
-                      data.users.reduce((sum, u) => sum + (u.wallet?.balance?.toNumber() || 0), 0) /
+                      data.users.reduce((sum: number, u: any) => sum + (u.wallet?.balance?.toNumber() || 0), 0) /
                         data.users.length
                     )
                   : formatCurrency(0)}
@@ -361,7 +346,7 @@ export default function UsersListPage() {
             <div>
               <p className="text-[10px] text-muted-foreground uppercase font-medium">Total OTPs</p>
               <p className="text-xl font-bold text-foreground">
-                {data?.users.reduce((sum, u) => sum + (u.wallet?.totalOtp || 0), 0) || 0}
+                {data?.users.reduce((sum: number, u: any) => sum + (u.wallet?.totalOtp || 0), 0) || 0}
               </p>
             </div>
           </div>
@@ -470,7 +455,7 @@ export default function UsersListPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  data?.users.map((user, index) => (
+                  data?.users.map((user: any, index: number) => (
                     <motion.tr
                       key={user.id}
                       initial={{ opacity: 0, y: 8 }}
@@ -763,9 +748,9 @@ export default function UsersListPage() {
             </Button>
             <Button
               onClick={handleBalanceAdjust}
-              disabled={!balanceAmount || !balanceReason || balanceAdjustMutation.isPending}
+              disabled={!balanceAmount || !balanceReason}
             >
-              {balanceAdjustMutation.isPending ? "Processing..." : "Adjust Balance"}
+              Adjust Balance
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -813,9 +798,9 @@ export default function UsersListPage() {
             <Button
               variant={statusAction === "block" ? "destructive" : "default"}
               onClick={handleStatusAction}
-              disabled={!statusReason || setStatusMutation.isPending}
+              disabled={!statusReason}
             >
-              {setStatusMutation.isPending ? "Processing..." : statusAction === "block" ? "Block User" : "Unlock User"}
+              {statusAction === "block" ? "Block User" : "Unlock User"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -843,10 +828,9 @@ export default function UsersListPage() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirm}
-              disabled={deleteMutation.isPending}
               className="bg-destructive hover:bg-destructive/90"
             >
-              {deleteMutation.isPending ? "Deleting..." : "Delete User"}
+              Delete User
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

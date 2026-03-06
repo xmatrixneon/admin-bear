@@ -1,40 +1,25 @@
+// app/api/admin/stats/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "better-auth/next";
-import { auth } from "@/lib/auth";
+import { verifyAdminToken } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
 /**
- * Admin middleware - checks if user has admin privileges
+ * Admin middleware - checks token from Authorization header
  */
-async function requireAdmin(req: NextRequest) {
-  const session = await getServerSession(req);
-  const userId = session?.user?.id;
-
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // Check if user is admin by querying the database directly
-  const { prisma } = await import("@/lib/db");
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { isAdmin: true },
-  });
-
-  if (!user?.isAdmin) {
-    return NextResponse.json({ error: "Forbidden: Admin access required" }, { status: 403 });
-  }
-
-  return null; // Success
+function requireAdmin(req: NextRequest): boolean {
+  const authHeader = req.headers.get("Authorization");
+  const token = authHeader?.replace("Bearer ", "");
+  if (!token) return false;
+  return verifyAdminToken(token);
 }
 
 /**
  * GET /api/admin/stats - Get dashboard stats
  */
 export async function GET(req: NextRequest) {
-  const authError = await requireAdmin(req);
-  if (authError) return authError;
-
-  const { prisma } = await import("@/lib/db");
+  if (!requireAdmin(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const [
     totalUsers,
@@ -54,27 +39,33 @@ export async function GET(req: NextRequest) {
     prisma.promocode.count({ where: { isActive: true } }),
   ]);
 
-  const totalRevenue = await prisma.transaction.aggregate({
+  // Total Revenue: Only count SMS received (COMPLETED ActiveNumber)
+  const totalRevenue = await prisma.activeNumber.aggregate({
+    where: { status: "COMPLETED" },
+    _sum: { price: true },
+  });
+
+  // Total Recharge: Only count DEPOSIT and PROMO transactions
+  const totalRecharge = await prisma.transaction.aggregate({
     where: {
       status: "COMPLETED",
-      amount: { gt: 0 },
+      type: { in: ["DEPOSIT", "PROMO"] },
     },
     _sum: { amount: true },
   });
 
-  const otpRevenue = await prisma.activeNumber.aggregate({
-    where: { status: "COMPLETED" },
-    _sum: { price: true },
-  });
+  // OTP Revenue (same as totalRevenue - for compatibility)
+  const otpRevenue = totalRevenue;
 
   return NextResponse.json({
     totalUsers,
     totalServices,
     totalServers,
     activeNumbers,
-    totalWalletBalance: totalWalletBalance._sum.balance || 0,
+    totalWalletBalance: Number(totalWalletBalance._sum.balance || 0),
     activePromocodes,
-    totalRevenue: totalRevenue._sum.amount || 0,
-    otpRevenue: otpRevenue._sum.price || 0,
+    totalRevenue: Number(totalRevenue._sum.price || 0),
+    otpRevenue: Number(otpRevenue._sum.price || 0),
+    totalRecharge: Number(totalRecharge._sum.amount || 0),
   });
 }

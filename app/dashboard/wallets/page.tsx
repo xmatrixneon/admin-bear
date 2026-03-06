@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Wallet, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { trpc } from "@/lib/trpc";
+import { api } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
 
 const fadeUp = (delay = 0) => ({
@@ -23,14 +24,30 @@ const fadeUp = (delay = 0) => ({
 });
 
 export default function WalletsPage() {
-  const { data: users, isLoading, refetch } = trpc.admin.user.list.useQuery({
-    pageSize: 100,
-  });
+  const [users, setUsers] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const totalBalance = users?.users.reduce((sum, u) => sum + (u.wallet?.balance?.toNumber() || 0), 0) || 0;
-  const totalSpent = users?.users.reduce((sum, u) => sum + (u.wallet?.totalSpent?.toNumber() || 0), 0) || 0;
-  const totalRecharge = users?.users.reduce((sum, u) => sum + (u.wallet?.totalRecharge?.toNumber() || 0), 0) || 0;
-  const totalOtp = users?.users.reduce((sum, u) => sum + (u.wallet?.totalOtp || 0), 0) || 0;
+  const fetchWallets = async () => {
+    setIsLoading(true);
+    try {
+      const result = await api.getWallets();
+      setUsers(result);
+    } catch (err: any) {
+      console.error("Failed to fetch wallets:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWallets();
+  }, []);
+
+  const usersList = users?.users || users || [];
+  const totalBalance = usersList.reduce((sum: number, u: any) => sum + (u.wallet?.balance?.toNumber() || 0), 0) || 0;
+  const totalSpent = usersList.reduce((sum: number, u: any) => sum + (u.wallet?.totalSpent?.toNumber() || 0), 0) || 0;
+  const totalRecharge = usersList.reduce((sum: number, u: any) => sum + (u.wallet?.totalRecharge?.toNumber() || 0), 0) || 0;
+  const totalOtp = usersList.reduce((sum: number, u: any) => sum + (u.wallet?.totalOtp || 0), 0) || 0;
 
   return (
     <div className="space-y-6">
@@ -45,7 +62,7 @@ export default function WalletsPage() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => refetch()}
+          onClick={fetchWallets}
           disabled={isLoading}
         >
           {isLoading ? (
@@ -132,7 +149,7 @@ export default function WalletsPage() {
                       <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                     </TableRow>
                   ))
-                ) : users?.users.filter(u => u.wallet).length === 0 ? (
+                ) : usersList.filter((u: any) => u.wallet).length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-12">
                       <div className="flex flex-col items-center gap-3">
@@ -142,7 +159,7 @@ export default function WalletsPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  users?.users.filter(u => u.wallet).map((user, index) => (
+                  usersList.filter((u: any) => u.wallet).map((user: any, index: number) => (
                     <motion.tr
                       key={user.id}
                       initial={{ opacity: 0, y: 8 }}

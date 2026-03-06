@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Server,
@@ -50,7 +50,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
+import { api } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
 
 const fadeUp = (delay = 0) => ({
@@ -74,75 +74,96 @@ export default function ServicesPage() {
     iconUrl: "",
   });
 
-  const { data: services, isLoading, refetch } = trpc.admin.service.list.useQuery();
-  const { data: servers } = trpc.admin.server.list.useQuery();
+  const [services, setServices] = useState<any[]>([]);
+  const [servers, setServers] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Mutations
-  const createMutation = trpc.admin.service.create.useMutation({
-    onSuccess: () => {
-      toast.success("Service created successfully");
-      setCreateDialogOpen(false);
-      resetForm();
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to create service");
-    },
-  });
+  const fetchServices = async () => {
+    setIsLoading(true);
+    try {
+      const result = await api.getServices();
+      setServices((result || []) as any);
+    } catch (err: any) {
+      console.error("Failed to fetch services:", err);
+      toast.error(err.message || "Failed to fetch services");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const updateMutation = trpc.admin.service.update.useMutation({
-    onSuccess: () => {
-      toast.success("Service updated successfully");
-      setEditDialogOpen(false);
-      resetForm();
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to update service");
-    },
-  });
+  const fetchServers = async () => {
+    try {
+      const result = await api.getServers();
+      setServers((result || []) as any);
+    } catch (err: any) {
+      console.error("Failed to fetch servers:", err);
+    }
+  };
 
-  const deleteMutation = trpc.admin.service.delete.useMutation({
-    onSuccess: () => {
-      toast.success("Service deleted successfully");
-      setDeleteDialogOpen(false);
-      setSelectedService(null);
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to delete service");
-    },
-  });
+  useEffect(() => {
+    fetchServices();
+    fetchServers();
+  }, []);
 
   const resetForm = () => {
     setFormData({ code: "", name: "", serverId: "", basePrice: "", iconUrl: "" });
   };
 
-  const handleCreate = () => {
-    createMutation.mutate({
-      code: formData.code,
-      name: formData.name,
-      serverId: formData.serverId,
-      basePrice: parseFloat(formData.basePrice),
-      iconUrl: formData.iconUrl || null,
-    });
+  const handleCreate = async () => {
+    setIsSaving(true);
+    try {
+      await api.createService({
+        code: formData.code,
+        name: formData.name,
+        serverId: formData.serverId,
+        basePrice: parseFloat(formData.basePrice),
+        iconUrl: formData.iconUrl || null,
+      });
+      toast.success("Service created successfully");
+      setCreateDialogOpen(false);
+      resetForm();
+      fetchServices();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create service");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleEdit = () => {
+  const handleEdit = async () => {
     if (!selectedService) return;
-    updateMutation.mutate({
-      id: selectedService.id,
-      code: formData.code,
-      name: formData.name,
-      serverId: formData.serverId,
-      basePrice: parseFloat(formData.basePrice),
-      iconUrl: formData.iconUrl || null,
-    });
+    setIsSaving(true);
+    try {
+      await api.updateService(selectedService.id, {
+        code: formData.code,
+        name: formData.name,
+        serverId: formData.serverId,
+        basePrice: parseFloat(formData.basePrice),
+        iconUrl: formData.iconUrl || null,
+      });
+      toast.success("Service updated successfully");
+      setEditDialogOpen(false);
+      resetForm();
+      fetchServices();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update service");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!selectedService) return;
-    deleteMutation.mutate({ id: selectedService.id });
+    try {
+      await api.deleteService(selectedService.id);
+      toast.success("Service deleted successfully");
+      setDeleteDialogOpen(false);
+      setSelectedService(null);
+      fetchServices();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete service");
+    }
   };
 
   const openEditDialog = (service: any) => {
@@ -171,7 +192,7 @@ export default function ServicesPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => refetch()}
+            onClick={fetchServices}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -394,9 +415,9 @@ export default function ServicesPage() {
             </Button>
             <Button
               onClick={handleCreate}
-              disabled={createMutation.isPending}
+              disabled={isSaving}
             >
-              {createMutation.isPending ? "Creating..." : "Create Service"}
+              {isSaving ? "Creating..." : "Create Service"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -474,9 +495,9 @@ export default function ServicesPage() {
             </Button>
             <Button
               onClick={handleEdit}
-              disabled={updateMutation.isPending}
+              disabled={isSaving}
             >
-              {updateMutation.isPending ? "Updating..." : "Update Service"}
+              {isSaving ? "Updating..." : "Update Service"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -496,10 +517,9 @@ export default function ServicesPage() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              disabled={deleteMutation.isPending}
               className="bg-destructive hover:bg-destructive/90"
             >
-              {deleteMutation.isPending ? "Deleting..." : "Delete Service"}
+              Delete Service
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

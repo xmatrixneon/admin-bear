@@ -1,73 +1,118 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "better-auth/next";
-import { auth } from "@/lib/auth";
+import { verifyAdminToken } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
-/**
- * Admin middleware
- */
-async function requireAdmin(req: NextRequest) {
-  const session = await getServerSession(req);
-  const userId = session?.user?.id;
+// Fields that Prisma expects as Float — coerce from string if needed
+const FLOAT_FIELDS = new Set([
+  "minRechargeAmount",
+  "maxRechargeAmount",
+  "referralPercent",
+  "minRedeem",
+  "numberExpiryMinutes",
+  "minCancelMinutes",
+]);
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+const DEFAULT_SETTINGS = {
+  currency: "INR",
+  minRechargeAmount: 10,
+  maxRechargeAmount: 5000,
+  referralPercent: 0,
+  minRedeem: 0,
+  numberExpiryMinutes: 20,
+  minCancelMinutes: 2,
+  maintenanceMode: false,
+  upiId: "",
+  bharatpeMerchantId: "",
+  bharatpeToken: "",
+  bharatpeQrImage: "",
+  telegramSupportUsername: "",
+  apiDocsBaseUrl: "",
+};
+
+function requireAdmin(req: NextRequest): boolean {
+  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+  if (!token) return false;
+  return verifyAdminToken(token);
+}
+
+function getAdminId(req: NextRequest): string {
+  const token = req.headers.get("Authorization")?.replace("Bearer ", "") || "";
+  try {
+    const decoded = JSON.parse(Buffer.from(token, "base64").toString());
+    return decoded.id;
+  } catch {
+    return "unknown";
   }
-
-  const { prisma } = await import("@/lib/db");
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { isAdmin: true },
-  });
-
-  if (!user?.isAdmin) {
-    return NextResponse.json({ error: "Forbidden: Admin access required" }, { status: 403 });
-  }
-
-  return null;
 }
 
 /**
- * GET /api/admin/settings - Get settings
+ * Coerce only the fields that were actually sent.
+ * Fields not present in the body are left untouched in the DB.
  */
+function coerceBody(raw: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(raw)) {
+    if (FLOAT_FIELDS.has(key)) {
+      const num = parseFloat(value as string);
+      result[key] = isNaN(num) ? 0 : num;
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
 export async function GET(req: NextRequest) {
-  const authError = await requireAdmin(req);
-  if (authError) return authError;
+  if (!requireAdmin(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  const { prisma } = await import("@/lib/db");
+  const settings = await prisma.settings.findUnique({ where: { id: "1" } });
 
-  const settings = await prisma.settings.findUnique({
-    where: { id: "1" },
-  });
+  if (!settings) {
+    return NextResponse.json({ id: "1", ...DEFAULT_SETTINGS });
+  }
 
   return NextResponse.json(settings);
 }
 
-/**
- * PATCH /api/admin/settings - Update settings
- */
 export async function PATCH(req: NextRequest) {
-  const authError = await requireAdmin(req);
-  if (authError) return authError;
+  if (!requireAdmin(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  const body = await req.json();
-  const { prisma } = await import("@/lib/db");
+  const rawBody: Record<string, unknown> = await req.json();
+  const adminId = getAdminId(req);
 
-  const settings = await prisma.settings.update({
+  // Only the fields you sent — nothing more
+  const updateData = coerceBody(rawBody);
+
+  const settings = await prisma.settings.upsert({
     where: { id: "1" },
-    data: body,
+    // On first create, fall back to defaults for any field not supplied
+    create: { id: "1", ...DEFAULT_SETTINGS, ...updateData },
+    // On update, only touch what was sent
+    update: updateData,
   });
 
-  // Create audit log
-  const session = await getServerSession(req);
-  await prisma.userAuditLog.create({
-    data: {
-      userId: "1", // Settings record ID
-      adminId: session.user.id,
-      action: "UPDATE",
-      changes: body,
-      reason: "Settings update",
-    },
-  });
+  // Audit log
+  try {
+    const adminUser = await prisma.user.findFirst({ where: { isAdmin: true } });
+    if (adminUser) {
+      await prisma.userAuditLog.create({
+        data: {
+          userId: adminUser.id,
+          adminId: adminId || adminUser.id,
+          action: "UPDATE_SETTINGS",
+          // line 107 — replace with this:
+          changes: rawBody as Record<string, string | number | boolean | null>,
+          reason: "Settings update",
+        },
+      });
+    }
+  } catch {
+    // Don't fail the request if audit log fails
+  }
 
   return NextResponse.json(settings);
 }

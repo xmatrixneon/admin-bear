@@ -1,18 +1,18 @@
+// app/api/admin/wallets/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "better-auth/next";
+import { verifyAdminToken } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 
-/**
- * GET /api/admin/wallets - List all wallets
- */
+function requireAdmin(req: NextRequest): boolean {
+  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+  if (!token) return false;
+  return verifyAdminToken(token);
+}
+
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(req);
-  const userId = session?.user?.id;
-
-  if (!userId) {
+  if (!requireAdmin(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const { prisma } = await import("@/lib/db");
 
   const wallets = await prisma.wallet.findMany({
     include: {

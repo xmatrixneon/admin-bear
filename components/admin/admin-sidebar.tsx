@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
@@ -12,59 +13,35 @@ import {
   Settings,
   LogOut,
   Wallet,
-  Activity,
   FileText,
   Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useLocalStorage } from "@/hooks/use-local-storage";
 
 const navItems = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Users",
-    href: "/dashboard/users",
-    icon: Users,
-  },
-  {
-    title: "Services",
-    href: "/dashboard/services",
-    icon: Server,
-  },
-  {
-    title: "Promocodes",
-    href: "/dashboard/promocodes",
-    icon: Tag,
-  },
-  {
-    title: "Transactions",
-    href: "/dashboard/transactions",
-    icon: CreditCard,
-  },
-  {
-    title: "Wallets",
-    href: "/dashboard/wallets",
-    icon: Wallet,
-  },
-  {
-    title: "Audit Logs",
-    href: "/dashboard/audit-logs",
-    icon: FileText,
-  },
-  {
-    title: "Settings",
-    href: "/dashboard/settings",
-    icon: Settings,
-  },
+  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { title: "Users", href: "/dashboard/users", icon: Users },
+  { title: "Services", href: "/dashboard/services", icon: Server },
+  { title: "Promocodes", href: "/dashboard/promocodes", icon: Tag },
+  { title: "Transactions", href: "/dashboard/transactions", icon: CreditCard },
+  { title: "Wallets", href: "/dashboard/wallets", icon: Wallet },
+  { title: "Audit Logs", href: "/dashboard/audit-logs", icon: FileText },
+  { title: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
-  const [adminUser] = useLocalStorage("admin_user", null);
+  const [mounted, setMounted] = useState(false);
+  const [adminUser, setAdminUser] = useState<any>(null);
+
+  // Only read localStorage after mount to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+    try {
+      const stored = localStorage.getItem("admin_user");
+      if (stored) setAdminUser(JSON.parse(stored));
+    } catch {}
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("admin_token");
@@ -88,15 +65,15 @@ export function AdminSidebar() {
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-
+          const isActive =
+            pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link key={item.href} href={item.href}>
               <Button
                 variant={isActive ? "secondary" : "ghost"}
                 className={cn(
                   "w-full justify-start gap-3",
-                  isActive && "bg-secondary"
+                  isActive && "bg-secondary",
                 )}
               >
                 <Icon className="w-4 h-4" />
@@ -109,10 +86,15 @@ export function AdminSidebar() {
 
       {/* User & Logout */}
       <div className="p-4 border-t space-y-3">
-        {adminUser && (
+        {/* Only render user info after mount to avoid hydration mismatch */}
+        {mounted && adminUser && (
           <div className="px-3">
-            <p className="text-sm font-medium">{(adminUser as any)?.firstName || "Admin"}</p>
-            <p className="text-xs text-muted-foreground">{(adminUser as any)?.username || "Administrator"}</p>
+            <p className="text-sm font-medium">
+              {adminUser?.name || adminUser?.firstName || "Admin"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {adminUser?.telegramId || adminUser?.username || "Administrator"}
+            </p>
           </div>
         )}
         <Button

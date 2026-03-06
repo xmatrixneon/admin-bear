@@ -33,13 +33,13 @@ export default function LoginPage() {
         toast.success("Welcome back!");
         router.push("/dashboard");
       } else {
-        setError(result.error || "Login failed");
-        toast.error(result.error || "Login failed");
+        setError("Invalid credentials");
+        toast.error("Invalid credentials");
       }
     } catch (err: any) {
       console.error("Login error:", err);
-      setError("Connection failed. Please try again.");
-      toast.error("Connection failed");
+      setError(err.message || "Connection failed. Please try again.");
+      toast.error(err.message || "Connection failed");
     } finally {
       setIsLoading(false);
     }
@@ -82,19 +82,19 @@ export default function LoginPage() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Username</Label>
               <div className="relative">
                 <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="admin@meowsms.com"
+                  id="username"
+                  type="text"
+                  placeholder="admin"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-9"
                   required
                   disabled={isLoading}
-                  autoComplete="email"
+                  autoComplete="username"
                 />
               </div>
             </div>
@@ -135,11 +135,11 @@ export default function LoginPage() {
             <div className="text-center text-sm text-muted-foreground mt-4">
               <p>Default admin credentials:</p>
               <code className="block bg-muted px-2 py-1 rounded text-xs mt-1">
-                Email: admin@meowsms.com<br />
-                Password: admin123
+                Username: admin<br />
+                Password: Line@9798
               </code>
               <p className="text-xs text-muted-foreground mt-2">
-                Please change the password after first login!
+                Please change password after first login!
               </p>
             </div>
           </form>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   FileText,
@@ -24,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { trpc } from "@/lib/trpc";
+import { api } from "@/lib/api";
 import { formatDateTime } from "@/lib/utils";
 
 const fadeUp = (delay = 0) => ({
@@ -46,15 +46,30 @@ export default function AuditLogsPage() {
   const [search, setSearch] = useState("");
   const [actionFilter, setActionFilter] = useState("");
   const [page, setPage] = useState(1);
+  const [data, setData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { data, isLoading, refetch } = trpc.admin.auditLog.list.useQuery({
-    search: search || undefined,
-    action: actionFilter || undefined,
-    page,
-    pageSize: 25,
-  });
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const result = await api.getAuditLogs({
+        action: actionFilter || undefined,
+        page,
+        pageSize: 25,
+      });
+      setData(result);
+    } catch (err: any) {
+      console.error("Failed to fetch audit logs:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const totalPages = data?.pagination.totalPages || 1;
+  useEffect(() => {
+    fetchData();
+  }, [actionFilter, page]);
+
+  const totalPages = data?.pagination?.totalPages || 1;
 
   return (
     <div className="space-y-6">
@@ -69,7 +84,7 @@ export default function AuditLogsPage() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => refetch()}
+          onClick={fetchData}
           disabled={isLoading}
         >
           {isLoading ? (
@@ -147,7 +162,7 @@ export default function AuditLogsPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  data?.logs.map((log, index) => (
+                  data?.logs.map((log: any, index: number) => (
                     <motion.tr
                       key={log.id}
                       initial={{ opacity: 0, y: 8 }}
