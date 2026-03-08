@@ -9,40 +9,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { trpc } from "@/lib/trpc";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // tRPC mutation for login
+  const loginMutation = trpc.login.login.useMutation({
+    onSuccess: (data) => {
+      // Store token and user info
+      localStorage.setItem("admin_token", data.token);
+      localStorage.setItem("admin_user", JSON.stringify(data.user));
+      toast.success("Welcome back!");
+      router.push("/dashboard");
+    },
+    onError: (err: any) => {
+      setError(err.message || "Invalid credentials");
+      toast.error(err.message || "Invalid credentials");
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setIsLoading(true);
-
-    try {
-      const result = await api.login(email, password);
-
-      if (result.success) {
-        // Store token and user info
-        localStorage.setItem("admin_token", result.data!.token);
-        localStorage.setItem("admin_user", JSON.stringify(result.data!.user));
-        toast.success("Welcome back!");
-        router.push("/dashboard");
-      } else {
-        setError("Invalid credentials");
-        toast.error("Invalid credentials");
-      }
-    } catch (err: any) {
-      console.error("Login error:", err);
-      setError(err.message || "Connection failed. Please try again.");
-      toast.error(err.message || "Connection failed");
-    } finally {
-      setIsLoading(false);
-    }
+    await loginMutation.mutateAsync({ username: email, password });
   };
 
   return (
@@ -93,7 +86,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-9"
                   required
-                  disabled={isLoading}
+                  disabled={loginMutation.isPending}
                   autoComplete="username"
                 />
               </div>
@@ -111,7 +104,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-9"
                   required
-                  disabled={isLoading}
+                  disabled={loginMutation.isPending}
                   autoComplete="current-password"
                 />
               </div>
@@ -120,9 +113,9 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={isLoading}
+              disabled={loginMutation.isPending}
             >
-              {isLoading ? (
+              {loginMutation.isPending ? (
                 <>
                   <Loader2 size={16} className="mr-2 animate-spin" />
                   Signing in...

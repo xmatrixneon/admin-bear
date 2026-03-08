@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Server,
@@ -50,7 +50,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { trpc } from "@/lib/trpc";
 import { formatCurrency } from "@/lib/utils";
 
 const fadeUp = (delay = 0) => ({
@@ -74,93 +74,67 @@ export default function ServicesPage() {
     iconUrl: "",
   });
 
-  const [services, setServices] = useState<any[]>([]);
-  const [servers, setServers] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  // tRPC queries
+  const { data: services, isLoading, refetch, isFetching } = trpc.services.list.useQuery();
+  const { data: servers } = trpc.servers.list.useQuery();
 
-  const fetchServices = async () => {
-    setIsLoading(true);
-    try {
-      const result = await api.getServices();
-      setServices((result || []) as any);
-    } catch (err: any) {
-      console.error("Failed to fetch services:", err);
-      toast.error(err.message || "Failed to fetch services");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchServers = async () => {
-    try {
-      const result = await api.getServers();
-      setServers((result || []) as any);
-    } catch (err: any) {
-      console.error("Failed to fetch servers:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchServices();
-    fetchServers();
-  }, []);
+  // tRPC mutations
+  const createMutation = trpc.services.create.useMutation();
+  const updateMutation = trpc.services.update.useMutation();
+  const deleteMutation = trpc.services.delete.useMutation();
 
   const resetForm = () => {
     setFormData({ code: "", name: "", serverId: "", basePrice: "", iconUrl: "" });
   };
 
   const handleCreate = async () => {
-    setIsSaving(true);
     try {
-      await api.createService({
+      await createMutation.mutateAsync({
         code: formData.code,
         name: formData.name,
         serverId: formData.serverId,
         basePrice: parseFloat(formData.basePrice),
-        iconUrl: formData.iconUrl || null,
+        iconUrl: formData.iconUrl || undefined,
       });
       toast.success("Service created successfully");
       setCreateDialogOpen(false);
       resetForm();
-      fetchServices();
+      refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to create service");
-    } finally {
-      setIsSaving(false);
     }
   };
 
   const handleEdit = async () => {
     if (!selectedService) return;
-    setIsSaving(true);
     try {
-      await api.updateService(selectedService.id, {
-        code: formData.code,
-        name: formData.name,
-        serverId: formData.serverId,
-        basePrice: parseFloat(formData.basePrice),
-        iconUrl: formData.iconUrl || null,
+      await updateMutation.mutateAsync({
+        id: selectedService.id,
+        data: {
+          code: formData.code,
+          name: formData.name,
+          serverId: formData.serverId,
+          basePrice: parseFloat(formData.basePrice),
+          iconUrl: formData.iconUrl || undefined,
+        },
       });
       toast.success("Service updated successfully");
       setEditDialogOpen(false);
       resetForm();
-      fetchServices();
+      refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to update service");
-    } finally {
-      setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
     if (!selectedService) return;
     try {
-      await api.deleteService(selectedService.id);
+      await deleteMutation.mutateAsync({ id: selectedService.id });
       toast.success("Service deleted successfully");
       setDeleteDialogOpen(false);
       setSelectedService(null);
-      fetchServices();
+      refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to delete service");
     }
@@ -192,10 +166,10 @@ export default function ServicesPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={fetchServices}
-            disabled={isLoading}
+            onClick={() => refetch()}
+            disabled={isFetching}
           >
-            {isLoading ? (
+            {isFetching ? (
               <Loader2 size={16} className="animate-spin mr-2" />
             ) : (
               <RefreshCw size={16} className="mr-2" />
@@ -415,9 +389,9 @@ export default function ServicesPage() {
             </Button>
             <Button
               onClick={handleCreate}
-              disabled={isSaving}
+              disabled={createMutation.isPending}
             >
-              {isSaving ? "Creating..." : "Create Service"}
+              {createMutation.isPending ? "Creating..." : "Create Service"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -495,9 +469,9 @@ export default function ServicesPage() {
             </Button>
             <Button
               onClick={handleEdit}
-              disabled={isSaving}
+              disabled={updateMutation.isPending}
             >
-              {isSaving ? "Updating..." : "Update Service"}
+              {updateMutation.isPending ? "Updating..." : "Update Service"}
             </Button>
           </DialogFooter>
         </DialogContent>

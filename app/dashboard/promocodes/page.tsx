@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { formatCurrency, formatDate, toNumber } from "@/lib/utils";
 import {
@@ -51,7 +51,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { trpc } from "@/lib/trpc";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },
@@ -71,39 +71,27 @@ export default function PromocodesPage() {
     maxUses: "1",
   });
 
-  const [promocodes, setPromocodes] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // tRPC query for promocodes
+  const { data: promocodes, isLoading, refetch, isFetching } = trpc.promocodes.list.useQuery();
 
-  const fetchPromocodes = async () => {
-    setIsLoading(true);
-    try {
-      const result = await api.getPromocodes();
-      setPromocodes(result as any);
-    } catch (err: any) {
-      console.error("Failed to fetch promocodes:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchPromocodes();
-  }, []);
+  // tRPC mutations
+  const generateMutation = trpc.promocodes.generate.useMutation();
+  const updateMutation = trpc.promocodes.update.useMutation();
+  const deleteMutation = trpc.promocodes.delete.useMutation();
 
   const handleGenerate = async () => {
     try {
-      const result = await api.generatePromocodes(
-        parseFloat(formData.amount),
-        parseInt(formData.count),
-        parseInt(formData.maxUses),
-      );
-      const promoArray = Array.isArray(result) ? result : [];
+      await generateMutation.mutateAsync({
+        amount: parseFloat(formData.amount),
+        count: parseInt(formData.count),
+        maxUses: parseInt(formData.maxUses),
+      });
       toast.success(
-        `Generated ${promoArray.length} promocode${promoArray.length > 1 ? "s" : ""} successfully`,
+        `Generated ${formData.count} promocode${parseInt(formData.count) > 1 ? "s" : ""} successfully`,
       );
       setCreateDialogOpen(false);
       setFormData({ amount: "", count: "1", maxUses: "1" });
-      fetchPromocodes();
+      refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to generate promocodes");
     }
@@ -111,9 +99,12 @@ export default function PromocodesPage() {
 
   const handleToggleStatus = async (id: string, isActive: boolean) => {
     try {
-      await api.updatePromocode(id, isActive ? "deactivate" : "activate");
+      await updateMutation.mutateAsync({
+        id,
+        action: isActive ? "deactivate" : "activate",
+      });
       toast.success(`Promocode ${isActive ? "deactivated" : "activated"}`);
-      fetchPromocodes();
+      refetch();
     } catch (err: any) {
       toast.error(
         err.message ||
@@ -125,11 +116,11 @@ export default function PromocodesPage() {
   const handleDelete = async () => {
     if (!selectedPromo) return;
     try {
-      await api.deletePromocode(selectedPromo.id);
+      await deleteMutation.mutateAsync({ id: selectedPromo.id });
       toast.success("Promocode deleted successfully");
       setDeleteDialogOpen(false);
       setSelectedPromo(null);
-      fetchPromocodes();
+      refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to delete promocode");
     }
@@ -161,10 +152,10 @@ export default function PromocodesPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={fetchPromocodes}
-            disabled={isLoading}
+            onClick={() => refetch()}
+            disabled={isFetching}
           >
-            {isLoading ? (
+            {isFetching ? (
               <Loader2 size={16} className="animate-spin mr-2" />
             ) : (
               <RefreshCw size={16} className="mr-2" />
@@ -469,8 +460,8 @@ export default function PromocodesPage() {
             >
               Cancel
             </Button>
-            <Button onClick={handleGenerate} disabled={isLoading}>
-              {isLoading ? "Generating..." : "Generate Codes"}
+            <Button onClick={handleGenerate} disabled={generateMutation.isPending}>
+              {generateMutation.isPending ? "Generating..." : "Generate Codes"}
             </Button>
           </DialogFooter>
         </DialogContent>

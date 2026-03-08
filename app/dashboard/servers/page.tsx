@@ -1,21 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Server, Plus, RefreshCw, Loader2, MoreVertical, Trash2, Edit, KeyRound } from "lucide-react";
+import {
+  Server,
+  Plus,
+  RefreshCw,
+  Loader2,
+  MoreVertical,
+  Edit,
+  KeyRound,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },
@@ -23,122 +30,133 @@ const fadeUp = (delay = 0) => ({
   transition: { type: "spring" as const, stiffness: 280, damping: 24, delay },
 });
 
+// Type for selected item (Server or ApiCredential)
+type SelectedItem =
+  | { id: string; name: string; countryCode: string; countryIso: string; countryName: string; flagUrl: string; apiId: string; isActive: boolean }
+  | { id: string; name: string; apiUrl: string; apiKey: string; isActive: boolean };
+
 export default function ServersPage() {
   const [activeTab, setActiveTab] = useState("servers");
-  const [serverDialogOpen, setServerDialogOpen] = useState(false);
-  const [apiDialogOpen, setApiDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [deleteType, setDeleteType] = useState<"server" | "api">("server");
 
   // Server form state
+  const [serverDialogOpen, setServerDialogOpen] = useState(false);
   const [serverForm, setServerForm] = useState({
     name: "",
     countryCode: "",
-    apiCredentialId: "",
+    countryIso: "IN",
+    countryName: "",
     flagUrl: "",
+    apiId: "",
+    isActive: true,
   });
 
-  // API form state
-  const [apiForm, setApiForm] = useState({
-    name: "",
-    apiUrl: "",
-    apiKey: "",
-  });
+  const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
+  const [deleteType, setDeleteType] = useState<"server" | "api">("server");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-  const [servers, setServers] = useState<any[]>([]);
-  const [apiCredentials, setApiCredentials] = useState<any[]>([]);
-  const [serversLoading, setServersLoading] = useState(true);
-  const [apiLoading, setApiLoading] = useState(true);
+  // tRPC queries
+  const { data: serversData, isLoading, refetch } = trpc.servers.list.useQuery();
+  const { data: apiCredentialsData, isLoading: apiLoading, refetch: apiRefetch } = trpc.servers.listApiCredentials.useQuery();
 
-  const fetchServers = async () => {
-    setServersLoading(true);
-    try {
-      const result = await api.getServers();
-      setServers((result || []) as any);
-    } catch (err: any) {
-      console.error("Failed to fetch servers:", err);
-      toast.error(err.message || "Failed to fetch servers");
-    } finally {
-      setServersLoading(false);
-    }
-  };
+  // tRPC mutations
+  const createServerMutation = trpc.servers.create.useMutation();
+  const updateServerMutation = trpc.servers.update.useMutation();
+  const deleteServerMutation = trpc.servers.delete.useMutation();
+  const createApiCredentialMutation = trpc.servers.createApiCredential.useMutation();
+  const updateApiCredentialMutation = trpc.servers.updateApiCredential.useMutation();
+  const deleteApiCredentialMutation = trpc.servers.deleteApiCredential.useMutation();
 
-  const fetchApiCredentials = async () => {
-    setApiLoading(true);
-    try {
-      // For now, we'll need to get this from the servers response
-      // This is a placeholder - the API should have a separate endpoint
-      setApiCredentials([] as any);
-    } catch (err: any) {
-      console.error("Failed to fetch API credentials:", err);
-    } finally {
-      setApiLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchServers();
-    fetchApiCredentials();
-  }, []);
-
+  // Handlers
   const handleCreateServer = async () => {
     try {
-      await api.createServer(serverForm);
+      await createServerMutation.mutateAsync(serverForm);
       toast.success("Server created successfully");
       setServerDialogOpen(false);
-      setServerForm({ name: "", countryCode: "", apiCredentialId: "", flagUrl: "" });
-      fetchServers();
+      setServerForm({ name: "", countryCode: "", countryIso: "", countryName: "", flagUrl: "", apiId: "", isActive: true });
+      refetch();
+      apiRefetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to create server");
     }
   };
 
   const handleUpdateServer = async () => {
+    if (!selectedItem) return;
     try {
-      await api.updateServer(selectedItem.id, serverForm);
+      await updateServerMutation.mutateAsync({
+        id: selectedItem.id,
+        name: serverForm.name,
+        countryCode: serverForm.countryCode,
+        countryIso: serverForm.countryIso,
+        countryName: serverForm.countryName,
+        flagUrl: serverForm.flagUrl || null,
+        apiId: serverForm.apiId,
+        isActive: serverForm.isActive,
+      });
       toast.success("Server updated successfully");
       setServerDialogOpen(false);
-      setSelectedItem(null);
-      fetchServers();
+      setServerForm({ name: "", countryCode: "", countryIso: "", countryName: "", flagUrl: "", apiId: "", isActive: true });
+      refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to update server");
     }
   };
 
   const handleDelete = async () => {
+    if (!selectedItem) return;
     try {
       if (deleteType === "server") {
-        await api.deleteServer(selectedItem.id);
+        await deleteServerMutation.mutateAsync({ id: selectedItem.id });
       } else {
-        // API credential deletion - placeholder
+        await deleteApiCredentialMutation.mutateAsync({ id: selectedItem.id });
       }
-      toast.success(`${deleteType === "server" ? "Server" : "API credential"} deleted successfully`);
       setDeleteDialogOpen(false);
       setSelectedItem(null);
-      fetchServers();
+      refetch();
+      apiRefetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to delete");
     }
   };
 
-  const openServerDialog = (server?: any) => {
+  const handleEditServer = async (server?: any) => {
     if (server) {
       setSelectedItem(server);
       setServerForm({
         name: server.name,
         countryCode: server.countryCode,
-        apiCredentialId: server.apiId,
+        countryIso: server.countryIso,
+        countryName: server.countryName,
         flagUrl: server.flagUrl || "",
+        apiId: server.api?.id || "",
+        isActive: server.isActive,
       });
-    } else {
-      setSelectedItem(null);
-      setServerForm({ name: "", countryCode: "", apiCredentialId: "", flagUrl: "" });
+      setServerDialogOpen(true);
     }
-    setServerDialogOpen(true);
   };
 
-  const openApiDialog = (api?: any) => {
+  // API credential form state
+  const [apiDialogOpen, setApiDialogOpen] = useState(false);
+  const [apiForm, setApiForm] = useState({
+    name: "",
+    apiUrl: "",
+    apiKey: "",
+  });
+
+  const handleCreateApi = async () => {
+    try {
+      await createApiCredentialMutation.mutateAsync(apiForm);
+      toast.success("API credential created successfully");
+      setApiDialogOpen(false);
+      setApiForm({ name: "", apiUrl: "", apiKey: "" });
+      refetch();
+      apiRefetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create API credential");
+    }
+  };
+
+  const handleEditApi = async (api?: any) => {
     if (api) {
       setSelectedItem(api);
       setApiForm({
@@ -146,33 +164,92 @@ export default function ServersPage() {
         apiUrl: api.apiUrl,
         apiKey: api.apiKey,
       });
-    } else {
-      setSelectedItem(null);
-      setApiForm({ name: "", apiUrl: "", apiKey: "" });
+      setApiDialogOpen(true);
     }
-    setApiDialogOpen(true);
+  };
+
+  const handleDeleteApi = async (api?: any) => {
+    if (!api) return;
+    try {
+      await deleteApiCredentialMutation.mutateAsync({ id: api.id });
+      toast.success("API credential deleted successfully");
+      setApiDialogOpen(false);
+      setSelectedItem(null);
+      apiRefetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete API credential");
+    }
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Servers & API Credentials</h1>
+          <h1 className="text-2xl font-bold text-foreground">Servers</h1>
           <p className="text-sm text-muted-foreground">
             Manage OTP servers and API credentials
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => { fetchServers(); fetchApiCredentials(); }} disabled={serversLoading || apiLoading}>
-            {serversLoading || apiLoading ? <Loader2 size={16} className="animate-spin mr-2" /> : <RefreshCw size={16} className="mr-2" />}
-            Refresh
-          </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            refetch();
+            apiRefetch();
+          }}
+          disabled={isLoading || apiLoading}
+        >
+          {isLoading || apiLoading ? (
+            <Loader2 size={16} className="animate-spin mr-2" />
+          ) : (
+            <RefreshCw size={16} className="mr-2" />
+          )}
+          Refresh
+        </Button>
+      </motion.div>
+
+      {/* Stats Cards */}
+      <motion.div {...fadeUp(0.05)} className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-500/10 p-2 rounded-lg">
+              <Server size={18} className="text-blue-500" />
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase font-medium">Total Servers</p>
+              <p className="text-xl font-bold text-foreground">{serversData?.length || 0}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-green-500/10 p-2 rounded-lg">
+              <KeyRound size={18} className="text-green-500" />
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase font-medium">Active Servers</p>
+              <p className="text-xl font-bold text-foreground">
+                {serversData?.filter?.((s: any) => s.isActive).length || 0}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-card border border-border rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-purple-500/10 p-2 rounded-lg">
+              <KeyRound size={18} className="text-purple-500" />
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground uppercase font-medium">API Credentials</p>
+              <p className="text-xl font-bold text-foreground">{apiCredentialsData?.length || 0}</p>
+            </div>
+          </div>
         </div>
       </motion.div>
 
       {/* Tabs */}
-      <motion.div {...fadeUp(0.05)}>
+      <motion.div {...fadeUp(0.1)} className="bg-card border border-border rounded-xl p-4 space-y-4">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="servers">Servers</TabsTrigger>
@@ -182,7 +259,7 @@ export default function ServersPage() {
           {/* Servers Tab */}
           <TabsContent value="servers" className="space-y-4">
             <div className="flex justify-end">
-              <Button size="sm" onClick={() => openServerDialog()}>
+              <Button size="sm" onClick={() => handleCreateServer()}>
                 <Plus size={16} className="mr-2" />
                 Add Server
               </Button>
@@ -193,31 +270,34 @@ export default function ServersPage() {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Country</TableHead>
-                    <TableHead>API</TableHead>
+                    <TableHead>Code</TableHead>
+                    <TableHead>API Credential</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Services</TableHead>
                     <TableHead className="w-[60px] text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {serversLoading ? (
+                  {isLoading ? (
                     Array.from({ length: 5 }).map((_, i) => (
                       <TableRow key={i}>
                         <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-6 w-16" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                        <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                        <TableCell><Skeleton className="h-6 w-16" /></TableCell>
                       </TableRow>
                     ))
-                  ) : servers?.length === 0 ? (
+                  ) : serversData?.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-12">
+                      <TableCell colSpan={7} className="text-center py-12">
                         <div className="flex flex-col items-center gap-3">
                           <Server size={48} className="text-muted-foreground/40" />
                           <p className="text-muted-foreground">No servers found</p>
-                          <Button size="sm" onClick={() => openServerDialog()}>
+                          <Button size="sm" onClick={() => handleCreateServer()}>
                             <Plus size={16} className="mr-2" />
                             Add First Server
                           </Button>
@@ -225,7 +305,7 @@ export default function ServersPage() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    servers?.map((server, index) => (
+                    serversData?.map((server, index) => (
                       <motion.tr
                         key={server.id}
                         initial={{ opacity: 0, y: 8 }}
@@ -242,15 +322,20 @@ export default function ServersPage() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline">{server.countryIso} ({server.countryCode})</Badge>
+                          <Badge variant="outline">{server.countryCode} ({server.countryIso})</Badge>
                         </TableCell>
                         <TableCell>
-                          <span className="text-sm text-muted-foreground">{server.apiId || "-"}</span>
+                          <div className="flex items-center gap-1.5">
+                            <KeyRound size={14} className="text-muted-foreground" />
+                            <span className="text-sm">{server.api?.id || "-"}</span>
+                          </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={server.isActive ? "default" : "secondary"}>
-                            {server.isActive ? "Active" : "Inactive"}
-                          </Badge>
+                          <Switch
+                            checked={server.isActive}
+                            disabled={true}
+                            onCheckedChange={(checked) => handleUpdateServer({ ...server, isActive: checked })}
+                          />
                         </TableCell>
                         <TableCell>
                           <span className="text-sm">{server.services?.length || 0}</span>
@@ -263,19 +348,12 @@ export default function ServersPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => openServerDialog(server)}>
+                              <DropdownMenuItem onClick={() => handleEditServer(server)}>
                                 <Edit size={14} className="mr-2" />
                                 Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-destructive focus:text-destructive"
-                                onClick={() => {
-                                  setSelectedItem(server);
-                                  setDeleteType("server");
-                                  setDeleteDialogOpen(true);
-                                }}
-                              >
-                                <Trash2 size={14} className="mr-2" />
+                              <DropdownMenuItem onClick={() => { setSelectedItem(server); setDeleteType("server"); setDeleteDialogOpen(true); }}>
+                                <Edit size={14} className="mr-2 text-destructive" />
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -292,9 +370,9 @@ export default function ServersPage() {
           {/* API Credentials Tab */}
           <TabsContent value="api" className="space-y-4">
             <div className="flex justify-end">
-              <Button size="sm" onClick={() => openApiDialog()}>
-                <KeyRound size={16} className="mr-2" />
-                Add API
+              <Button size="sm" onClick={() => setApiDialogOpen(true)}>
+                <Plus size={16} className="mr-2" />
+                Add API Credential
               </Button>
             </div>
             <div className="bg-card border border-border rounded-xl overflow-hidden">
@@ -304,8 +382,9 @@ export default function ServersPage() {
                     <TableHead>Name</TableHead>
                     <TableHead>API URL</TableHead>
                     <TableHead>API Key</TableHead>
-                    <TableHead>Status</TableHead>
                     <TableHead>Created</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Used By</TableHead>
                     <TableHead className="w-[60px] text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -316,26 +395,29 @@ export default function ServersPage() {
                         <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-48" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                         <TableCell><Skeleton className="h-6 w-16" /></TableCell>
                         <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                        <TableCell><Skeleton className="h-6 w-16" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                       </TableRow>
                     ))
-                  ) : apiCredentials?.length === 0 ? (
+                  ) : apiCredentialsData?.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-12">
+                      <TableCell colSpan={9} className="text-center py-12">
                         <div className="flex flex-col items-center gap-3">
                           <KeyRound size={48} className="text-muted-foreground/40" />
                           <p className="text-muted-foreground">No API credentials found</p>
-                          <Button size="sm" onClick={() => openApiDialog()}>
-                            <KeyRound size={16} className="mr-2" />
-                            Add First API
+                          <Button size="sm" onClick={() => setApiDialogOpen(true)}>
+                            <Plus size={16} className="mr-2" />
+                            Add First API Credential
                           </Button>
                         </div>
                       </TableCell>
                     </TableRow>
                   ) : (
-                    apiCredentials?.map((api, index) => (
+                    apiCredentialsData?.map((api, index) => (
                       <motion.tr
                         key={api.id}
                         initial={{ opacity: 0, y: 8 }}
@@ -344,27 +426,36 @@ export default function ServersPage() {
                         className="hover:bg-muted/50 transition-colors border-b"
                       >
                         <TableCell>
-                          <span className="font-medium">{api.name}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-white">
+                              <span className="text-xs font-bold">{api.name?.[0]?.toUpperCase() || "API"}</span>
+                            </div>
+                          </div>
                         </TableCell>
                         <TableCell>
-                          <span className="text-sm text-muted-foreground truncate max-w-[200px] block">
+                          <span className="text-sm truncate max-w-[200px] block">
                             {api.apiUrl}
                           </span>
                         </TableCell>
                         <TableCell>
                           <span className="text-sm font-mono bg-muted px-2 py-0.5 rounded">
-                            {api.apiKey.slice(0, 8)}***
+                            {api.apiKey?.slice(0, 8)}***
                           </span>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={api.isActive ? "default" : "secondary"}>
-                            {api.isActive ? "Active" : "Inactive"}
-                          </Badge>
                         </TableCell>
                         <TableCell>
                           <span className="text-sm text-muted-foreground">
                             {new Date(api.createdAt).toLocaleDateString()}
                           </span>
+                        </TableCell>
+                        <TableCell>
+                          <Switch
+                            checked={api.isActive}
+                            disabled={true}
+                            onCheckedChange={(checked) => handleEditApi({ ...api, isActive: checked })}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm">{api.servers?.length || 0}</span>
                         </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>
@@ -374,19 +465,12 @@ export default function ServersPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => openApiDialog(api)}>
+                              <DropdownMenuItem onClick={() => handleEditApi(api)}>
                                 <Edit size={14} className="mr-2" />
                                 Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-destructive focus:text-destructive"
-                                onClick={() => {
-                                  setSelectedItem(api);
-                                  setDeleteType("api");
-                                  setDeleteDialogOpen(true);
-                                }}
-                              >
-                                <Trash2 size={14} className="mr-2" />
+                              <DropdownMenuItem onClick={() => { setDeleteType("api"); handleDeleteApi(api); setDeleteDialogOpen(true); }}>
+                                <Edit size={14} className="mr-2 text-destructive" />
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -410,7 +494,7 @@ export default function ServersPage() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Server Name</Label>
+              <Label>Name</Label>
               <Input
                 placeholder="e.g., India Server 1"
                 value={serverForm.name}
@@ -426,14 +510,22 @@ export default function ServersPage() {
               />
             </div>
             <div className="space-y-2">
+              <Label>Country Name</Label>
+              <Input
+                placeholder="India"
+                value={serverForm.countryName}
+                onChange={(e) => setServerForm({ ...serverForm, countryName: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
               <Label>API Credential</Label>
               <select
                 className="w-full h-10 px-3 py-2 rounded-md border bg-background text-sm"
-                value={serverForm.apiCredentialId}
-                onChange={(e) => setServerForm({ ...serverForm, apiCredentialId: e.target.value })}
+                value={serverForm.apiId}
+                onChange={(e) => setServerForm({ ...serverForm, apiId: e.target.value })}
               >
                 <option value="">Select API credential</option>
-                {apiCredentials?.map((api) => (
+                {apiCredentialsData?.map((api) => (
                   <option key={api.id} value={api.id}>
                     {api.name}
                   </option>
@@ -448,30 +540,50 @@ export default function ServersPage() {
                 onChange={(e) => setServerForm({ ...serverForm, flagUrl: e.target.value })}
               />
             </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="isActive"
+                checked={serverForm.isActive}
+                onCheckedChange={(checked) => setServerForm({ ...serverForm, isActive: checked })}
+              />
+              <Label htmlFor="isActive">Active</Label>
+            </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setServerDialogOpen(false)}>Cancel</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setServerDialogOpen(false);
+                setServerForm({ name: "", countryCode: "", countryIso: "", countryName: "", flagUrl: "", apiId: "", isActive: true });
+              }}
+            >
+              Cancel
+            </Button>
             <Button
               onClick={selectedItem ? handleUpdateServer : handleCreateServer}
-              disabled={serversLoading}
+              disabled={createServerMutation.isPending || updateServerMutation.isPending}
             >
-              {selectedItem ? "Update" : "Create"} Server
+              {createServerMutation.isPending || updateServerMutation.isPending
+                ? "Saving..."
+                : selectedItem
+                ? "Update"
+                : "Create"} Server
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* API Dialog */}
+      {/* API Credential Dialog */}
       <Dialog open={apiDialogOpen} onOpenChange={setApiDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{selectedItem ? "Edit API Credential" : "Add New API"}</DialogTitle>
+            <DialogTitle>Add API Credential</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>API Name</Label>
+              <Label>Name</Label>
               <Input
-                placeholder="e.g., 5SIM, SMS-Activate"
+                placeholder="e.g., 5SIM Account"
                 value={apiForm.name}
                 onChange={(e) => setApiForm({ ...apiForm, name: e.target.value })}
               />
@@ -487,45 +599,61 @@ export default function ServersPage() {
             <div className="space-y-2">
               <Label>API Key</Label>
               <Input
-                type="password"
-                placeholder="••••••••"
+                placeholder="your-api-key"
                 value={apiForm.apiKey}
                 onChange={(e) => setApiForm({ ...apiForm, apiKey: e.target.value })}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setApiDialogOpen(false)}>Cancel</Button>
             <Button
-              onClick={() => { /* API credential actions - placeholder */ }}
+              variant="outline"
+              onClick={() => {
+                setApiDialogOpen(false);
+                setApiForm({ name: "", apiUrl: "", apiKey: "" });
+              }}
             >
-              {selectedItem ? "Update" : "Add"} API
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateApi}
+              disabled={createApiCredentialMutation.isPending}
+            >
+              {createApiCredentialMutation.isPending ? "Creating..." : "Create"} Credential
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete {deleteType === "server" ? "Server" : "API Credential"}</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete <strong>{selectedItem?.name}</strong>?
-              This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete {deleteType === "server" ? "Server" : "API Credential"}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Are you sure you want to delete <strong>{selectedItem?.name}</strong>?
+            This action cannot be undone.
+          </p>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setSelectedItem(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
               onClick={handleDelete}
-              className="bg-destructive hover:bg-destructive/90"
+              variant="destructive"
             >
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

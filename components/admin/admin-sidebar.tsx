@@ -21,10 +21,11 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { title: "Users", href: "/dashboard/users", icon: Users },
+  { title: "Wallets", href: "/dashboard/wallets", icon: Wallet },
+  { title: "Transactions", href: "/dashboard/transactions", icon: CreditCard },
+  { title: "Servers", href: "/dashboard/servers", icon: Server },
   { title: "Services", href: "/dashboard/services", icon: Server },
   { title: "Promocodes", href: "/dashboard/promocodes", icon: Tag },
-  { title: "Transactions", href: "/dashboard/transactions", icon: CreditCard },
-  { title: "Wallets", href: "/dashboard/wallets", icon: Wallet },
   { title: "Audit Logs", href: "/dashboard/audit-logs", icon: FileText },
   { title: "Settings", href: "/dashboard/settings", icon: Settings },
 ];

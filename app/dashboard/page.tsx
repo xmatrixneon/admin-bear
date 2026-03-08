@@ -281,6 +281,30 @@ export default function DashboardPage() {
             <ArrowUpRight size={14} className="text-muted-foreground" />
           </a>
           <a
+            href="/dashboard/wallets"
+            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
+          >
+            <Wallet size={24} className="text-emerald-500" />
+            <span className="text-sm font-medium">Wallets</span>
+            <ArrowUpRight size={14} className="text-muted-foreground" />
+          </a>
+          <a
+            href="/dashboard/transactions"
+            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
+          >
+            <Activity size={24} className="text-cyan-500" />
+            <span className="text-sm font-medium">Transactions</span>
+            <ArrowUpRight size={14} className="text-muted-foreground" />
+          </a>
+          <a
+            href="/dashboard/servers"
+            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
+          >
+            <Server size={24} className="text-purple-500" />
+            <span className="text-sm font-medium">Servers</span>
+            <ArrowUpRight size={14} className="text-muted-foreground" />
+          </a>
+          <a
             href="/dashboard/services"
             className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
           >
@@ -292,8 +316,16 @@ export default function DashboardPage() {
             href="/dashboard/promocodes"
             className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
           >
-            <Activity size={24} className="text-green-500" />
+            <CreditCard size={24} className="text-orange-500" />
             <span className="text-sm font-medium">Promocodes</span>
+            <ArrowUpRight size={14} className="text-muted-foreground" />
+          </a>
+          <a
+            href="/dashboard/audit-logs"
+            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
+          >
+            <MessageSquare size={24} className="text-rose-500" />
+            <span className="text-sm font-medium">Audit Logs</span>
             <ArrowUpRight size={14} className="text-muted-foreground" />
           </a>
           <a

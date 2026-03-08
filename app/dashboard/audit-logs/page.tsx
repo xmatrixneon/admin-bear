@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   FileText,
@@ -24,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { api } from "@/lib/api";
+import { trpc } from "@/lib/trpc";
 import { formatDateTime } from "@/lib/utils";
 
 const fadeUp = (delay = 0) => ({
@@ -46,28 +46,13 @@ export default function AuditLogsPage() {
   const [search, setSearch] = useState("");
   const [actionFilter, setActionFilter] = useState("ALL");
   const [page, setPage] = useState(1);
-  const [data, setData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const result = await api.getAuditLogs({
-        action: actionFilter === "ALL" ? undefined : actionFilter || undefined,
-        page,
-        pageSize: 25,
-      });
-      setData(result);
-    } catch (err: any) {
-      console.error("Failed to fetch audit logs:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [actionFilter, page]);
+  // tRPC query for audit logs
+  const { data, isLoading, refetch, isFetching } = trpc.auditLogs.list.useQuery({
+    action: actionFilter === "ALL" ? undefined : (actionFilter as any) || undefined,
+    page,
+    pageSize: 25,
+  });
 
   const totalPages = data?.pagination?.totalPages || 1;
 
@@ -78,16 +63,16 @@ export default function AuditLogsPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Audit Logs</h1>
           <p className="text-sm text-muted-foreground">
-            Track all admin actions on the platform
+            Track all admin actions on platform
           </p>
         </div>
         <Button
           variant="outline"
           size="sm"
-          onClick={fetchData}
-          disabled={isLoading}
+          onClick={() => refetch()}
+          disabled={isFetching}
         >
-          {isLoading ? (
+          {isFetching ? (
             <Loader2 size={16} className="animate-spin mr-2" />
           ) : (
             <RefreshCw size={16} className="mr-2" />
@@ -152,7 +137,7 @@ export default function AuditLogsPage() {
                       <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                     </TableRow>
                   ))
-                ) : data?.logs.length === 0 ? (
+                ) : data?.logs?.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center py-12">
                       <div className="flex flex-col items-center gap-3">
@@ -162,7 +147,7 @@ export default function AuditLogsPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  data?.logs.map((log: any, index: number) => (
+                  data?.logs?.map((log: any, index: number) => (
                     <motion.tr
                       key={log.id}
                       initial={{ opacity: 0, y: 8 }}

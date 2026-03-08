@@ -32,6 +32,7 @@ export const walletsRouter = router({
               select: {
                 id: true,
                 email: true,
+                telegramId: true,
                 telegramUsername: true,
                 firstName: true,
                 lastName: true,
@@ -72,6 +73,7 @@ export const walletsRouter = router({
             select: {
               id: true,
               email: true,
+              telegramId: true,
               telegramUsername: true,
               firstName: true,
               lastName: true,

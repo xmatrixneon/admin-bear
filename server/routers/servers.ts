@@ -16,8 +16,28 @@ const serverInputSchema = z.object({
 });
 
 /**
+ * API credential input schema
+ */
+const apiCredentialInputSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  apiUrl: z.string().url('API URL is required'),
+  apiKey: z.string().min(1, 'API key is required'),
+});
+
+/**
+ * API credential update schema
+ */
+const apiCredentialUpdateSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1, 'Name is required').optional(),
+  apiUrl: z.string().url('API URL is required').optional(),
+  apiKey: z.string().min(1, 'API key is required').optional(),
+  isActive: z.boolean().optional(),
+});
+
+/**
  * Servers Router
- * Full CRUD operations for OTP server management
+ * Full CRUD operations for OTP server and API credential management
  */
 export const serversRouter = router({
   /**
@@ -74,6 +94,19 @@ export const serversRouter = router({
     }),
 
   /**
+   * List all API credentials
+   */
+  listApiCredentials: protectedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const credentials = await prisma.apiCredential.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return credentials;
+  }),
+
+  /**
    * Create a new server
    */
   create: protectedProcedure
@@ -108,7 +141,7 @@ export const serversRouter = router({
       // Create audit log
       await prisma.userAuditLog.create({
         data: {
-          userId: admin.id, // Use adminId as userId for system operations
+          userId: admin.id,
           adminId: admin.id,
           action: 'CREATE_SERVER',
           changes: server,
@@ -116,6 +149,35 @@ export const serversRouter = router({
       });
 
       return server;
+    }),
+
+  /**
+   * Create a new API credential
+   */
+  createApiCredential: protectedProcedure
+    .input(apiCredentialInputSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { prisma, admin } = ctx;
+
+      const credential = await prisma.apiCredential.create({
+        data: {
+          name: input.name,
+          apiUrl: input.apiUrl,
+          apiKey: input.apiKey,
+        },
+      });
+
+      // Create audit log
+      await prisma.userAuditLog.create({
+        data: {
+          userId: admin.id,
+          adminId: admin.id,
+          action: 'CREATE_API_CREDENTIAL',
+          changes: credential,
+        },
+      });
+
+      return credential;
     }),
 
   /**
@@ -165,7 +227,7 @@ export const serversRouter = router({
       // Create audit log
       await prisma.userAuditLog.create({
         data: {
-          userId: admin.id, // Use adminId as userId for system operations
+          userId: admin.id,
           adminId: admin.id,
           action: 'UPDATE_SERVER',
           changes: {
@@ -176,6 +238,52 @@ export const serversRouter = router({
       });
 
       return server;
+    }),
+
+  /**
+   * Update an existing API credential
+   */
+  updateApiCredential: protectedProcedure
+    .input(apiCredentialUpdateSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { prisma, admin } = ctx;
+
+      // Check if credential exists
+      const existing = await prisma.apiCredential.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!existing) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'API credential not found',
+        });
+      }
+
+      const credential = await prisma.apiCredential.update({
+        where: { id: input.id },
+        data: {
+          ...(input.name && { name: input.name }),
+          ...(input.apiUrl && { apiUrl: input.apiUrl }),
+          ...(input.apiKey && { apiKey: input.apiKey }),
+          ...(input.isActive !== undefined && { isActive: input.isActive }),
+        },
+      });
+
+      // Create audit log
+      await prisma.userAuditLog.create({
+        data: {
+          userId: admin.id,
+          adminId: admin.id,
+          action: 'UPDATE_API_CREDENTIAL',
+          changes: {
+            previous: existing,
+            new: credential,
+          },
+        },
+      });
+
+      return credential;
     }),
 
   /**
@@ -206,7 +314,7 @@ export const serversRouter = router({
       if (serviceCount > 0) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: `Cannot delete server with ${serviceCount} associated services. Please delete or reassign the services first.`,
+          message: `Cannot delete server with ${serviceCount} associated services. Please delete or reassign services first.`,
         });
       }
 
@@ -217,9 +325,58 @@ export const serversRouter = router({
       // Create audit log
       await prisma.userAuditLog.create({
         data: {
-          userId: admin.id, // Use adminId as userId for system operations
+          userId: admin.id,
           adminId: admin.id,
           action: 'DELETE_SERVER',
+          changes: { id: input.id, name: existing.name },
+        },
+      });
+
+      return { success: true };
+    }),
+
+  /**
+   * Delete an API credential
+   */
+  deleteApiCredential: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma, admin } = ctx;
+
+      // Check if credential exists
+      const existing = await prisma.apiCredential.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!existing) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'API credential not found',
+        });
+      }
+
+      // Check for associated servers
+      const serverCount = await prisma.otpServer.count({
+        where: { apiId: input.id },
+      });
+
+      if (serverCount > 0) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: `Cannot delete API credential with ${serverCount} associated servers. Please delete or reassign servers first.`,
+        });
+      }
+
+      await prisma.apiCredential.delete({
+        where: { id: input.id },
+      });
+
+      // Create audit log
+      await prisma.userAuditLog.create({
+        data: {
+          userId: admin.id,
+          adminId: admin.id,
+          action: 'DELETE_API_CREDENTIAL',
           changes: { id: input.id, name: existing.name },
         },
       });

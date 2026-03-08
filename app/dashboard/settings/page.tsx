@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Loader2,
@@ -10,7 +10,6 @@ import {
   CreditCard,
   Clock,
   MessageCircle,
-  ChevronRight,
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { trpc } from "@/lib/trpc";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -263,39 +262,23 @@ function SettingSection({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<SettingsData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  // tRPC query for fetching settings
+  const { data: settings, isLoading, refetch, isFetching } = trpc.settings.get.useQuery();
 
-  const fetchSettings = async (silent = false) => {
-    if (!silent) setIsLoading(true);
-    else setIsRefreshing(true);
-    try {
-      const result = await api.getSettings() as SettingsData;
-      setSettings(result);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to fetch settings");
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSettings();
-  }, []);
+  // tRPC mutation for updating settings
+  const updateSettingsMutation = trpc.settings.update.useMutation({
+    onSuccess: () => {
+      toast.success("Saved successfully");
+      refetch();
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to save");
+    },
+  });
 
   // Called by each section with only its own changed fields
   const handleSectionSave = async (partial: Partial<SettingsData>) => {
-    try {
-      const updated = await api.updateSettings(partial as any) as SettingsData;
-      // Merge updated fields back so all sections stay in sync
-      setSettings((prev) => (prev ? { ...prev, ...updated } : updated));
-      toast.success("Saved successfully");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to save");
-      throw err;
-    }
+    await updateSettingsMutation.mutateAsync(partial as any);
   };
 
   if (isLoading || !settings) {
@@ -326,11 +309,11 @@ export default function SettingsPage() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => fetchSettings(true)}
-          disabled={isRefreshing}
+          onClick={() => refetch()}
+          disabled={isFetching}
           className="h-8 text-xs gap-1.5 shrink-0"
         >
-          {isRefreshing ? (
+          {isFetching ? (
             <Loader2 size={12} className="animate-spin" />
           ) : (
             <RefreshCw size={12} />

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Wallet, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/lib/api";
+import { trpc } from "@/lib/trpc";
 import { formatCurrency } from "@/lib/utils";
 
 const fadeUp = (delay = 0) => ({
@@ -24,30 +23,15 @@ const fadeUp = (delay = 0) => ({
 });
 
 export default function WalletsPage() {
-  const [wallets, setWallets] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // tRPC query for fetching wallets
+  const { data: walletsData, isLoading, refetch, isFetching } = trpc.wallets.list.useQuery();
+  const { data: stats } = trpc.wallets.getStats.useQuery();
 
-  const fetchWallets = async () => {
-    setIsLoading(true);
-    try {
-      const result = await api.getWallets() as any[];
-      setWallets(result || []);
-    } catch (err: any) {
-      console.error("Failed to fetch wallets:", err);
-      setWallets([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchWallets();
-  }, []);
-
-  const totalBalance = wallets.reduce((sum: number, w: any) => sum + (Number(w.balance) || 0), 0);
-  const totalSpent = wallets.reduce((sum: number, w: any) => sum + (Number(w.totalSpent) || 0), 0);
-  const totalRecharge = wallets.reduce((sum: number, w: any) => sum + (Number(w.totalRecharge) || 0), 0);
-  const totalOtp = wallets.reduce((sum: number, w: any) => sum + (w.totalOtp || 0), 0);
+  const wallets = walletsData?.wallets || [];
+  const totalBalance = stats?.totalBalance || 0;
+  const totalSpent = stats?.totalSpent || 0;
+  const totalRecharge = stats?.totalRecharge || 0;
+  const totalOtp = stats?.totalOtp || 0;
 
   return (
     <div className="space-y-6">
@@ -62,10 +46,10 @@ export default function WalletsPage() {
         <Button
           variant="outline"
           size="sm"
-          onClick={fetchWallets}
-          disabled={isLoading}
+          onClick={() => refetch()}
+          disabled={isFetching}
         >
-          {isLoading ? (
+          {isFetching ? (
             <Loader2 size={16} className="animate-spin mr-2" />
           ) : (
             <RefreshCw size={16} className="mr-2" />

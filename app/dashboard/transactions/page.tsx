@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { CreditCard, RefreshCw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { api } from "@/lib/api";
+import { trpc } from "@/lib/trpc";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 
 const fadeUp = (delay = 0) => ({
@@ -71,41 +71,19 @@ export default function TransactionsPage() {
   const [status, setStatus] = useState<string>("");
   const [page, setPage] = useState(1);
 
-  const [data, setData] = useState<any>(null);
-  const [stats, setStats] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // tRPC queries
+  const { data: transactionsData, isLoading, refetch, isFetching } = trpc.transactions.list.useQuery({
+    search: search || undefined,
+    type: type as any || undefined,
+    status: status as any || undefined,
+    page,
+    pageSize: 25,
+  });
+
+  const { data: stats } = trpc.transactions.getStats.useQuery();
 
   // Calculate total amount from byType
   const totalAmount = stats?.byType ? Object.values(stats.byType).reduce((sum: number, item: any) => sum + Number(item.amount || 0), 0) : 0;
-
-  const fetchTransactions = async () => {
-    setIsLoading(true);
-    try {
-      const [transactionsResult, statsResult] = await Promise.all([
-        api.getTransactions({
-          search: search || undefined,
-          type: type || undefined,
-          status: status || undefined,
-          page,
-          pageSize: 25,
-        }),
-        api.getTransactionStats(),
-      ]);
-
-      setData(transactionsResult);
-      setStats(statsResult);
-    } catch (err) {
-      console.error("Failed to fetch transactions:", err);
-      setData(null);
-      setStats(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTransactions();
-  }, [search, type, status, page]);
 
   return (
     <div className="space-y-6">
@@ -118,8 +96,8 @@ export default function TransactionsPage() {
           </p>
         </div>
 
-        <Button variant="outline" onClick={fetchTransactions}>
-          {isLoading ? (
+        <Button variant="outline" onClick={() => refetch()}>
+          {isFetching ? (
             <Loader2 size={16} className="animate-spin mr-2" />
           ) : (
             <RefreshCw size={16} className="mr-2" />
@@ -238,7 +216,7 @@ export default function TransactionsPage() {
                 </TableRow>
               ))
             ) : (
-              data?.transactions?.map((txn: any) => (
+              transactionsData?.transactions?.map((txn: any) => (
                 <TableRow key={txn.id}>
                   <TableCell>
                     <Avatar>
