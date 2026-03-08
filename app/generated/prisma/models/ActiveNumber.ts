@@ -46,9 +46,9 @@ export type ActiveNumberMinAggregateOutputType = {
   status: $Enums.NumberStatus | null
   activeStatus: $Enums.ActiveStatus | null
   balanceDeducted: boolean | null
-  buyTime: Date | null
-  expiresAt: Date | null
   createdAt: Date | null
+  expiresAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ActiveNumberMaxAggregateOutputType = {
@@ -63,9 +63,9 @@ export type ActiveNumberMaxAggregateOutputType = {
   status: $Enums.NumberStatus | null
   activeStatus: $Enums.ActiveStatus | null
   balanceDeducted: boolean | null
-  buyTime: Date | null
-  expiresAt: Date | null
   createdAt: Date | null
+  expiresAt: Date | null
+  updatedAt: Date | null
 }
 
 export type ActiveNumberCountAggregateOutputType = {
@@ -81,9 +81,9 @@ export type ActiveNumberCountAggregateOutputType = {
   activeStatus: number
   smsContent: number
   balanceDeducted: number
-  buyTime: number
-  expiresAt: number
   createdAt: number
+  expiresAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -108,9 +108,9 @@ export type ActiveNumberMinAggregateInputType = {
   status?: true
   activeStatus?: true
   balanceDeducted?: true
-  buyTime?: true
-  expiresAt?: true
   createdAt?: true
+  expiresAt?: true
+  updatedAt?: true
 }
 
 export type ActiveNumberMaxAggregateInputType = {
@@ -125,9 +125,9 @@ export type ActiveNumberMaxAggregateInputType = {
   status?: true
   activeStatus?: true
   balanceDeducted?: true
-  buyTime?: true
-  expiresAt?: true
   createdAt?: true
+  expiresAt?: true
+  updatedAt?: true
 }
 
 export type ActiveNumberCountAggregateInputType = {
@@ -143,9 +143,9 @@ export type ActiveNumberCountAggregateInputType = {
   activeStatus?: true
   smsContent?: true
   balanceDeducted?: true
-  buyTime?: true
-  expiresAt?: true
   createdAt?: true
+  expiresAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -248,9 +248,9 @@ export type ActiveNumberGroupByOutputType = {
   activeStatus: $Enums.ActiveStatus
   smsContent: runtime.JsonValue | null
   balanceDeducted: boolean
-  buyTime: Date
-  expiresAt: Date
   createdAt: Date
+  expiresAt: Date
+  updatedAt: Date
   _count: ActiveNumberCountAggregateOutputType | null
   _avg: ActiveNumberAvgAggregateOutputType | null
   _sum: ActiveNumberSumAggregateOutputType | null
@@ -289,9 +289,9 @@ export type ActiveNumberWhereInput = {
   activeStatus?: Prisma.EnumActiveStatusFilter<"ActiveNumber"> | $Enums.ActiveStatus
   smsContent?: Prisma.JsonNullableFilter<"ActiveNumber">
   balanceDeducted?: Prisma.BoolFilter<"ActiveNumber"> | boolean
-  buyTime?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
-  expiresAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
+  expiresAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   service?: Prisma.XOR<Prisma.ServiceScalarRelationFilter, Prisma.ServiceWhereInput>
   server?: Prisma.XOR<Prisma.OtpServerScalarRelationFilter, Prisma.OtpServerWhereInput>
@@ -310,9 +310,9 @@ export type ActiveNumberOrderByWithRelationInput = {
   activeStatus?: Prisma.SortOrder
   smsContent?: Prisma.SortOrderInput | Prisma.SortOrder
   balanceDeducted?: Prisma.SortOrder
-  buyTime?: Prisma.SortOrder
-  expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   service?: Prisma.ServiceOrderByWithRelationInput
   server?: Prisma.OtpServerOrderByWithRelationInput
@@ -334,9 +334,9 @@ export type ActiveNumberWhereUniqueInput = Prisma.AtLeast<{
   activeStatus?: Prisma.EnumActiveStatusFilter<"ActiveNumber"> | $Enums.ActiveStatus
   smsContent?: Prisma.JsonNullableFilter<"ActiveNumber">
   balanceDeducted?: Prisma.BoolFilter<"ActiveNumber"> | boolean
-  buyTime?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
-  expiresAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
+  expiresAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   service?: Prisma.XOR<Prisma.ServiceScalarRelationFilter, Prisma.ServiceWhereInput>
   server?: Prisma.XOR<Prisma.OtpServerScalarRelationFilter, Prisma.OtpServerWhereInput>
@@ -355,9 +355,9 @@ export type ActiveNumberOrderByWithAggregationInput = {
   activeStatus?: Prisma.SortOrder
   smsContent?: Prisma.SortOrderInput | Prisma.SortOrder
   balanceDeducted?: Prisma.SortOrder
-  buyTime?: Prisma.SortOrder
-  expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.ActiveNumberCountOrderByAggregateInput
   _avg?: Prisma.ActiveNumberAvgOrderByAggregateInput
   _max?: Prisma.ActiveNumberMaxOrderByAggregateInput
@@ -381,9 +381,9 @@ export type ActiveNumberScalarWhereWithAggregatesInput = {
   activeStatus?: Prisma.EnumActiveStatusWithAggregatesFilter<"ActiveNumber"> | $Enums.ActiveStatus
   smsContent?: Prisma.JsonNullableWithAggregatesFilter<"ActiveNumber">
   balanceDeducted?: Prisma.BoolWithAggregatesFilter<"ActiveNumber"> | boolean
-  buyTime?: Prisma.DateTimeWithAggregatesFilter<"ActiveNumber"> | Date | string
-  expiresAt?: Prisma.DateTimeWithAggregatesFilter<"ActiveNumber"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ActiveNumber"> | Date | string
+  expiresAt?: Prisma.DateTimeWithAggregatesFilter<"ActiveNumber"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ActiveNumber"> | Date | string
 }
 
 export type ActiveNumberCreateInput = {
@@ -396,9 +396,9 @@ export type ActiveNumberCreateInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNumbersInput
   service: Prisma.ServiceCreateNestedOneWithoutPurchasesInput
   server: Prisma.OtpServerCreateNestedOneWithoutNumbersInput
@@ -417,9 +417,9 @@ export type ActiveNumberUncheckedCreateInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type ActiveNumberUpdateInput = {
@@ -432,9 +432,9 @@ export type ActiveNumberUpdateInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNumbersNestedInput
   service?: Prisma.ServiceUpdateOneRequiredWithoutPurchasesNestedInput
   server?: Prisma.OtpServerUpdateOneRequiredWithoutNumbersNestedInput
@@ -453,9 +453,9 @@ export type ActiveNumberUncheckedUpdateInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActiveNumberCreateManyInput = {
@@ -471,9 +471,9 @@ export type ActiveNumberCreateManyInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type ActiveNumberUpdateManyMutationInput = {
@@ -486,9 +486,9 @@ export type ActiveNumberUpdateManyMutationInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActiveNumberUncheckedUpdateManyInput = {
@@ -504,9 +504,9 @@ export type ActiveNumberUncheckedUpdateManyInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActiveNumberListRelationFilter = {
@@ -532,9 +532,9 @@ export type ActiveNumberCountOrderByAggregateInput = {
   activeStatus?: Prisma.SortOrder
   smsContent?: Prisma.SortOrder
   balanceDeducted?: Prisma.SortOrder
-  buyTime?: Prisma.SortOrder
-  expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ActiveNumberAvgOrderByAggregateInput = {
@@ -553,9 +553,9 @@ export type ActiveNumberMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   activeStatus?: Prisma.SortOrder
   balanceDeducted?: Prisma.SortOrder
-  buyTime?: Prisma.SortOrder
-  expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ActiveNumberMinOrderByAggregateInput = {
@@ -570,9 +570,9 @@ export type ActiveNumberMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   activeStatus?: Prisma.SortOrder
   balanceDeducted?: Prisma.SortOrder
-  buyTime?: Prisma.SortOrder
-  expiresAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  expiresAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type ActiveNumberSumOrderByAggregateInput = {
@@ -723,9 +723,9 @@ export type ActiveNumberCreateWithoutUserInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
   service: Prisma.ServiceCreateNestedOneWithoutPurchasesInput
   server: Prisma.OtpServerCreateNestedOneWithoutNumbersInput
 }
@@ -742,9 +742,9 @@ export type ActiveNumberUncheckedCreateWithoutUserInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type ActiveNumberCreateOrConnectWithoutUserInput = {
@@ -789,9 +789,9 @@ export type ActiveNumberScalarWhereInput = {
   activeStatus?: Prisma.EnumActiveStatusFilter<"ActiveNumber"> | $Enums.ActiveStatus
   smsContent?: Prisma.JsonNullableFilter<"ActiveNumber">
   balanceDeducted?: Prisma.BoolFilter<"ActiveNumber"> | boolean
-  buyTime?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
-  expiresAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
+  expiresAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ActiveNumber"> | Date | string
 }
 
 export type ActiveNumberCreateWithoutServerInput = {
@@ -804,9 +804,9 @@ export type ActiveNumberCreateWithoutServerInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNumbersInput
   service: Prisma.ServiceCreateNestedOneWithoutPurchasesInput
 }
@@ -823,9 +823,9 @@ export type ActiveNumberUncheckedCreateWithoutServerInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type ActiveNumberCreateOrConnectWithoutServerInput = {
@@ -864,9 +864,9 @@ export type ActiveNumberCreateWithoutServiceInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNumbersInput
   server: Prisma.OtpServerCreateNestedOneWithoutNumbersInput
 }
@@ -883,9 +883,9 @@ export type ActiveNumberUncheckedCreateWithoutServiceInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type ActiveNumberCreateOrConnectWithoutServiceInput = {
@@ -926,9 +926,9 @@ export type ActiveNumberCreateManyUserInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type ActiveNumberUpdateWithoutUserInput = {
@@ -941,9 +941,9 @@ export type ActiveNumberUpdateWithoutUserInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   service?: Prisma.ServiceUpdateOneRequiredWithoutPurchasesNestedInput
   server?: Prisma.OtpServerUpdateOneRequiredWithoutNumbersNestedInput
 }
@@ -960,9 +960,9 @@ export type ActiveNumberUncheckedUpdateWithoutUserInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActiveNumberUncheckedUpdateManyWithoutUserInput = {
@@ -977,9 +977,9 @@ export type ActiveNumberUncheckedUpdateManyWithoutUserInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActiveNumberCreateManyServerInput = {
@@ -994,9 +994,9 @@ export type ActiveNumberCreateManyServerInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type ActiveNumberUpdateWithoutServerInput = {
@@ -1009,9 +1009,9 @@ export type ActiveNumberUpdateWithoutServerInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNumbersNestedInput
   service?: Prisma.ServiceUpdateOneRequiredWithoutPurchasesNestedInput
 }
@@ -1028,9 +1028,9 @@ export type ActiveNumberUncheckedUpdateWithoutServerInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActiveNumberUncheckedUpdateManyWithoutServerInput = {
@@ -1045,9 +1045,9 @@ export type ActiveNumberUncheckedUpdateManyWithoutServerInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActiveNumberCreateManyServiceInput = {
@@ -1062,9 +1062,9 @@ export type ActiveNumberCreateManyServiceInput = {
   activeStatus?: $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: boolean
-  buyTime?: Date | string
-  expiresAt: Date | string
   createdAt?: Date | string
+  expiresAt: Date | string
+  updatedAt?: Date | string
 }
 
 export type ActiveNumberUpdateWithoutServiceInput = {
@@ -1077,9 +1077,9 @@ export type ActiveNumberUpdateWithoutServiceInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNumbersNestedInput
   server?: Prisma.OtpServerUpdateOneRequiredWithoutNumbersNestedInput
 }
@@ -1096,9 +1096,9 @@ export type ActiveNumberUncheckedUpdateWithoutServiceInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ActiveNumberUncheckedUpdateManyWithoutServiceInput = {
@@ -1113,9 +1113,9 @@ export type ActiveNumberUncheckedUpdateManyWithoutServiceInput = {
   activeStatus?: Prisma.EnumActiveStatusFieldUpdateOperationsInput | $Enums.ActiveStatus
   smsContent?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   balanceDeducted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  buyTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -1133,9 +1133,9 @@ export type ActiveNumberSelect<ExtArgs extends runtime.Types.Extensions.Internal
   activeStatus?: boolean
   smsContent?: boolean
   balanceDeducted?: boolean
-  buyTime?: boolean
-  expiresAt?: boolean
   createdAt?: boolean
+  expiresAt?: boolean
+  updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceDefaultArgs<ExtArgs>
   server?: boolean | Prisma.OtpServerDefaultArgs<ExtArgs>
@@ -1154,9 +1154,9 @@ export type ActiveNumberSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   activeStatus?: boolean
   smsContent?: boolean
   balanceDeducted?: boolean
-  buyTime?: boolean
-  expiresAt?: boolean
   createdAt?: boolean
+  expiresAt?: boolean
+  updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceDefaultArgs<ExtArgs>
   server?: boolean | Prisma.OtpServerDefaultArgs<ExtArgs>
@@ -1175,9 +1175,9 @@ export type ActiveNumberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   activeStatus?: boolean
   smsContent?: boolean
   balanceDeducted?: boolean
-  buyTime?: boolean
-  expiresAt?: boolean
   createdAt?: boolean
+  expiresAt?: boolean
+  updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceDefaultArgs<ExtArgs>
   server?: boolean | Prisma.OtpServerDefaultArgs<ExtArgs>
@@ -1196,12 +1196,12 @@ export type ActiveNumberSelectScalar = {
   activeStatus?: boolean
   smsContent?: boolean
   balanceDeducted?: boolean
-  buyTime?: boolean
-  expiresAt?: boolean
   createdAt?: boolean
+  expiresAt?: boolean
+  updatedAt?: boolean
 }
 
-export type ActiveNumberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "serviceId" | "orderId" | "numberId" | "phoneNumber" | "serverId" | "price" | "status" | "activeStatus" | "smsContent" | "balanceDeducted" | "buyTime" | "expiresAt" | "createdAt", ExtArgs["result"]["activeNumber"]>
+export type ActiveNumberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "serviceId" | "orderId" | "numberId" | "phoneNumber" | "serverId" | "price" | "status" | "activeStatus" | "smsContent" | "balanceDeducted" | "createdAt" | "expiresAt" | "updatedAt", ExtArgs["result"]["activeNumber"]>
 export type ActiveNumberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   service?: boolean | Prisma.ServiceDefaultArgs<ExtArgs>
@@ -1233,14 +1233,18 @@ export type $ActiveNumberPayload<ExtArgs extends runtime.Types.Extensions.Intern
     numberId: string
     phoneNumber: string
     serverId: string
+    /**
+     * Purchase price at time of buy. Non-negative (0.00 allowed for 100% discount).
+     * Enforced by DB CHECK — see add_wallet_check_constraints.sql
+     */
     price: runtime.Decimal
     status: $Enums.NumberStatus
     activeStatus: $Enums.ActiveStatus
     smsContent: runtime.JsonValue | null
     balanceDeducted: boolean
-    buyTime: Date
-    expiresAt: Date
     createdAt: Date
+    expiresAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["activeNumber"]>
   composites: {}
 }
@@ -1679,9 +1683,9 @@ export interface ActiveNumberFieldRefs {
   readonly activeStatus: Prisma.FieldRef<"ActiveNumber", 'ActiveStatus'>
   readonly smsContent: Prisma.FieldRef<"ActiveNumber", 'Json'>
   readonly balanceDeducted: Prisma.FieldRef<"ActiveNumber", 'Boolean'>
-  readonly buyTime: Prisma.FieldRef<"ActiveNumber", 'DateTime'>
-  readonly expiresAt: Prisma.FieldRef<"ActiveNumber", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"ActiveNumber", 'DateTime'>
+  readonly expiresAt: Prisma.FieldRef<"ActiveNumber", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"ActiveNumber", 'DateTime'>
 }
     
 

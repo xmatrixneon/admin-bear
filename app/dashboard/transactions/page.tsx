@@ -75,6 +75,9 @@ export default function TransactionsPage() {
   const [stats, setStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Calculate total amount from byType
+  const totalAmount = stats?.byType ? Object.values(stats.byType).reduce((sum: number, item: any) => sum + Number(item.amount || 0), 0) : 0;
+
   const fetchTransactions = async () => {
     setIsLoading(true);
     try {
@@ -93,6 +96,8 @@ export default function TransactionsPage() {
       setStats(statsResult);
     } catch (err) {
       console.error("Failed to fetch transactions:", err);
+      setData(null);
+      setStats(null);
     } finally {
       setIsLoading(false);
     }
@@ -143,7 +148,7 @@ export default function TransactionsPage() {
         <div className="bg-card border rounded-xl p-4">
           <p className="text-xs text-muted-foreground">Total Amount</p>
           <p className="text-xl font-bold">
-            {formatCurrency(stats?.totalAmount || 0)}
+            {formatCurrency(totalAmount)}
           </p>
         </div>
       </motion.div>

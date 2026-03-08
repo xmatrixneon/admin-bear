@@ -736,9 +736,25 @@ export type $WalletPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
+    /**
+     * Non-negative enforced by DB CHECK constraint.
+     * Applied via: prisma/migrations/..._add_wallet_check_constraints/migration.sql
+     */
     balance: runtime.Decimal
+    /**
+     * Non-negative enforced by DB CHECK constraint.
+     * Applied via: prisma/migrations/..._add_wallet_check_constraints/migration.sql
+     */
     totalSpent: runtime.Decimal
+    /**
+     * Non-negative enforced by DB CHECK constraint.
+     * Applied via: prisma/migrations/..._add_wallet_check_constraints/migration.sql
+     */
     totalOtp: number
+    /**
+     * Non-negative enforced by DB CHECK constraint.
+     * Applied via: prisma/migrations/..._add_wallet_check_constraints/migration.sql
+     */
     totalRecharge: runtime.Decimal
     createdAt: Date
     updatedAt: Date

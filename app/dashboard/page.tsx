@@ -16,9 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/lib/api";
+import { trpc } from "@/lib/trpc";
 import { formatCurrency } from "@/lib/utils";
-import { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -75,23 +74,12 @@ function StatCard({
 }
 
 export default function DashboardPage() {
-  // Stats queries
-  const { data: generalStats, isLoading: generalStatsLoading, refetch } = useApiQuery<any>(
-    () => api.getStats(),
-    { revalidateOnMount: false }
-  );
+  // Stats queries using tRPC
+  const { data: generalStats, isLoading: generalStatsLoading, refetch: refetchGeneralStats } = trpc.stats.getDashboardStats.useQuery();
 
-  const { data: transactionStats, isLoading: transactionStatsLoading } = useApiQuery<any>(
-    () => api.getTransactionStats(),
-    { revalidateOnMount: false }
-  );
+  const { data: transactionStats, isLoading: transactionStatsLoading } = trpc.stats.getTransactionStats.useQuery();
 
-  const { data: otpStats, isLoading: otpStatsLoading } = useApiQuery<any>(
-    () => api.getStats(),
-    { revalidateOnMount: false }
-  );
-
-  const isLoading = generalStatsLoading || transactionStatsLoading || otpStatsLoading;
+  const isLoading = generalStatsLoading || transactionStatsLoading;
 
   // Calculate values
   const totalUsers = generalStats?.totalUsers || 0;
@@ -129,7 +117,7 @@ export default function DashboardPage() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => refetch()}
+          onClick={() => refetchGeneralStats()}
           disabled={isLoading}
         >
           {isLoading ? (
@@ -189,7 +177,7 @@ export default function DashboardPage() {
           icon={MessageSquare}
           color="text-rose-500"
           bgColor="bg-rose-500/5"
-          loading={otpStatsLoading}
+          loading={generalStatsLoading}
         />
         <StatCard
           title="Total Revenue"
@@ -197,7 +185,7 @@ export default function DashboardPage() {
           icon={DollarSign}
           color="text-primary"
           bgColor="bg-primary/5"
-          loading={generalStatsLoading || otpStatsLoading}
+          loading={generalStatsLoading}
         />
       </div>
 
@@ -320,56 +308,4 @@ export default function DashboardPage() {
       </motion.div>
     </div>
   );
-}
-
-/**
- * Custom hook for API queries with caching
- */
-function useApiQuery<T>(
-  queryFn: () => Promise<T>,
-  options: { revalidateOnMount?: boolean } = {}
-) {
-  const [data, setData] = useState<T | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-
-    queryFn()
-      .then((result) => {
-        if (mounted) {
-          setData(result);
-        }
-      })
-      .catch((err: any) => {
-        console.error("API query error:", err);
-        setError(err.message || "Failed to load data");
-      })
-      .finally(() => {
-        if (mounted) setIsLoading(false);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, [options.revalidateOnMount]);
-
-  const refetch = () => {
-    setIsLoading(true);
-    setError(null);
-    queryFn()
-      .then((result) => {
-        setData(result);
-      })
-      .catch((err: any) => {
-        console.error("API refetch error:", err);
-        setError(err.message || "Failed to load data");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  return { data, isLoading, error, refetch };
 }

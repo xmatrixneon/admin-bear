@@ -166,8 +166,13 @@ class ApiClient {
     page?: number;
     pageSize?: number;
   }) {
-    const searchParams = new URLSearchParams(params as any).toString();
-    return this.request(`/api/admin/transactions?${searchParams}`);
+    const searchParams = new URLSearchParams();
+    if (params?.search) searchParams.set("search", params.search);
+    if (params?.type) searchParams.set("type", params.type);
+    if (params?.status) searchParams.set("status", params.status);
+    searchParams.set("page", String(params?.page || 1));
+    searchParams.set("pageSize", String(params?.pageSize || 25));
+    return this.request(`/api/admin/transactions?${searchParams.toString()}`);
   }
 
   async getTransactionStats(startDate?: string, endDate?: string) {

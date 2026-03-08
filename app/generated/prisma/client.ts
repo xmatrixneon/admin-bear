@@ -117,6 +117,11 @@ export type Settings = Prisma.SettingsModel
  */
 export type UserApi = Prisma.UserApiModel
 /**
+ * Model UserApiRefreshLog
+ * 
+ */
+export type UserApiRefreshLog = Prisma.UserApiRefreshLogModel
+/**
  * Model UserData
  * 
  */

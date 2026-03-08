@@ -42,6 +42,7 @@ export type TransactionMinAggregateOutputType = {
   status: $Enums.TransactionStatus | null
   description: string | null
   txnId: string | null
+  refundOrderId: string | null
   phoneNumber: string | null
   createdAt: Date | null
 }
@@ -54,6 +55,7 @@ export type TransactionMaxAggregateOutputType = {
   status: $Enums.TransactionStatus | null
   description: string | null
   txnId: string | null
+  refundOrderId: string | null
   phoneNumber: string | null
   createdAt: Date | null
 }
@@ -66,6 +68,7 @@ export type TransactionCountAggregateOutputType = {
   status: number
   description: number
   txnId: number
+  refundOrderId: number
   phoneNumber: number
   metadata: number
   createdAt: number
@@ -89,6 +92,7 @@ export type TransactionMinAggregateInputType = {
   status?: true
   description?: true
   txnId?: true
+  refundOrderId?: true
   phoneNumber?: true
   createdAt?: true
 }
@@ -101,6 +105,7 @@ export type TransactionMaxAggregateInputType = {
   status?: true
   description?: true
   txnId?: true
+  refundOrderId?: true
   phoneNumber?: true
   createdAt?: true
 }
@@ -113,6 +118,7 @@ export type TransactionCountAggregateInputType = {
   status?: true
   description?: true
   txnId?: true
+  refundOrderId?: true
   phoneNumber?: true
   metadata?: true
   createdAt?: true
@@ -213,6 +219,7 @@ export type TransactionGroupByOutputType = {
   status: $Enums.TransactionStatus
   description: string | null
   txnId: string | null
+  refundOrderId: string | null
   phoneNumber: string | null
   metadata: runtime.JsonValue | null
   createdAt: Date
@@ -249,6 +256,7 @@ export type TransactionWhereInput = {
   status?: Prisma.EnumTransactionStatusFilter<"Transaction"> | $Enums.TransactionStatus
   description?: Prisma.StringNullableFilter<"Transaction"> | string | null
   txnId?: Prisma.StringNullableFilter<"Transaction"> | string | null
+  refundOrderId?: Prisma.StringNullableFilter<"Transaction"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"Transaction"> | string | null
   metadata?: Prisma.JsonNullableFilter<"Transaction">
   createdAt?: Prisma.DateTimeFilter<"Transaction"> | Date | string
@@ -263,6 +271,7 @@ export type TransactionOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   txnId?: Prisma.SortOrderInput | Prisma.SortOrder
+  refundOrderId?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -272,6 +281,7 @@ export type TransactionOrderByWithRelationInput = {
 export type TransactionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   txnId?: string
+  refundOrderId?: string
   AND?: Prisma.TransactionWhereInput | Prisma.TransactionWhereInput[]
   OR?: Prisma.TransactionWhereInput[]
   NOT?: Prisma.TransactionWhereInput | Prisma.TransactionWhereInput[]
@@ -284,7 +294,7 @@ export type TransactionWhereUniqueInput = Prisma.AtLeast<{
   metadata?: Prisma.JsonNullableFilter<"Transaction">
   createdAt?: Prisma.DateTimeFilter<"Transaction"> | Date | string
   wallet?: Prisma.XOR<Prisma.WalletScalarRelationFilter, Prisma.WalletWhereInput>
-}, "id" | "txnId">
+}, "id" | "txnId" | "refundOrderId">
 
 export type TransactionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -294,6 +304,7 @@ export type TransactionOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   txnId?: Prisma.SortOrderInput | Prisma.SortOrder
+  refundOrderId?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -315,6 +326,7 @@ export type TransactionScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumTransactionStatusWithAggregatesFilter<"Transaction"> | $Enums.TransactionStatus
   description?: Prisma.StringNullableWithAggregatesFilter<"Transaction"> | string | null
   txnId?: Prisma.StringNullableWithAggregatesFilter<"Transaction"> | string | null
+  refundOrderId?: Prisma.StringNullableWithAggregatesFilter<"Transaction"> | string | null
   phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"Transaction"> | string | null
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"Transaction">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Transaction"> | Date | string
@@ -327,6 +339,7 @@ export type TransactionCreateInput = {
   status?: $Enums.TransactionStatus
   description?: string | null
   txnId?: string | null
+  refundOrderId?: string | null
   phoneNumber?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -341,6 +354,7 @@ export type TransactionUncheckedCreateInput = {
   status?: $Enums.TransactionStatus
   description?: string | null
   txnId?: string | null
+  refundOrderId?: string | null
   phoneNumber?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -353,6 +367,7 @@ export type TransactionUpdateInput = {
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   txnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refundOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -367,6 +382,7 @@ export type TransactionUncheckedUpdateInput = {
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   txnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refundOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -380,6 +396,7 @@ export type TransactionCreateManyInput = {
   status?: $Enums.TransactionStatus
   description?: string | null
   txnId?: string | null
+  refundOrderId?: string | null
   phoneNumber?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -392,6 +409,7 @@ export type TransactionUpdateManyMutationInput = {
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   txnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refundOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -405,6 +423,7 @@ export type TransactionUncheckedUpdateManyInput = {
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   txnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refundOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -428,6 +447,7 @@ export type TransactionCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   description?: Prisma.SortOrder
   txnId?: Prisma.SortOrder
+  refundOrderId?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -445,6 +465,7 @@ export type TransactionMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   description?: Prisma.SortOrder
   txnId?: Prisma.SortOrder
+  refundOrderId?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -457,6 +478,7 @@ export type TransactionMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   description?: Prisma.SortOrder
   txnId?: Prisma.SortOrder
+  refundOrderId?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -522,6 +544,7 @@ export type TransactionCreateWithoutWalletInput = {
   status?: $Enums.TransactionStatus
   description?: string | null
   txnId?: string | null
+  refundOrderId?: string | null
   phoneNumber?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -534,6 +557,7 @@ export type TransactionUncheckedCreateWithoutWalletInput = {
   status?: $Enums.TransactionStatus
   description?: string | null
   txnId?: string | null
+  refundOrderId?: string | null
   phoneNumber?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -576,6 +600,7 @@ export type TransactionScalarWhereInput = {
   status?: Prisma.EnumTransactionStatusFilter<"Transaction"> | $Enums.TransactionStatus
   description?: Prisma.StringNullableFilter<"Transaction"> | string | null
   txnId?: Prisma.StringNullableFilter<"Transaction"> | string | null
+  refundOrderId?: Prisma.StringNullableFilter<"Transaction"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"Transaction"> | string | null
   metadata?: Prisma.JsonNullableFilter<"Transaction">
   createdAt?: Prisma.DateTimeFilter<"Transaction"> | Date | string
@@ -588,6 +613,7 @@ export type TransactionCreateManyWalletInput = {
   status?: $Enums.TransactionStatus
   description?: string | null
   txnId?: string | null
+  refundOrderId?: string | null
   phoneNumber?: string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -600,6 +626,7 @@ export type TransactionUpdateWithoutWalletInput = {
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   txnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refundOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -612,6 +639,7 @@ export type TransactionUncheckedUpdateWithoutWalletInput = {
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   txnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refundOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -624,6 +652,7 @@ export type TransactionUncheckedUpdateManyWithoutWalletInput = {
   status?: Prisma.EnumTransactionStatusFieldUpdateOperationsInput | $Enums.TransactionStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   txnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  refundOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -639,6 +668,7 @@ export type TransactionSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   status?: boolean
   description?: boolean
   txnId?: boolean
+  refundOrderId?: boolean
   phoneNumber?: boolean
   metadata?: boolean
   createdAt?: boolean
@@ -653,6 +683,7 @@ export type TransactionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   status?: boolean
   description?: boolean
   txnId?: boolean
+  refundOrderId?: boolean
   phoneNumber?: boolean
   metadata?: boolean
   createdAt?: boolean
@@ -667,6 +698,7 @@ export type TransactionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   status?: boolean
   description?: boolean
   txnId?: boolean
+  refundOrderId?: boolean
   phoneNumber?: boolean
   metadata?: boolean
   createdAt?: boolean
@@ -681,12 +713,13 @@ export type TransactionSelectScalar = {
   status?: boolean
   description?: boolean
   txnId?: boolean
+  refundOrderId?: boolean
   phoneNumber?: boolean
   metadata?: boolean
   createdAt?: boolean
 }
 
-export type TransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "walletId" | "type" | "amount" | "status" | "description" | "txnId" | "phoneNumber" | "metadata" | "createdAt", ExtArgs["result"]["transaction"]>
+export type TransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "walletId" | "type" | "amount" | "status" | "description" | "txnId" | "refundOrderId" | "phoneNumber" | "metadata" | "createdAt", ExtArgs["result"]["transaction"]>
 export type TransactionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   wallet?: boolean | Prisma.WalletDefaultArgs<ExtArgs>
 }
@@ -706,10 +739,23 @@ export type $TransactionPayload<ExtArgs extends runtime.Types.Extensions.Interna
     id: string
     walletId: string
     type: $Enums.TransactionType
+    /**
+     * Amount is always positive (stored as absolute value).
+     * Sign is determined by TransactionType: PURCHASE/REFUND/PROMO/REFERRAL/ADJUSTMENT
+     * Non-negative enforced by DB CHECK — see add_wallet_check_constraints.sql
+     */
     amount: runtime.Decimal
     status: $Enums.TransactionStatus
     description: string | null
+    /**
+     * Unique dedup key for deposits (UTR). Null for other transaction types.
+     */
     txnId: string | null
+    /**
+     * Dedup key for refunds — stores the source orderId.
+     * Unique constraint prevents duplicate refunds surviving a poller/cancel race.
+     */
+    refundOrderId: string | null
     phoneNumber: string | null
     metadata: runtime.JsonValue | null
     createdAt: Date
@@ -1144,6 +1190,7 @@ export interface TransactionFieldRefs {
   readonly status: Prisma.FieldRef<"Transaction", 'TransactionStatus'>
   readonly description: Prisma.FieldRef<"Transaction", 'String'>
   readonly txnId: Prisma.FieldRef<"Transaction", 'String'>
+  readonly refundOrderId: Prisma.FieldRef<"Transaction", 'String'>
   readonly phoneNumber: Prisma.FieldRef<"Transaction", 'String'>
   readonly metadata: Prisma.FieldRef<"Transaction", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Transaction", 'DateTime'>

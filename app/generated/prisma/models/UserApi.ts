@@ -253,6 +253,7 @@ export type UserApiWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"UserApi"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserApi"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  refreshLogs?: Prisma.UserApiRefreshLogListRelationFilter
 }
 
 export type UserApiOrderByWithRelationInput = {
@@ -266,6 +267,7 @@ export type UserApiOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  refreshLogs?: Prisma.UserApiRefreshLogOrderByRelationAggregateInput
 }
 
 export type UserApiWhereUniqueInput = Prisma.AtLeast<{
@@ -282,6 +284,7 @@ export type UserApiWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"UserApi"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserApi"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  refreshLogs?: Prisma.UserApiRefreshLogListRelationFilter
 }, "id" | "userId" | "apiKey">
 
 export type UserApiOrderByWithAggregationInput = {
@@ -326,6 +329,7 @@ export type UserApiCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutUserApiInput
+  refreshLogs?: Prisma.UserApiRefreshLogCreateNestedManyWithoutUserApiInput
 }
 
 export type UserApiUncheckedCreateInput = {
@@ -338,6 +342,7 @@ export type UserApiUncheckedCreateInput = {
   lastRefreshedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  refreshLogs?: Prisma.UserApiRefreshLogUncheckedCreateNestedManyWithoutUserApiInput
 }
 
 export type UserApiUpdateInput = {
@@ -350,6 +355,7 @@ export type UserApiUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutUserApiNestedInput
+  refreshLogs?: Prisma.UserApiRefreshLogUpdateManyWithoutUserApiNestedInput
 }
 
 export type UserApiUncheckedUpdateInput = {
@@ -362,6 +368,7 @@ export type UserApiUncheckedUpdateInput = {
   lastRefreshedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshLogs?: Prisma.UserApiRefreshLogUncheckedUpdateManyWithoutUserApiNestedInput
 }
 
 export type UserApiCreateManyInput = {
@@ -450,6 +457,11 @@ export type UserApiSumOrderByAggregateInput = {
   refreshCount?: Prisma.SortOrder
 }
 
+export type UserApiScalarRelationFilter = {
+  is?: Prisma.UserApiWhereInput
+  isNot?: Prisma.UserApiWhereInput
+}
+
 export type UserApiCreateNestedOneWithoutUserInput = {
   create?: Prisma.XOR<Prisma.UserApiCreateWithoutUserInput, Prisma.UserApiUncheckedCreateWithoutUserInput>
   connectOrCreate?: Prisma.UserApiCreateOrConnectWithoutUserInput
@@ -482,6 +494,20 @@ export type UserApiUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserApiUpdateToOneWithWhereWithoutUserInput, Prisma.UserApiUpdateWithoutUserInput>, Prisma.UserApiUncheckedUpdateWithoutUserInput>
 }
 
+export type UserApiCreateNestedOneWithoutRefreshLogsInput = {
+  create?: Prisma.XOR<Prisma.UserApiCreateWithoutRefreshLogsInput, Prisma.UserApiUncheckedCreateWithoutRefreshLogsInput>
+  connectOrCreate?: Prisma.UserApiCreateOrConnectWithoutRefreshLogsInput
+  connect?: Prisma.UserApiWhereUniqueInput
+}
+
+export type UserApiUpdateOneRequiredWithoutRefreshLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserApiCreateWithoutRefreshLogsInput, Prisma.UserApiUncheckedCreateWithoutRefreshLogsInput>
+  connectOrCreate?: Prisma.UserApiCreateOrConnectWithoutRefreshLogsInput
+  upsert?: Prisma.UserApiUpsertWithoutRefreshLogsInput
+  connect?: Prisma.UserApiWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserApiUpdateToOneWithWhereWithoutRefreshLogsInput, Prisma.UserApiUpdateWithoutRefreshLogsInput>, Prisma.UserApiUncheckedUpdateWithoutRefreshLogsInput>
+}
+
 export type UserApiCreateWithoutUserInput = {
   id?: string
   apiKey: string
@@ -491,6 +517,7 @@ export type UserApiCreateWithoutUserInput = {
   lastRefreshedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  refreshLogs?: Prisma.UserApiRefreshLogCreateNestedManyWithoutUserApiInput
 }
 
 export type UserApiUncheckedCreateWithoutUserInput = {
@@ -502,6 +529,7 @@ export type UserApiUncheckedCreateWithoutUserInput = {
   lastRefreshedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  refreshLogs?: Prisma.UserApiRefreshLogUncheckedCreateNestedManyWithoutUserApiInput
 }
 
 export type UserApiCreateOrConnectWithoutUserInput = {
@@ -529,6 +557,7 @@ export type UserApiUpdateWithoutUserInput = {
   lastRefreshedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshLogs?: Prisma.UserApiRefreshLogUpdateManyWithoutUserApiNestedInput
 }
 
 export type UserApiUncheckedUpdateWithoutUserInput = {
@@ -540,8 +569,102 @@ export type UserApiUncheckedUpdateWithoutUserInput = {
   lastRefreshedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshLogs?: Prisma.UserApiRefreshLogUncheckedUpdateManyWithoutUserApiNestedInput
 }
 
+export type UserApiCreateWithoutRefreshLogsInput = {
+  id?: string
+  apiKey: string
+  isActive?: boolean
+  rateLimit?: number
+  refreshCount?: number
+  lastRefreshedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutUserApiInput
+}
+
+export type UserApiUncheckedCreateWithoutRefreshLogsInput = {
+  id?: string
+  userId: string
+  apiKey: string
+  isActive?: boolean
+  rateLimit?: number
+  refreshCount?: number
+  lastRefreshedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type UserApiCreateOrConnectWithoutRefreshLogsInput = {
+  where: Prisma.UserApiWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserApiCreateWithoutRefreshLogsInput, Prisma.UserApiUncheckedCreateWithoutRefreshLogsInput>
+}
+
+export type UserApiUpsertWithoutRefreshLogsInput = {
+  update: Prisma.XOR<Prisma.UserApiUpdateWithoutRefreshLogsInput, Prisma.UserApiUncheckedUpdateWithoutRefreshLogsInput>
+  create: Prisma.XOR<Prisma.UserApiCreateWithoutRefreshLogsInput, Prisma.UserApiUncheckedCreateWithoutRefreshLogsInput>
+  where?: Prisma.UserApiWhereInput
+}
+
+export type UserApiUpdateToOneWithWhereWithoutRefreshLogsInput = {
+  where?: Prisma.UserApiWhereInput
+  data: Prisma.XOR<Prisma.UserApiUpdateWithoutRefreshLogsInput, Prisma.UserApiUncheckedUpdateWithoutRefreshLogsInput>
+}
+
+export type UserApiUpdateWithoutRefreshLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  apiKey?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  refreshCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastRefreshedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutUserApiNestedInput
+}
+
+export type UserApiUncheckedUpdateWithoutRefreshLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  apiKey?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rateLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  refreshCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastRefreshedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type UserApiCountOutputType
+ */
+
+export type UserApiCountOutputType = {
+  refreshLogs: number
+}
+
+export type UserApiCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  refreshLogs?: boolean | UserApiCountOutputTypeCountRefreshLogsArgs
+}
+
+/**
+ * UserApiCountOutputType without action
+ */
+export type UserApiCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserApiCountOutputType
+   */
+  select?: Prisma.UserApiCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserApiCountOutputType without action
+ */
+export type UserApiCountOutputTypeCountRefreshLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserApiRefreshLogWhereInput
+}
 
 
 export type UserApiSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -555,6 +678,8 @@ export type UserApiSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  refreshLogs?: boolean | Prisma.UserApi$refreshLogsArgs<ExtArgs>
+  _count?: boolean | Prisma.UserApiCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["userApi"]>
 
 export type UserApiSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -598,6 +723,8 @@ export type UserApiSelectScalar = {
 export type UserApiOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "apiKey" | "isActive" | "rateLimit" | "refreshCount" | "lastRefreshedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userApi"]>
 export type UserApiInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  refreshLogs?: boolean | Prisma.UserApi$refreshLogsArgs<ExtArgs>
+  _count?: boolean | Prisma.UserApiCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserApiIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -610,6 +737,7 @@ export type $UserApiPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "UserApi"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    refreshLogs: Prisma.$UserApiRefreshLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1016,6 +1144,7 @@ readonly fields: UserApiFieldRefs;
 export interface Prisma__UserApiClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  refreshLogs<T extends Prisma.UserApi$refreshLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserApi$refreshLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserApiRefreshLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1447,6 +1576,30 @@ export type UserApiDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many UserApis to delete.
    */
   limit?: number
+}
+
+/**
+ * UserApi.refreshLogs
+ */
+export type UserApi$refreshLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserApiRefreshLog
+   */
+  select?: Prisma.UserApiRefreshLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserApiRefreshLog
+   */
+  omit?: Prisma.UserApiRefreshLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserApiRefreshLogInclude<ExtArgs> | null
+  where?: Prisma.UserApiRefreshLogWhereInput
+  orderBy?: Prisma.UserApiRefreshLogOrderByWithRelationInput | Prisma.UserApiRefreshLogOrderByWithRelationInput[]
+  cursor?: Prisma.UserApiRefreshLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserApiRefreshLogScalarFieldEnum | Prisma.UserApiRefreshLogScalarFieldEnum[]
 }
 
 /**

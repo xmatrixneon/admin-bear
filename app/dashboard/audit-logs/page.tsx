@@ -44,7 +44,7 @@ const actionColors: Record<string, string> = {
 
 export default function AuditLogsPage() {
   const [search, setSearch] = useState("");
-  const [actionFilter, setActionFilter] = useState("");
+  const [actionFilter, setActionFilter] = useState("ALL");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,7 +53,7 @@ export default function AuditLogsPage() {
     setIsLoading(true);
     try {
       const result = await api.getAuditLogs({
-        action: actionFilter || undefined,
+        action: actionFilter === "ALL" ? undefined : actionFilter || undefined,
         page,
         pageSize: 25,
       });
@@ -114,7 +114,7 @@ export default function AuditLogsPage() {
                 <SelectValue placeholder="All actions" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All actions</SelectItem>
+                <SelectItem value="ALL">All actions</SelectItem>
                 <SelectItem value="DELETE">Delete</SelectItem>
                 <SelectItem value="UPDATE">Update</SelectItem>
                 <SelectItem value="BALANCE_ADJUST">Balance Adjust</SelectItem>

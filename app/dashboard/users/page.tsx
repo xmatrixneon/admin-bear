@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -18,7 +18,6 @@ import {
   Filter,
   ArrowUpDown,
   IndianRupee,
-  Calendar,
   Phone,
   Mail,
   Star,
@@ -75,7 +74,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { api } from "@/lib/api";
+import { trpc } from "@/lib/trpc";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 
 // Animation helper
@@ -96,12 +95,12 @@ const filterTabs: { value: FilterTab; label: string }[] = [
 ];
 
 // Sort options
-type SortBy = "createdAt" | "balance" | "totalSpent" | "totalOtp";
+type SortBy = "createdAt" | "telegramId" | "balance" | "totalOtp";
 
 const sortOptions: { value: SortBy; label: string }[] = [
   { value: "createdAt", label: "Joined Date" },
+  { value: "telegramId", label: "Telegram ID" },
   { value: "balance", label: "Balance" },
-  { value: "totalSpent", label: "Total Spent" },
   { value: "totalOtp", label: "OTP Sold" },
 ];
 
@@ -152,34 +151,21 @@ export default function UsersListPage() {
   const [statusAction, setStatusAction] = useState<"block" | "unlock">("block");
   const [statusReason, setStatusReason] = useState("");
 
-  // Queries
-  const [data, setData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isFetching, setIsFetching] = useState(false);
+  // tRPC query for users
+  const { data, isLoading, refetch } = trpc.users.list.useQuery({
+    search: search || undefined,
+    filter,
+    sortBy,
+    sortOrder,
+    page,
+    pageSize: 20,
+  });
 
-  const fetchUsers = async () => {
-    setIsLoading(true);
-    try {
-      const result = await api.getUsers({
-        search: search || undefined,
-        filter,
-        sortBy,
-        sortOrder,
-        page,
-        pageSize: 20,
-      });
-      setData(result);
-    } catch (err: any) {
-      console.error("Failed to fetch users:", err);
-    } finally {
-      setIsLoading(false);
-      setIsFetching(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, [search, filter, sortBy, sortOrder, page]);
+  // tRPC mutations
+  const deleteUserMutation = trpc.users.delete.useMutation();
+  const setAdminMutation = trpc.users.setAdmin.useMutation();
+  const adjustBalanceMutation = trpc.users.adjustBalance.useMutation();
+  const setStatusMutation = trpc.users.setStatus.useMutation();
 
   // Handlers
   const handleSearch = (value: string) => {
@@ -216,12 +202,16 @@ export default function UsersListPage() {
   const handleDeleteConfirm = async () => {
     if (!userToDelete) return;
     try {
-      await api.deleteUser(userToDelete.id, false, deleteReason || "Deleted by admin");
+      await deleteUserMutation.mutateAsync({
+        id: userToDelete.id,
+        permanent: false,
+        reason: deleteReason || "Deleted by admin",
+      });
       toast.success("User deleted successfully");
       setDeleteDialogOpen(false);
       setUserToDelete(null);
       setDeleteReason("");
-      fetchUsers();
+      refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to delete user");
     }
@@ -229,9 +219,12 @@ export default function UsersListPage() {
 
   const handleToggleAdmin = async (userId: string, isAdmin: boolean) => {
     try {
-      await api.updateUser(userId, { action: "setAdmin", userId, isAdmin: !isAdmin });
+      await setAdminMutation.mutateAsync({
+        id: userId,
+        isAdmin: !isAdmin,
+      });
       toast.success("User admin status updated");
-      fetchUsers();
+      refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to update admin status");
     }
@@ -240,13 +233,18 @@ export default function UsersListPage() {
   const handleBalanceAdjust = async () => {
     if (!selectedUser || !balanceAmount || !balanceReason) return;
     try {
-      await api.adjustBalance(selectedUser.id, parseFloat(balanceAmount), balanceReason, balanceType);
+      await adjustBalanceMutation.mutateAsync({
+        userId: selectedUser.id,
+        amount: parseFloat(balanceAmount),
+        reason: balanceReason,
+        type: balanceType,
+      });
       toast.success("Balance adjusted successfully");
       setBalanceDialogOpen(false);
       setSelectedUser(null);
       setBalanceAmount("");
       setBalanceReason("");
-      fetchUsers();
+      refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to adjust balance");
     }
@@ -255,11 +253,14 @@ export default function UsersListPage() {
   const handleStatusAction = async () => {
     if (!selectedUser || !statusReason) return;
     try {
-      await api.setUserStatus(selectedUser.id, statusAction === "block" ? "BANNED" : "ACTIVE");
+      await setStatusMutation.mutateAsync({
+        id: selectedUser.id,
+        status: statusAction === "block" ? "BLOCKED" : "ACTIVE",
+      });
       toast.success(`User ${statusAction === "block" ? "blocked" : "unlocked"} successfully`);
       setStatusDialogOpen(false);
       setStatusReason("");
-      fetchUsers();
+      refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to update user status");
     }
@@ -277,21 +278,19 @@ export default function UsersListPage() {
             Manage user accounts and permissions
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={fetchUsers}
-            disabled={isFetching}
-          >
-            {isFetching ? (
-              <Loader2 size={16} className="animate-spin mr-2" />
-            ) : (
-              <RefreshCw size={16} className="mr-2" />
-            )}
-            Refresh
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => refetch()}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Loader2 size={16} className="animate-spin mr-2" />
+          ) : (
+            <RefreshCw size={16} className="mr-2" />
+          )}
+          Refresh
+        </Button>
       </motion.div>
 
       {/* Stats Cards */}
@@ -330,7 +329,7 @@ export default function UsersListPage() {
               <p className="text-xl font-bold text-foreground">
                 {data?.users.length
                   ? formatCurrency(
-                      data.users.reduce((sum: number, u: any) => sum + (u.wallet?.balance?.toNumber() || 0), 0) /
+                      data.users.reduce((sum: number, u: any) => sum + (u.wallet?.balance?.toNumber?.() || 0), 0) /
                         data.users.length
                     )
                   : formatCurrency(0)}
@@ -534,7 +533,7 @@ export default function UsersListPage() {
                               Pro
                             </Badge>
                           )}
-                          {user.userData?.status === "BANNED" && (
+                          {user.userData?.status === "BLOCKED" && (
                             <Badge variant="destructive">Blocked</Badge>
                           )}
                           {user.userData?.status === "SUSPENDED" && (
@@ -572,7 +571,7 @@ export default function UsersListPage() {
                               <CreditCard size={14} className="mr-2" />
                               Adjust Balance
                             </DropdownMenuItem>
-                            {!user.deletedAt && user.userData?.status !== "BANNED" && (
+                            {!user.deletedAt && user.userData?.status !== "BLOCKED" && (
                               <DropdownMenuItem
                                 onClick={() => {
                                   setSelectedUser({ id: user.id, name: getUserDisplayName(user) });
@@ -584,7 +583,7 @@ export default function UsersListPage() {
                                 Block User
                               </DropdownMenuItem>
                             )}
-                            {user.userData?.status === "BANNED" && (
+                            {user.userData?.status === "BLOCKED" && (
                               <DropdownMenuItem
                                 onClick={() => {
                                   setSelectedUser({ id: user.id, name: getUserDisplayName(user) });
@@ -637,7 +636,7 @@ export default function UsersListPage() {
           </div>
 
           {/* Pagination */}
-          {data && data.pagination.totalPages > 1 && (
+          {totalPages > 1 && (
             <div className="border-t border-border p-4">
               <Pagination>
                 <PaginationContent>

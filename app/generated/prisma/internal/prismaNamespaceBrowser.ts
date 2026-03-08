@@ -66,6 +66,7 @@ export const ModelName = {
   CustomPrice: 'CustomPrice',
   Settings: 'Settings',
   UserApi: 'UserApi',
+  UserApiRefreshLog: 'UserApiRefreshLog',
   UserData: 'UserData',
   UserAuditLog: 'UserAuditLog'
 } as const
@@ -186,6 +187,7 @@ export const TransactionScalarFieldEnum = {
   status: 'status',
   description: 'description',
   txnId: 'txnId',
+  refundOrderId: 'refundOrderId',
   phoneNumber: 'phoneNumber',
   metadata: 'metadata',
   createdAt: 'createdAt'
@@ -251,9 +253,9 @@ export const ActiveNumberScalarFieldEnum = {
   activeStatus: 'activeStatus',
   smsContent: 'smsContent',
   balanceDeducted: 'balanceDeducted',
-  buyTime: 'buyTime',
+  createdAt: 'createdAt',
   expiresAt: 'expiresAt',
-  createdAt: 'createdAt'
+  updatedAt: 'updatedAt'
 } as const
 
 export type ActiveNumberScalarFieldEnum = (typeof ActiveNumberScalarFieldEnum)[keyof typeof ActiveNumberScalarFieldEnum]
@@ -329,6 +331,15 @@ export const UserApiScalarFieldEnum = {
 } as const
 
 export type UserApiScalarFieldEnum = (typeof UserApiScalarFieldEnum)[keyof typeof UserApiScalarFieldEnum]
+
+
+export const UserApiRefreshLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type UserApiRefreshLogScalarFieldEnum = (typeof UserApiRefreshLogScalarFieldEnum)[keyof typeof UserApiRefreshLogScalarFieldEnum]
 
 
 export const UserDataScalarFieldEnum = {

@@ -214,17 +214,17 @@ export type ApiCredentialOrderByWithRelationInput = {
 
 export type ApiCredentialWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  apiKey?: string
   AND?: Prisma.ApiCredentialWhereInput | Prisma.ApiCredentialWhereInput[]
   OR?: Prisma.ApiCredentialWhereInput[]
   NOT?: Prisma.ApiCredentialWhereInput | Prisma.ApiCredentialWhereInput[]
   name?: Prisma.StringFilter<"ApiCredential"> | string
   apiUrl?: Prisma.StringFilter<"ApiCredential"> | string
-  apiKey?: Prisma.StringFilter<"ApiCredential"> | string
   isActive?: Prisma.BoolFilter<"ApiCredential"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ApiCredential"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ApiCredential"> | Date | string
   servers?: Prisma.OtpServerListRelationFilter
-}, "id">
+}, "id" | "apiKey">
 
 export type ApiCredentialOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -521,6 +521,9 @@ export type $ApiCredentialPayload<ExtArgs extends runtime.Types.Extensions.Inter
     id: string
     name: string
     apiUrl: string
+    /**
+     * SECURITY: apiKey stored in DB — rotate via admin panel, never commit to source.
+     */
     apiKey: string
     isActive: boolean
     createdAt: Date

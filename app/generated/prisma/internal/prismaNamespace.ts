@@ -399,6 +399,7 @@ export const ModelName = {
   CustomPrice: 'CustomPrice',
   Settings: 'Settings',
   UserApi: 'UserApi',
+  UserApiRefreshLog: 'UserApiRefreshLog',
   UserData: 'UserData',
   UserAuditLog: 'UserAuditLog'
 } as const
@@ -416,7 +417,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verification" | "wallet" | "transaction" | "apiCredential" | "otpServer" | "service" | "activeNumber" | "promocode" | "promocodeHistory" | "customPrice" | "settings" | "userApi" | "userData" | "userAuditLog"
+    modelProps: "user" | "account" | "session" | "verification" | "wallet" | "transaction" | "apiCredential" | "otpServer" | "service" | "activeNumber" | "promocode" | "promocodeHistory" | "customPrice" | "settings" | "userApi" | "userApiRefreshLog" | "userData" | "userAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1530,6 +1531,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserApiRefreshLog: {
+      payload: Prisma.$UserApiRefreshLogPayload<ExtArgs>
+      fields: Prisma.UserApiRefreshLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserApiRefreshLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserApiRefreshLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload>
+        }
+        findFirst: {
+          args: Prisma.UserApiRefreshLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserApiRefreshLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload>
+        }
+        findMany: {
+          args: Prisma.UserApiRefreshLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload>[]
+        }
+        create: {
+          args: Prisma.UserApiRefreshLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload>
+        }
+        createMany: {
+          args: Prisma.UserApiRefreshLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserApiRefreshLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload>[]
+        }
+        delete: {
+          args: Prisma.UserApiRefreshLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload>
+        }
+        update: {
+          args: Prisma.UserApiRefreshLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserApiRefreshLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserApiRefreshLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserApiRefreshLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserApiRefreshLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserApiRefreshLogPayload>
+        }
+        aggregate: {
+          args: Prisma.UserApiRefreshLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserApiRefreshLog>
+        }
+        groupBy: {
+          args: Prisma.UserApiRefreshLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserApiRefreshLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserApiRefreshLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserApiRefreshLogCountAggregateOutputType> | number
+        }
+      }
+    }
     UserData: {
       payload: Prisma.$UserDataPayload<ExtArgs>
       fields: Prisma.UserDataFieldRefs
@@ -1817,6 +1892,7 @@ export const TransactionScalarFieldEnum = {
   status: 'status',
   description: 'description',
   txnId: 'txnId',
+  refundOrderId: 'refundOrderId',
   phoneNumber: 'phoneNumber',
   metadata: 'metadata',
   createdAt: 'createdAt'
@@ -1882,9 +1958,9 @@ export const ActiveNumberScalarFieldEnum = {
   activeStatus: 'activeStatus',
   smsContent: 'smsContent',
   balanceDeducted: 'balanceDeducted',
-  buyTime: 'buyTime',
+  createdAt: 'createdAt',
   expiresAt: 'expiresAt',
-  createdAt: 'createdAt'
+  updatedAt: 'updatedAt'
 } as const
 
 export type ActiveNumberScalarFieldEnum = (typeof ActiveNumberScalarFieldEnum)[keyof typeof ActiveNumberScalarFieldEnum]
@@ -1960,6 +2036,15 @@ export const UserApiScalarFieldEnum = {
 } as const
 
 export type UserApiScalarFieldEnum = (typeof UserApiScalarFieldEnum)[keyof typeof UserApiScalarFieldEnum]
+
+
+export const UserApiRefreshLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type UserApiRefreshLogScalarFieldEnum = (typeof UserApiRefreshLogScalarFieldEnum)[keyof typeof UserApiRefreshLogScalarFieldEnum]
 
 
 export const UserDataScalarFieldEnum = {
@@ -2196,6 +2281,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
+
+/**
+ * Reference to a field of type 'UserStatus'
+ */
+export type EnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'UserStatus[]'
+ */
+export type ListEnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -2306,6 +2405,7 @@ export type GlobalOmitConfig = {
   customPrice?: Prisma.CustomPriceOmit
   settings?: Prisma.SettingsOmit
   userApi?: Prisma.UserApiOmit
+  userApiRefreshLog?: Prisma.UserApiRefreshLogOmit
   userData?: Prisma.UserDataOmit
   userAuditLog?: Prisma.UserAuditLogOmit
 }

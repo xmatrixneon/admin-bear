@@ -37,7 +37,7 @@ export type UserDataSumAggregateOutputType = {
 export type UserDataMinAggregateOutputType = {
   id: string | null
   userId: string | null
-  status: string | null
+  status: $Enums.UserStatus | null
   lastLogin: Date | null
   apiCalls: number | null
   lastApiCall: Date | null
@@ -48,7 +48,7 @@ export type UserDataMinAggregateOutputType = {
 export type UserDataMaxAggregateOutputType = {
   id: string | null
   userId: string | null
-  status: string | null
+  status: $Enums.UserStatus | null
   lastLogin: Date | null
   apiCalls: number | null
   lastApiCall: Date | null
@@ -200,7 +200,7 @@ export type UserDataGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type UserDataGroupByOutputType = {
   id: string
   userId: string
-  status: string
+  status: $Enums.UserStatus
   lastLogin: Date | null
   apiCalls: number
   lastApiCall: Date | null
@@ -234,7 +234,7 @@ export type UserDataWhereInput = {
   NOT?: Prisma.UserDataWhereInput | Prisma.UserDataWhereInput[]
   id?: Prisma.StringFilter<"UserData"> | string
   userId?: Prisma.StringFilter<"UserData"> | string
-  status?: Prisma.StringFilter<"UserData"> | string
+  status?: Prisma.EnumUserStatusFilter<"UserData"> | $Enums.UserStatus
   lastLogin?: Prisma.DateTimeNullableFilter<"UserData"> | Date | string | null
   apiCalls?: Prisma.IntFilter<"UserData"> | number
   lastApiCall?: Prisma.DateTimeNullableFilter<"UserData"> | Date | string | null
@@ -261,7 +261,7 @@ export type UserDataWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.UserDataWhereInput | Prisma.UserDataWhereInput[]
   OR?: Prisma.UserDataWhereInput[]
   NOT?: Prisma.UserDataWhereInput | Prisma.UserDataWhereInput[]
-  status?: Prisma.StringFilter<"UserData"> | string
+  status?: Prisma.EnumUserStatusFilter<"UserData"> | $Enums.UserStatus
   lastLogin?: Prisma.DateTimeNullableFilter<"UserData"> | Date | string | null
   apiCalls?: Prisma.IntFilter<"UserData"> | number
   lastApiCall?: Prisma.DateTimeNullableFilter<"UserData"> | Date | string | null
@@ -292,7 +292,7 @@ export type UserDataScalarWhereWithAggregatesInput = {
   NOT?: Prisma.UserDataScalarWhereWithAggregatesInput | Prisma.UserDataScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"UserData"> | string
   userId?: Prisma.StringWithAggregatesFilter<"UserData"> | string
-  status?: Prisma.StringWithAggregatesFilter<"UserData"> | string
+  status?: Prisma.EnumUserStatusWithAggregatesFilter<"UserData"> | $Enums.UserStatus
   lastLogin?: Prisma.DateTimeNullableWithAggregatesFilter<"UserData"> | Date | string | null
   apiCalls?: Prisma.IntWithAggregatesFilter<"UserData"> | number
   lastApiCall?: Prisma.DateTimeNullableWithAggregatesFilter<"UserData"> | Date | string | null
@@ -302,7 +302,7 @@ export type UserDataScalarWhereWithAggregatesInput = {
 
 export type UserDataCreateInput = {
   id?: string
-  status?: string
+  status?: $Enums.UserStatus
   lastLogin?: Date | string | null
   apiCalls?: number
   lastApiCall?: Date | string | null
@@ -314,7 +314,7 @@ export type UserDataCreateInput = {
 export type UserDataUncheckedCreateInput = {
   id?: string
   userId: string
-  status?: string
+  status?: $Enums.UserStatus
   lastLogin?: Date | string | null
   apiCalls?: number
   lastApiCall?: Date | string | null
@@ -324,7 +324,7 @@ export type UserDataUncheckedCreateInput = {
 
 export type UserDataUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   apiCalls?: Prisma.IntFieldUpdateOperationsInput | number
   lastApiCall?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -336,7 +336,7 @@ export type UserDataUpdateInput = {
 export type UserDataUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   apiCalls?: Prisma.IntFieldUpdateOperationsInput | number
   lastApiCall?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -347,7 +347,7 @@ export type UserDataUncheckedUpdateInput = {
 export type UserDataCreateManyInput = {
   id?: string
   userId: string
-  status?: string
+  status?: $Enums.UserStatus
   lastLogin?: Date | string | null
   apiCalls?: number
   lastApiCall?: Date | string | null
@@ -357,7 +357,7 @@ export type UserDataCreateManyInput = {
 
 export type UserDataUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   apiCalls?: Prisma.IntFieldUpdateOperationsInput | number
   lastApiCall?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -368,7 +368,7 @@ export type UserDataUpdateManyMutationInput = {
 export type UserDataUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   apiCalls?: Prisma.IntFieldUpdateOperationsInput | number
   lastApiCall?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -454,9 +454,13 @@ export type UserDataUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserDataUpdateToOneWithWhereWithoutUserInput, Prisma.UserDataUpdateWithoutUserInput>, Prisma.UserDataUncheckedUpdateWithoutUserInput>
 }
 
+export type EnumUserStatusFieldUpdateOperationsInput = {
+  set?: $Enums.UserStatus
+}
+
 export type UserDataCreateWithoutUserInput = {
   id?: string
-  status?: string
+  status?: $Enums.UserStatus
   lastLogin?: Date | string | null
   apiCalls?: number
   lastApiCall?: Date | string | null
@@ -466,7 +470,7 @@ export type UserDataCreateWithoutUserInput = {
 
 export type UserDataUncheckedCreateWithoutUserInput = {
   id?: string
-  status?: string
+  status?: $Enums.UserStatus
   lastLogin?: Date | string | null
   apiCalls?: number
   lastApiCall?: Date | string | null
@@ -492,7 +496,7 @@ export type UserDataUpdateToOneWithWhereWithoutUserInput = {
 
 export type UserDataUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   apiCalls?: Prisma.IntFieldUpdateOperationsInput | number
   lastApiCall?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -502,7 +506,7 @@ export type UserDataUpdateWithoutUserInput = {
 
 export type UserDataUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   lastLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   apiCalls?: Prisma.IntFieldUpdateOperationsInput | number
   lastApiCall?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -578,7 +582,10 @@ export type $UserDataPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
-    status: string
+    /**
+     * Use UserStatus enum for compile-time safety — prevents typo bugs in status checks.
+     */
+    status: $Enums.UserStatus
     lastLogin: Date | null
     apiCalls: number
     lastApiCall: Date | null
@@ -1010,7 +1017,7 @@ export interface Prisma__UserDataClient<T, Null = never, ExtArgs extends runtime
 export interface UserDataFieldRefs {
   readonly id: Prisma.FieldRef<"UserData", 'String'>
   readonly userId: Prisma.FieldRef<"UserData", 'String'>
-  readonly status: Prisma.FieldRef<"UserData", 'String'>
+  readonly status: Prisma.FieldRef<"UserData", 'UserStatus'>
   readonly lastLogin: Prisma.FieldRef<"UserData", 'DateTime'>
   readonly apiCalls: Prisma.FieldRef<"UserData", 'Int'>
   readonly lastApiCall: Prisma.FieldRef<"UserData", 'DateTime'>

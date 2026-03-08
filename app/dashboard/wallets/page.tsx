@@ -24,16 +24,17 @@ const fadeUp = (delay = 0) => ({
 });
 
 export default function WalletsPage() {
-  const [users, setUsers] = useState<any>(null);
+  const [wallets, setWallets] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchWallets = async () => {
     setIsLoading(true);
     try {
-      const result = await api.getWallets();
-      setUsers(result);
+      const result = await api.getWallets() as any[];
+      setWallets(result || []);
     } catch (err: any) {
       console.error("Failed to fetch wallets:", err);
+      setWallets([]);
     } finally {
       setIsLoading(false);
     }
@@ -43,11 +44,10 @@ export default function WalletsPage() {
     fetchWallets();
   }, []);
 
-  const usersList = users?.users || users || [];
-  const totalBalance = usersList.reduce((sum: number, u: any) => sum + (u.wallet?.balance?.toNumber() || 0), 0) || 0;
-  const totalSpent = usersList.reduce((sum: number, u: any) => sum + (u.wallet?.totalSpent?.toNumber() || 0), 0) || 0;
-  const totalRecharge = usersList.reduce((sum: number, u: any) => sum + (u.wallet?.totalRecharge?.toNumber() || 0), 0) || 0;
-  const totalOtp = usersList.reduce((sum: number, u: any) => sum + (u.wallet?.totalOtp || 0), 0) || 0;
+  const totalBalance = wallets.reduce((sum: number, w: any) => sum + (Number(w.balance) || 0), 0);
+  const totalSpent = wallets.reduce((sum: number, w: any) => sum + (Number(w.totalSpent) || 0), 0);
+  const totalRecharge = wallets.reduce((sum: number, w: any) => sum + (Number(w.totalRecharge) || 0), 0);
+  const totalOtp = wallets.reduce((sum: number, w: any) => sum + (w.totalOtp || 0), 0);
 
   return (
     <div className="space-y-6">
@@ -130,6 +130,7 @@ export default function WalletsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[80px]">User</TableHead>
+                  <TableHead>Telegram ID</TableHead>
                   <TableHead>Username</TableHead>
                   <TableHead>Balance</TableHead>
                   <TableHead>Total Recharge</TableHead>
@@ -142,16 +143,18 @@ export default function WalletsPage() {
                   Array.from({ length: 10 }).map((_, i) => (
                     <TableRow key={i}>
                       <TableCell><Skeleton className="h-8 w-8 rounded-full" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                      <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                     </TableRow>
                   ))
-                ) : usersList.filter((u: any) => u.wallet).length === 0 ? (
+                ) : wallets.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-12">
+                    <TableCell colSpan={7} className="text-center py-12">
                       <div className="flex flex-col items-center gap-3">
                         <Wallet size={48} className="text-muted-foreground/40" />
                         <p className="text-muted-foreground">No wallets found</p>
@@ -159,9 +162,9 @@ export default function WalletsPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  usersList.filter((u: any) => u.wallet).map((user: any, index: number) => (
+                  wallets.map((wallet: any, index: number) => (
                     <motion.tr
-                      key={user.id}
+                      key={wallet.id}
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 + index * 0.01 }}
@@ -170,33 +173,38 @@ export default function WalletsPage() {
                       <TableCell>
                         <Avatar size="sm">
                           <AvatarFallback className="text-xs">
-                            {user.firstName?.[0] || "U"}
+                            {wallet.user?.firstName?.[0] || "U"}
                           </AvatarFallback>
                         </Avatar>
                       </TableCell>
                       <TableCell>
+                        <span className="font-mono text-xs text-muted-foreground">
+                          {wallet.user?.telegramId || "-"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
                         <span className="text-sm">
-                          {user.telegramUsername ? `@${user.telegramUsername}` : user.email || "-"}
+                          {wallet.user?.telegramUsername ? `@${wallet.user.telegramUsername}` : wallet.user?.email || "-"}
                         </span>
                       </TableCell>
                       <TableCell>
                         <span className="font-semibold text-green-600 dark:text-green-400">
-                          {formatCurrency(user.wallet?.balance)}
+                          {formatCurrency(wallet.balance)}
                         </span>
                       </TableCell>
                       <TableCell>
                         <span className="text-sm text-green-600 dark:text-green-400">
-                          {formatCurrency(user.wallet?.totalRecharge)}
+                          {formatCurrency(wallet.totalRecharge)}
                         </span>
                       </TableCell>
                       <TableCell>
                         <span className="text-sm text-red-600 dark:text-red-400">
-                          {formatCurrency(user.wallet?.totalSpent)}
+                          {formatCurrency(wallet.totalSpent)}
                         </span>
                       </TableCell>
                       <TableCell>
                         <span className="text-sm font-medium">
-                          {user.wallet?.totalOtp || 0}
+                          {wallet.totalOtp || 0}
                         </span>
                       </TableCell>
                     </motion.tr>
