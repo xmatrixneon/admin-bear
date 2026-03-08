@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Loader2,
@@ -263,7 +263,25 @@ function SettingSection({
 
 export default function SettingsPage() {
   // tRPC query for fetching settings
-  const { data: settings, isLoading, refetch, isFetching } = trpc.settings.get.useQuery();
+  const { data: rawSettings, isLoading, refetch, isFetching } = trpc.settings.get.useQuery();
+
+  // Convert Decimal values to numbers for the UI
+  const settings: SettingsData | null = rawSettings ? {
+    currency: rawSettings.currency || '',
+    minRechargeAmount: Number(rawSettings.minRechargeAmount),
+    maxRechargeAmount: Number(rawSettings.maxRechargeAmount),
+    referralPercent: Number(rawSettings.referralPercent),
+    minRedeem: Number(rawSettings.minRedeem),
+    numberExpiryMinutes: rawSettings.numberExpiryMinutes || 0,
+    minCancelMinutes: rawSettings.minCancelMinutes || 0,
+    maintenanceMode: rawSettings.maintenanceMode || false,
+    upiId: rawSettings.upiId || '',
+    bharatpeMerchantId: rawSettings.bharatpeMerchantId || '',
+    bharatpeToken: rawSettings.bharatpeToken || '',
+    bharatpeQrImage: rawSettings.bharatpeQrImage || '',
+    telegramSupportUsername: rawSettings.telegramSupportUsername || '',
+    apiDocsBaseUrl: rawSettings.apiDocsBaseUrl || '',
+  } : null;
 
   // tRPC mutation for updating settings
   const updateSettingsMutation = trpc.settings.update.useMutation({

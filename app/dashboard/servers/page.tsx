@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Server,
@@ -32,7 +32,7 @@ const fadeUp = (delay = 0) => ({
 
 // Type for selected item (Server or ApiCredential)
 type SelectedItem =
-  | { id: string; name: string; countryCode: string; countryIso: string; countryName: string; flagUrl: string; apiId: string; isActive: boolean }
+  | { id: string; name: string; countryCode: string; countryIso: string; countryName: string; flagUrl: string | null; apiId: string; isActive: boolean }
   | { id: string; name: string; apiUrl: string; apiKey: string; isActive: boolean };
 
 export default function ServersPage() {
@@ -80,18 +80,21 @@ export default function ServersPage() {
     }
   };
 
-  const handleUpdateServer = async () => {
-    if (!selectedItem) return;
+  const handleUpdateServer = useCallback(async (serverData?: any) => {
+    const targetServer = serverData || selectedItem;
+    if (!targetServer) return;
     try {
       await updateServerMutation.mutateAsync({
-        id: selectedItem.id,
-        name: serverForm.name,
-        countryCode: serverForm.countryCode,
-        countryIso: serverForm.countryIso,
-        countryName: serverForm.countryName,
-        flagUrl: serverForm.flagUrl || null,
-        apiId: serverForm.apiId,
-        isActive: serverForm.isActive,
+        id: targetServer.id,
+        data: {
+          name: serverForm.name,
+          countryCode: serverForm.countryCode,
+          countryIso: serverForm.countryIso,
+          countryName: serverForm.countryName,
+          flagUrl: serverForm.flagUrl || undefined,
+          apiId: serverForm.apiId,
+          isActive: serverData?.isActive ?? serverForm.isActive,
+        },
       });
       toast.success("Server updated successfully");
       setServerDialogOpen(false);
@@ -100,7 +103,7 @@ export default function ServersPage() {
     } catch (err: any) {
       toast.error(err.message || "Failed to update server");
     }
-  };
+  }, [selectedItem, serverForm, updateServerMutation, refetch]);
 
   const handleDelete = async () => {
     if (!selectedItem) return;
@@ -338,7 +341,7 @@ export default function ServersPage() {
                           />
                         </TableCell>
                         <TableCell>
-                          <span className="text-sm">{server.services?.length || 0}</span>
+                          <span className="text-sm">{server._count?.services || 0}</span>
                         </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>
@@ -455,7 +458,7 @@ export default function ServersPage() {
                           />
                         </TableCell>
                         <TableCell>
-                          <span className="text-sm">{api.servers?.length || 0}</span>
+                          <span className="text-sm">{api._count?.servers || 0}</span>
                         </TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>

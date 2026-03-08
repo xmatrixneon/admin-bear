@@ -100,6 +100,11 @@ export const serversRouter = router({
     const { prisma } = ctx;
 
     const credentials = await prisma.apiCredential.findMany({
+      include: {
+        _count: {
+          select: { servers: true },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     });
 

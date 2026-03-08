@@ -32,6 +32,9 @@ export const servicesRouter = router({
             api: true,
           },
         },
+        _count: {
+          select: { purchases: true },
+        },
       },
       orderBy: { name: 'asc' },
     });

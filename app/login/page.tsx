@@ -20,6 +20,7 @@ export default function LoginPage() {
   // tRPC mutation for login
   const loginMutation = trpc.login.login.useMutation({
     onSuccess: (data) => {
+      if (!data) return;
       // Store token and user info
       localStorage.setItem("admin_token", data.token);
       localStorage.setItem("admin_user", JSON.stringify(data.user));
