@@ -21,6 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { PageHeader } from "@/components/admin/page-header";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -315,30 +316,16 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6 max-w-5xl">
       {/* Header */}
-      <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-xl font-bold text-foreground">Settings</h1>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Edit any section and save independently — no need to fill everything.
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetch()}
-          disabled={isFetching}
-          className="h-8 text-xs gap-1.5 shrink-0"
-        >
-          {isFetching ? (
-            <Loader2 size={12} className="animate-spin" />
-          ) : (
-            <RefreshCw size={12} />
-          )}
-          Refresh
-        </Button>
-      </motion.div>
+      <PageHeader
+        title="Settings"
+        description="Edit any section and save independently — no need to fill everything."
+        actions={
+          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+            {isFetching ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+            Refresh
+          </Button>
+        }
+      />
 
       {/* Sections grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
