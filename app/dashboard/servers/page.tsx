@@ -10,6 +10,9 @@ import {
   MoreVertical,
   Edit,
   KeyRound,
+  CheckCircle,
+  XCircle,
+  Globe,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +24,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Card, CardContent } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/admin/page-header";
+import { StatsCard } from "@/components/admin/stats-card";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },
@@ -55,8 +61,8 @@ export default function ServersPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // tRPC queries
-  const { data: serversData, isLoading, refetch } = trpc.servers.list.useQuery();
-  const { data: apiCredentialsData, isLoading: apiLoading, refetch: apiRefetch } = trpc.servers.listApiCredentials.useQuery();
+  const { data: serversData, isLoading, refetch, isFetching } = trpc.servers.list.useQuery();
+  const { data: apiCredentialsData, isLoading: apiLoading, refetch: apiRefetch, isFetching: apiFetching } = trpc.servers.listApiCredentials.useQuery();
 
   // tRPC mutations
   const createServerMutation = trpc.servers.create.useMutation();
@@ -113,6 +119,7 @@ export default function ServersPage() {
       } else {
         await deleteApiCredentialMutation.mutateAsync({ id: selectedItem.id });
       }
+      toast.success(`${deleteType === "server" ? "Server" : "API credential"} deleted successfully`);
       setDeleteDialogOpen(false);
       setSelectedItem(null);
       refetch();
@@ -184,72 +191,72 @@ export default function ServersPage() {
     }
   };
 
+  // Stats
+  const activeServers = serversData?.filter((s: any) => s.isActive).length || 0;
+  const inactiveServers = serversData?.filter((s: any) => !s.isActive).length || 0;
+  const activeApis = apiCredentialsData?.filter((a: any) => a.isActive).length || 0;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
-      <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Servers</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage OTP servers and API credentials
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            refetch();
-            apiRefetch();
-          }}
-          disabled={isLoading || apiLoading}
-        >
-          {isLoading || apiLoading ? (
-            <Loader2 size={16} className="animate-spin mr-2" />
-          ) : (
-            <RefreshCw size={16} className="mr-2" />
-          )}
-          Refresh
-        </Button>
-      </motion.div>
+      <PageHeader
+        title="Servers"
+        description="Manage OTP servers and API credentials"
+        actions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              refetch();
+              apiRefetch();
+            }}
+            disabled={isFetching || apiFetching}
+          >
+            {isFetching || apiFetching ? (
+              <Loader2 size={16} className="animate-spin mr-2" />
+            ) : (
+              <RefreshCw size={16} className="mr-2" />
+            )}
+            Refresh
+          </Button>
+        }
+      />
 
       {/* Stats Cards */}
-      <motion.div {...fadeUp(0.05)} className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-blue-500/10 p-2 rounded-lg">
-              <Server size={18} className="text-blue-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">Total Servers</p>
-              <p className="text-xl font-bold text-foreground">{serversData?.length || 0}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-green-500/10 p-2 rounded-lg">
-              <KeyRound size={18} className="text-green-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">Active Servers</p>
-              <p className="text-xl font-bold text-foreground">
-                {serversData?.filter?.((s: any) => s.isActive).length || 0}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-purple-500/10 p-2 rounded-lg">
-              <KeyRound size={18} className="text-purple-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">API Credentials</p>
-              <p className="text-xl font-bold text-foreground">{apiCredentialsData?.length || 0}</p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatsCard
+          title="Total Servers"
+          value={serversData?.length || 0}
+          icon={Server}
+          color="text-blue-500"
+          bgColor="bg-blue-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="Active Servers"
+          value={activeServers}
+          icon={CheckCircle}
+          color="text-green-500"
+          bgColor="bg-green-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="API Credentials"
+          value={apiCredentialsData?.length || 0}
+          icon={KeyRound}
+          color="text-purple-500"
+          bgColor="bg-purple-500/5"
+          loading={apiLoading}
+        />
+        <StatsCard
+          title="Active APIs"
+          value={activeApis}
+          icon={Globe}
+          color="text-cyan-500"
+          bgColor="bg-cyan-500/5"
+          loading={apiLoading}
+        />
+      </div>
 
       {/* Tabs */}
       <motion.div {...fadeUp(0.1)} className="bg-card border border-border rounded-xl p-4 space-y-4">
@@ -262,88 +269,65 @@ export default function ServersPage() {
           {/* Servers Tab */}
           <TabsContent value="servers" className="space-y-4">
             <div className="flex justify-end">
-              <Button size="sm" onClick={() => handleCreateServer()}>
+              <Button size="sm" onClick={() => setServerDialogOpen(true)}>
                 <Plus size={16} className="mr-2" />
                 Add Server
               </Button>
             </div>
-            <div className="bg-card border border-border rounded-xl overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Country</TableHead>
-                    <TableHead>Code</TableHead>
-                    <TableHead>API Credential</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Services</TableHead>
-                    <TableHead className="w-[60px] text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
-                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                        <TableCell><Skeleton className="h-6 w-16" /></TableCell>
-                      </TableRow>
-                    ))
-                  ) : serversData?.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-12">
-                        <div className="flex flex-col items-center gap-3">
-                          <Server size={48} className="text-muted-foreground/40" />
-                          <p className="text-muted-foreground">No servers found</p>
-                          <Button size="sm" onClick={() => handleCreateServer()}>
-                            <Plus size={16} className="mr-2" />
-                            Add First Server
-                          </Button>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <Card key={i} className="border-border">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <Skeleton className="h-10 w-10 rounded-lg" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-3 w-24" />
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    serversData?.map((server, index) => (
-                      <motion.tr
-                        key={server.id}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 + index * 0.02 }}
-                        className="hover:bg-muted/50 transition-colors border-b"
-                      >
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {server.flagUrl && (
-                              <img src={server.flagUrl} alt={server.countryIso} className="w-5 h-4 object-cover rounded" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : serversData?.length === 0 ? (
+                <Card className="border-border">
+                  <CardContent className="py-12 text-center">
+                    <Server size={48} className="mx-auto text-muted-foreground/40 mb-3" />
+                    <p className="text-muted-foreground">No servers found</p>
+                    <Button size="sm" className="mt-3" onClick={() => setServerDialogOpen(true)}>
+                      <Plus size={16} className="mr-2" />
+                      Add First Server
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                serversData?.map((server: any, index: number) => (
+                  <motion.div
+                    key={server.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.02 }}
+                  >
+                    <Card className="border-border">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            {server.flagUrl ? (
+                              <img src={server.flagUrl} alt={server.countryIso} className="w-8 h-6 object-cover rounded" />
+                            ) : (
+                              <div className="w-8 h-6 bg-muted rounded flex items-center justify-center">
+                                <Globe size={14} className="text-muted-foreground" />
+                              </div>
                             )}
-                            <span className="font-medium">{server.name}</span>
+                            <div>
+                              <p className="font-medium text-sm">{server.name}</p>
+                              <Badge variant="outline" className="text-xs">
+                                {server.countryCode} ({server.countryIso})
+                              </Badge>
+                            </div>
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{server.countryCode} ({server.countryIso})</Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1.5">
-                            <KeyRound size={14} className="text-muted-foreground" />
-                            <span className="text-sm">{server.api?.id || "-"}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Switch
-                            checked={server.isActive}
-                            disabled={true}
-                            onCheckedChange={(checked) => handleUpdateServer({ ...server, isActive: checked })}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-sm">{server._count?.services || 0}</span>
-                        </TableCell>
-                        <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -355,18 +339,147 @@ export default function ServersPage() {
                                 <Edit size={14} className="mr-2" />
                                 Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => { setSelectedItem(server); setDeleteType("server"); setDeleteDialogOpen(true); }}>
-                                <Edit size={14} className="mr-2 text-destructive" />
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => {
+                                  setSelectedItem(server);
+                                  setDeleteType("server");
+                                  setDeleteDialogOpen(true);
+                                }}
+                              >
+                                <Edit size={14} className="mr-2" />
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <p className="text-xs text-muted-foreground">Status</p>
+                            <Badge variant={server.isActive ? "default" : "secondary"} className="mt-0.5">
+                              {server.isActive ? "Active" : "Inactive"}
+                            </Badge>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Services</p>
+                            <p className="font-medium">{server._count?.services || 0}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Country</TableHead>
+                      <TableHead>API Credential</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Services</TableHead>
+                      <TableHead className="w-[60px] text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {isLoading ? (
+                      Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i}>
+                          <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                          <TableCell><Skeleton className="h-6 w-16" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                          <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                        </TableRow>
+                      ))
+                    ) : serversData?.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-12">
+                          <div className="flex flex-col items-center gap-3">
+                            <Server size={48} className="text-muted-foreground/40" />
+                            <p className="text-muted-foreground">No servers found</p>
+                            <Button size="sm" onClick={() => setServerDialogOpen(true)}>
+                              <Plus size={16} className="mr-2" />
+                              Add First Server
+                            </Button>
+                          </div>
                         </TableCell>
-                      </motion.tr>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                      </TableRow>
+                    ) : (
+                      serversData?.map((server, index) => (
+                        <motion.tr
+                          key={server.id}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 + index * 0.02 }}
+                          className="hover:bg-muted/50 transition-colors border-b"
+                        >
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {server.flagUrl && (
+                                <img src={server.flagUrl} alt={server.countryIso} className="w-5 h-4 object-cover rounded" />
+                              )}
+                              <span className="font-medium">{server.name}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{server.countryCode} ({server.countryIso})</Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1.5">
+                              <KeyRound size={14} className="text-muted-foreground" />
+                              <span className="text-sm">{server.api?.name || "-"}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Switch
+                              checked={server.isActive}
+                              disabled={true}
+                              onCheckedChange={(checked) => handleUpdateServer({ ...server, isActive: checked })}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm">{server._count?.services || 0}</span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <MoreVertical size={14} />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEditServer(server)}>
+                                  <Edit size={14} className="mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-destructive focus:text-destructive"
+                                  onClick={() => {
+                                    setSelectedItem(server);
+                                    setDeleteType("server");
+                                    setDeleteDialogOpen(true);
+                                  }}
+                                >
+                                  <Edit size={14} className="mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </motion.tr>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           </TabsContent>
 
@@ -378,89 +491,54 @@ export default function ServersPage() {
                 Add API Credential
               </Button>
             </div>
-            <div className="bg-card border border-border rounded-xl overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>API URL</TableHead>
-                    <TableHead>API Key</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Used By</TableHead>
-                    <TableHead className="w-[60px] text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {apiLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
-                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-48" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-6 w-16" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                        <TableCell><Skeleton className="h-6 w-16" /></TableCell>
-                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                      </TableRow>
-                    ))
-                  ) : apiCredentialsData?.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={9} className="text-center py-12">
-                        <div className="flex flex-col items-center gap-3">
-                          <KeyRound size={48} className="text-muted-foreground/40" />
-                          <p className="text-muted-foreground">No API credentials found</p>
-                          <Button size="sm" onClick={() => setApiDialogOpen(true)}>
-                            <Plus size={16} className="mr-2" />
-                            Add First API Credential
-                          </Button>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {apiLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <Card key={i} className="border-border">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="flex-1 space-y-2">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-3 w-24" />
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    apiCredentialsData?.map((api, index) => (
-                      <motion.tr
-                        key={api.id}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 + index * 0.02 }}
-                        className="hover:bg-muted/50 transition-colors border-b"
-                      >
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-white">
-                              <span className="text-xs font-bold">{api.name?.[0]?.toUpperCase() || "API"}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : apiCredentialsData?.length === 0 ? (
+                <Card className="border-border">
+                  <CardContent className="py-12 text-center">
+                    <KeyRound size={48} className="mx-auto text-muted-foreground/40 mb-3" />
+                    <p className="text-muted-foreground">No API credentials found</p>
+                    <Button size="sm" className="mt-3" onClick={() => setApiDialogOpen(true)}>
+                      <Plus size={16} className="mr-2" />
+                      Add First API Credential
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                apiCredentialsData?.map((api: any, index: number) => (
+                  <motion.div
+                    key={api.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.02 }}
+                  >
+                    <Card className="border-border">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                              <span className="text-sm font-bold text-blue-500">{api.name?.[0]?.toUpperCase() || "A"}</span>
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm">{api.name}</p>
+                              <p className="text-xs text-muted-foreground truncate max-w-[200px]">{api.apiUrl}</p>
                             </div>
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-sm truncate max-w-[200px] block">
-                            {api.apiUrl}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-sm font-mono bg-muted px-2 py-0.5 rounded">
-                            {api.apiKey?.slice(0, 8)}***
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-sm text-muted-foreground">
-                            {new Date(api.createdAt).toLocaleDateString()}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <Switch
-                            checked={api.isActive}
-                            disabled={true}
-                            onCheckedChange={(checked) => handleEditApi({ ...api, isActive: checked })}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-sm">{api._count?.servers || 0}</span>
-                        </TableCell>
-                        <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -472,18 +550,167 @@ export default function ServersPage() {
                                 <Edit size={14} className="mr-2" />
                                 Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => { setDeleteType("api"); handleDeleteApi(api); setDeleteDialogOpen(true); }}>
-                                <Edit size={14} className="mr-2 text-destructive" />
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => {
+                                  setDeleteType("api");
+                                  handleDeleteApi(api);
+                                  setDeleteDialogOpen(true);
+                                }}
+                              >
+                                <Edit size={14} className="mr-2" />
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                          <div>
+                            <p className="text-xs text-muted-foreground">API Key</p>
+                            <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
+                              {api.apiKey?.slice(0, 8)}***
+                            </code>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Status</p>
+                            <Badge variant={api.isActive ? "default" : "secondary"} className="mt-0.5">
+                              {api.isActive ? "Active" : "Inactive"}
+                            </Badge>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Used By</p>
+                            <p className="font-medium">{api._count?.servers || 0} servers</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Created</p>
+                            <p className="text-muted-foreground text-xs">
+                              {new Date(api.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))
+              )}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>API URL</TableHead>
+                      <TableHead>API Key</TableHead>
+                      <TableHead>Created</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Used By</TableHead>
+                      <TableHead className="w-[60px] text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {apiLoading ? (
+                      Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i}>
+                          <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-48" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                          <TableCell><Skeleton className="h-6 w-16" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                          <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                        </TableRow>
+                      ))
+                    ) : apiCredentialsData?.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-12">
+                          <div className="flex flex-col items-center gap-3">
+                            <KeyRound size={48} className="text-muted-foreground/40" />
+                            <p className="text-muted-foreground">No API credentials found</p>
+                            <Button size="sm" onClick={() => setApiDialogOpen(true)}>
+                              <Plus size={16} className="mr-2" />
+                              Add First API Credential
+                            </Button>
+                          </div>
                         </TableCell>
-                      </motion.tr>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                      </TableRow>
+                    ) : (
+                      apiCredentialsData?.map((api, index) => (
+                        <motion.tr
+                          key={api.id}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 + index * 0.02 }}
+                          className="hover:bg-muted/50 transition-colors border-b"
+                        >
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                                <span className="text-xs font-bold text-blue-500">{api.name?.[0]?.toUpperCase() || "A"}</span>
+                              </div>
+                              <span className="font-medium">{api.name}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm truncate max-w-[200px] block">
+                              {api.apiUrl}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <code className="text-sm font-mono bg-muted px-2 py-0.5 rounded">
+                              {api.apiKey?.slice(0, 8)}***
+                            </code>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm text-muted-foreground">
+                              {new Date(api.createdAt).toLocaleDateString()}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <Switch
+                              checked={api.isActive}
+                              disabled={true}
+                              onCheckedChange={(checked) => handleEditApi({ ...api, isActive: checked })}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm">{api._count?.servers || 0}</span>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <MoreVertical size={14} />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEditApi(api)}>
+                                  <Edit size={14} className="mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-destructive focus:text-destructive"
+                                  onClick={() => {
+                                    setDeleteType("api");
+                                    handleDeleteApi(api);
+                                    setDeleteDialogOpen(true);
+                                  }}
+                                >
+                                  <Edit size={14} className="mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </motion.tr>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
@@ -510,6 +737,14 @@ export default function ServersPage() {
                 placeholder="e.g., IN or 22"
                 value={serverForm.countryCode}
                 onChange={(e) => setServerForm({ ...serverForm, countryCode: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Country ISO</Label>
+              <Input
+                placeholder="e.g., IN"
+                value={serverForm.countryIso}
+                onChange={(e) => setServerForm({ ...serverForm, countryIso: e.target.value })}
               />
             </div>
             <div className="space-y-2">
@@ -635,7 +870,7 @@ export default function ServersPage() {
             <DialogTitle>Delete {deleteType === "server" ? "Server" : "API Credential"}</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
-            Are you sure you want to delete <strong>{selectedItem?.name}</strong>?
+            Are you sure you want to delete <strong>{(selectedItem as any)?.name}</strong>?
             This action cannot be undone.
           </p>
           <DialogFooter>

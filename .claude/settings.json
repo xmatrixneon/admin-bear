@@ -1,0 +1,7 @@
+{
+  "enabledPlugins": {
+    "frontend-design@claude-code-plugins": true,
+    "superpowers@superpowers-marketplace": true,
+    "claude-session-driver@superpowers-marketplace": true
+  }
+}

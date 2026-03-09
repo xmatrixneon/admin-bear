@@ -13,6 +13,9 @@ import {
   Trash2,
   Power,
   PowerOff,
+  CheckCircle,
+  XCircle,
+  Percent,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,8 +53,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { StatsCard } from "@/components/admin/stats-card";
+import { PageHeader } from "@/components/admin/page-header";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },
@@ -132,113 +138,215 @@ export default function PromocodesPage() {
   };
 
   const activeCount = promocodes?.filter((p) => p.isActive).length || 0;
+  const inactiveCount = promocodes?.filter((p) => !p.isActive).length || 0;
   const totalUses =
     promocodes?.reduce((sum, p) => sum + (p.usedCount || 0), 0) || 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
-      <motion.div
-        {...fadeUp()}
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-      >
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Promocodes</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage discount codes for users
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isFetching}
-          >
-            {isFetching ? (
-              <Loader2 size={16} className="animate-spin mr-2" />
-            ) : (
-              <RefreshCw size={16} className="mr-2" />
-            )}
-            Refresh
-          </Button>
-          <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
-            <Plus size={16} className="mr-2" />
-            Generate Codes
-          </Button>
-        </div>
-      </motion.div>
+      <PageHeader
+        title="Promocodes"
+        description="Manage discount codes for users"
+        actions={
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => refetch()}
+              disabled={isFetching}
+            >
+              {isFetching ? (
+                <Loader2 size={16} className="animate-spin mr-2" />
+              ) : (
+                <RefreshCw size={16} className="mr-2" />
+              )}
+              Refresh
+            </Button>
+            <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
+              <Plus size={16} className="mr-2" />
+              Generate Codes
+            </Button>
+          </>
+        }
+      />
 
       {/* Stats */}
       <motion.div
         {...fadeUp(0.05)}
-        className="grid grid-cols-2 md:grid-cols-4 gap-3"
+        className="grid grid-cols-2 lg:grid-cols-4 gap-3"
       >
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-blue-500/10 p-2 rounded-lg">
-              <Tag size={18} className="text-blue-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">
-                Total Codes
-              </p>
-              <p className="text-xl font-bold">{promocodes?.length || 0}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-green-500/10 p-2 rounded-lg">
-              <Power size={18} className="text-green-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">
-                Active
-              </p>
-              <p className="text-xl font-bold">{activeCount}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-amber-500/10 p-2 rounded-lg">
-              <Tag size={18} className="text-amber-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">
-                Total Uses
-              </p>
-              <p className="text-xl font-bold">{totalUses}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-purple-500/10 p-2 rounded-lg">
-              <Tag size={18} className="text-purple-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">
-                Avg Discount
-              </p>
-              <p className="text-xl font-bold">
-                {formatCurrency(
-                  promocodes && promocodes.length > 0
-                    ? promocodes.reduce(
-                        (sum, p) => sum + toNumber(p.amount),
-                        0,
-                      ) / promocodes.length
-                    : 0,
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
+        <StatsCard
+          title="Total Codes"
+          value={promocodes?.length || 0}
+          icon={Tag}
+          color="text-blue-500"
+          bgColor="bg-blue-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="Active"
+          value={activeCount}
+          icon={CheckCircle}
+          color="text-green-500"
+          bgColor="bg-green-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="Inactive"
+          value={inactiveCount}
+          icon={XCircle}
+          color="text-red-500"
+          bgColor="bg-red-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="Total Uses"
+          value={totalUses}
+          icon={Percent}
+          color="text-amber-500"
+          bgColor="bg-amber-500/5"
+          loading={isLoading}
+        />
       </motion.div>
 
-      {/* Promocodes Table */}
-      <motion.div {...fadeUp(0.1)}>
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="border-border">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </div>
+                <div className="mt-3 flex justify-between">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-6 w-16" />
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : promocodes?.length === 0 ? (
+          <Card className="border-border">
+            <CardContent className="py-12 text-center">
+              <Tag size={48} className="mx-auto text-muted-foreground/40 mb-3" />
+              <p className="text-muted-foreground">No promocodes found</p>
+              <Button
+                size="sm"
+                className="mt-3"
+                onClick={() => setCreateDialogOpen(true)}
+              >
+                <Plus size={16} className="mr-2" />
+                Generate First Code
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          promocodes?.map((promo, index) => (
+            <motion.div
+              key={promo.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.02 }}
+            >
+              <Card className="border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <code className="text-sm bg-muted px-2 py-0.5 rounded font-mono">
+                        {promo.code}
+                      </code>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => copyCode(promo.code)}
+                      >
+                        <Copy size={12} />
+                      </Button>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreVertical size={14} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {promo.isActive ? (
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleToggleStatus(promo.id, promo.isActive)
+                            }
+                          >
+                            <PowerOff size={14} className="mr-2" />
+                            Deactivate
+                          </DropdownMenuItem>
+                        ) : (
+                          <DropdownMenuItem
+                            onClick={() =>
+                              handleToggleStatus(promo.id, promo.isActive)
+                            }
+                          >
+                            <Power size={14} className="mr-2" />
+                            Activate
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => {
+                            setSelectedPromo(promo);
+                            setDeleteDialogOpen(true);
+                          }}
+                        >
+                          <Trash2 size={14} className="mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Amount</p>
+                      <p className="font-semibold text-green-600 dark:text-green-400">
+                        {formatCurrency(promo.amount)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Usage</p>
+                      <p className="font-medium">
+                        {promo.usedCount} / {promo.maxUses}
+                        {promo.usedCount >= promo.maxUses && (
+                          <Badge variant="outline" className="ml-1 text-xs">
+                            Exhausted
+                          </Badge>
+                        )}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Status</p>
+                      <Badge variant={promo.isActive ? "default" : "secondary"} className="mt-0.5">
+                        {promo.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Created</p>
+                      <p className="text-muted-foreground">{formatDate(promo.createdAt)}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <motion.div {...fadeUp(0.1)} className="hidden md:block">
         <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <Table>

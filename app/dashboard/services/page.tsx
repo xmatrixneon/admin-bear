@@ -11,6 +11,9 @@ import {
   Loader2,
   MoreVertical,
   DollarSign,
+  CheckCircle,
+  XCircle,
+  Package,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,9 +52,12 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { formatCurrency } from "@/lib/utils";
+import { PageHeader } from "@/components/admin/page-header";
+import { StatsCard } from "@/components/admin/stats-card";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },
@@ -152,39 +158,193 @@ export default function ServicesPage() {
     setEditDialogOpen(true);
   };
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Services</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage services offered on each server
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isFetching}
-          >
-            {isFetching ? (
-              <Loader2 size={16} className="animate-spin mr-2" />
-            ) : (
-              <RefreshCw size={16} className="mr-2" />
-            )}
-            Refresh
-          </Button>
-          <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
-            <Plus size={16} className="mr-2" />
-            Add Service
-          </Button>
-        </div>
-      </motion.div>
+  // Stats calculations
+  const activeCount = services?.filter((s: any) => s.isActive).length || 0;
+  const inactiveCount = services?.filter((s: any) => !s.isActive).length || 0;
+  const totalPurchases = services?.reduce((sum: number, s: any) => sum + (s._count?.purchases || 0), 0) || 0;
 
-      {/* Services Table */}
-      <motion.div {...fadeUp(0.1)}>
+  return (
+    <div className="space-y-4 md:space-y-6">
+      {/* Header */}
+      <PageHeader
+        title="Services"
+        description="Manage services offered on each server"
+        actions={
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => refetch()}
+              disabled={isFetching}
+            >
+              {isFetching ? (
+                <Loader2 size={16} className="animate-spin mr-2" />
+              ) : (
+                <RefreshCw size={16} className="mr-2" />
+              )}
+              Refresh
+            </Button>
+            <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
+              <Plus size={16} className="mr-2" />
+              Add Service
+            </Button>
+          </>
+        }
+      />
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <StatsCard
+          title="Total Services"
+          value={services?.length || 0}
+          icon={Package}
+          color="text-blue-500"
+          bgColor="bg-blue-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="Active"
+          value={activeCount}
+          icon={CheckCircle}
+          color="text-green-500"
+          bgColor="bg-green-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="Inactive"
+          value={inactiveCount}
+          icon={XCircle}
+          color="text-red-500"
+          bgColor="bg-red-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="Total Purchases"
+          value={totalPurchases}
+          icon={DollarSign}
+          color="text-purple-500"
+          bgColor="bg-purple-500/5"
+          loading={isLoading}
+        />
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="border-border">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <Skeleton className="h-12 w-12 rounded-lg" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </div>
+                <div className="mt-3 flex justify-between">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-6 w-16" />
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : services?.length === 0 ? (
+          <Card className="border-border">
+            <CardContent className="py-12 text-center">
+              <Server size={48} className="mx-auto text-muted-foreground/40 mb-3" />
+              <p className="text-muted-foreground">No services found</p>
+              <Button size="sm" className="mt-3" onClick={() => setCreateDialogOpen(true)}>
+                <Plus size={16} className="mr-2" />
+                Add First Service
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          services?.map((service: any, index: number) => (
+            <motion.div
+              key={service.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.02 }}
+            >
+              <Card className="border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {service.iconUrl ? (
+                        <img
+                          src={service.iconUrl}
+                          alt={service.name}
+                          className="w-10 h-10 rounded-lg object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                          <Server size={20} className="text-muted-foreground" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-medium text-sm">{service.name}</p>
+                        <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
+                          {service.code}
+                        </code>
+                      </div>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreVertical size={14} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => openEditDialog(service)}>
+                          <Edit size={14} className="mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => {
+                            setSelectedService(service);
+                            setDeleteDialogOpen(true);
+                          }}
+                        >
+                          <Trash2 size={14} className="mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Server</p>
+                      <p className="truncate">{service.server?.name || "Unknown"}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Price</p>
+                      <p className="text-green-600 dark:text-green-400 font-medium">
+                        {formatCurrency(service.basePrice)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Status</p>
+                      <Badge variant={service.isActive ? "default" : "secondary"} className="mt-0.5">
+                        {service.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Purchases</p>
+                      <p className="font-medium">{service._count?.purchases || 0}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <motion.div {...fadeUp(0.1)} className="hidden md:block">
         <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <Table>
