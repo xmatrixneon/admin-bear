@@ -15,16 +15,12 @@ import {
   UserMinus,
   Loader2,
   RefreshCw,
-  Filter,
-  ArrowUpDown,
   IndianRupee,
   Phone,
-  Mail,
   Star,
   Ban,
   Unlock,
   CreditCard,
-  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,9 +69,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
+import { StatsCard } from "@/components/admin/stats-card";
+import { PageHeader } from "@/components/admin/page-header";
+import { FilterBar } from "@/components/admin/filter-bar";
 
 // Animation helper
 const fadeUp = (delay = 0) => ({
@@ -176,16 +176,17 @@ export default function UsersListPage() {
     }
   };
 
-  const handleFilterChange = (newFilter: FilterTab) => {
-    setFilter(newFilter);
+  const handleFilterChange = (newFilter: string) => {
+    setFilter(newFilter as FilterTab);
     setPage(1);
   };
 
-  const handleSortChange = (newSortBy: SortBy) => {
-    if (sortBy === newSortBy) {
+  const handleSortChange = (newSortBy: string) => {
+    const newSort = newSortBy as SortBy;
+    if (sortBy === newSort) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      setSortBy(newSortBy);
+      setSortBy(newSort);
       setSortOrder("desc");
     }
     setPage(1);
@@ -268,153 +269,335 @@ export default function UsersListPage() {
 
   const totalPages = data?.pagination.totalPages || 1;
 
+  // Calculate stats
+  const totalUsers = data?.pagination.total || 0;
+  const adminCount = data?.users.filter((u: any) => u.isAdmin).length || 0;
+  const avgBalance = data?.users.length
+    ? formatCurrency(
+        data.users.reduce((sum: number, u: any) => sum + (u.wallet?.balance?.toNumber?.() || 0), 0) /
+          data.users.length
+      )
+    : formatCurrency(0);
+  const totalOtps = data?.users.reduce((sum: number, u: any) => sum + (u.wallet?.totalOtp || 0), 0) || 0;
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Users</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage user accounts and permissions
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetch()}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <Loader2 size={16} className="animate-spin mr-2" />
-          ) : (
-            <RefreshCw size={16} className="mr-2" />
-          )}
-          Refresh
-        </Button>
-      </motion.div>
+    <div className="space-y-4 md:space-y-6">
+      {/* Page Header */}
+      <PageHeader
+        title="Users"
+        description="Manage user accounts and permissions"
+        actions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Loader2 size={16} className="animate-spin mr-2" />
+            ) : (
+              <RefreshCw size={16} className="mr-2" />
+            )}
+            Refresh
+          </Button>
+        }
+      />
 
       {/* Stats Cards */}
-      <motion.div {...fadeUp(0.05)} className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-blue-500/10 p-2 rounded-lg">
-              <Users size={18} className="text-blue-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">Total Users</p>
-              <p className="text-xl font-bold text-foreground">{data?.pagination.total || 0}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-purple-500/10 p-2 rounded-lg">
-              <ShieldCheck size={18} className="text-purple-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">Admins</p>
-              <p className="text-xl font-bold text-foreground">
-                {data?.users.filter((u: any) => u.isAdmin).length || 0}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-green-500/10 p-2 rounded-lg">
-              <IndianRupee size={18} className="text-green-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">Avg Balance</p>
-              <p className="text-xl font-bold text-foreground">
-                {data?.users.length
-                  ? formatCurrency(
-                      data.users.reduce((sum: number, u: any) => sum + (u.wallet?.balance?.toNumber?.() || 0), 0) /
-                        data.users.length
-                    )
-                  : formatCurrency(0)}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-card border border-border rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="bg-amber-500/10 p-2 rounded-lg">
-              <Phone size={18} className="text-amber-500" />
-            </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground uppercase font-medium">Total OTPs</p>
-              <p className="text-xl font-bold text-foreground">
-                {data?.users.reduce((sum: number, u: any) => sum + (u.wallet?.totalOtp || 0), 0) || 0}
-              </p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <StatsCard
+          title="Total Users"
+          value={totalUsers}
+          icon={Users}
+          color="text-blue-500"
+          bgColor="bg-blue-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="Admins"
+          value={adminCount}
+          icon={ShieldCheck}
+          color="text-purple-500"
+          bgColor="bg-purple-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="Avg Balance"
+          value={avgBalance}
+          icon={IndianRupee}
+          color="text-green-500"
+          bgColor="bg-green-500/5"
+          loading={isLoading}
+        />
+        <StatsCard
+          title="Total OTPs"
+          value={totalOtps}
+          icon={Phone}
+          color="text-amber-500"
+          bgColor="bg-amber-500/5"
+          loading={isLoading}
+        />
+      </div>
 
-      {/* Search and Filters */}
-      <motion.div {...fadeUp(0.1)} className="bg-card border border-border rounded-xl p-4 space-y-4">
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search by ID, username, email..."
-              value={searchInputValue}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="pl-9 rounded-lg"
-            />
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Filter size={14} />
-                <span className="hidden sm:inline">{filterTabs.find((t) => t.value === filter)?.label}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {filterTabs.map((tab) => (
-                <DropdownMenuItem
-                  key={tab.value}
-                  onClick={() => handleFilterChange(tab.value)}
-                  className={filter === tab.value ? "bg-accent" : ""}
-                >
-                  {tab.label}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
-                <ArrowUpDown size={14} />
-                <span className="hidden sm:inline">{sortOptions.find((s) => s.value === sortBy)?.label}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {sortOptions.map((option) => (
-                <DropdownMenuItem
-                  key={option.value}
-                  onClick={() => handleSortChange(option.value)}
-                >
-                  <span className="flex-1">{option.label}</span>
-                  {sortBy === option.value && (
+      {/* Filter Bar */}
+      <FilterBar
+        searchPlaceholder="Search by ID, username, email..."
+        searchValue={searchInputValue}
+        onSearchChange={handleSearch}
+        filterOptions={filterTabs}
+        filterValue={filter}
+        onFilterChange={handleFilterChange}
+        sortOptions={sortOptions}
+        sortValue={sortBy}
+        sortOrder={sortOrder}
+        onSortChange={handleSortChange}
+      />
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-3">
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="border-border">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </div>
+                <div className="mt-3 flex justify-between">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-6 w-16" />
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        ) : data?.users.length === 0 ? (
+          <Card className="border-border">
+            <CardContent className="py-12 text-center">
+              <Users size={48} className="mx-auto text-muted-foreground/40 mb-3" />
+              <p className="text-muted-foreground">No users found</p>
+            </CardContent>
+          </Card>
+        ) : (
+          data?.users.map((user: any, index: number) => (
+            <motion.div
+              key={user.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.02 }}
+            >
+              <Card className="border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <Avatar size="lg">
+                        {user.isPremium && (
+                          <AvatarBadge>
+                            <Star size={8} fill="currentColor" />
+                          </AvatarBadge>
+                        )}
+                        {user.telegramUsername && (
+                          <AvatarImage
+                            src={`https://t.me/i/userpic/320/${user.telegramUsername}.jpg`}
+                            alt={getUserDisplayName(user)}
+                          />
+                        )}
+                        <AvatarFallback className="text-sm">
+                          {getUserInitials(user)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium text-sm">
+                          {getUserDisplayName(user)}
+                        </p>
+                        {user.telegramUsername && (
+                          <a
+                            href={`https://t.me/${user.telegramUsername}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-500 hover:underline"
+                          >
+                            @{user.telegramUsername}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreVertical size={14} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>
+                          {getUserDisplayName(user)}
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedUser({ id: user.id, name: getUserDisplayName(user) });
+                            setBalanceDialogOpen(true);
+                          }}
+                          disabled={!!user.deletedAt}
+                        >
+                          <CreditCard size={14} className="mr-2" />
+                          Adjust Balance
+                        </DropdownMenuItem>
+                        {!user.deletedAt && user.userData?.status !== "BLOCKED" && (
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setSelectedUser({ id: user.id, name: getUserDisplayName(user) });
+                              setStatusAction("block");
+                              setStatusDialogOpen(true);
+                            }}
+                          >
+                            <Ban size={14} className="mr-2 text-destructive" />
+                            Block User
+                          </DropdownMenuItem>
+                        )}
+                        {user.userData?.status === "BLOCKED" && (
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setSelectedUser({ id: user.id, name: getUserDisplayName(user) });
+                              setStatusAction("unlock");
+                              setStatusDialogOpen(true);
+                            }}
+                          >
+                            <Unlock size={14} className="mr-2 text-green-500" />
+                            Unlock User
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => handleToggleAdmin(user.id, user.isAdmin)}
+                          disabled={!!user.deletedAt}
+                        >
+                          {user.isAdmin ? (
+                            <>
+                              <UserMinus size={14} className="mr-2" />
+                              Remove Admin
+                            </>
+                          ) : (
+                            <>
+                              <UserPlus size={14} className="mr-2" />
+                              Make Admin
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        {!user.deletedAt && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              onClick={() => handleDeleteClick(user)}
+                              disabled={user.isAdmin}
+                            >
+                              <Trash2 size={14} className="mr-2" />
+                              Delete User
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-1.5 text-green-600 dark:text-green-400">
+                      <IndianRupee size={12} />
+                      <span className="font-semibold">
+                        {formatCurrency(user.wallet?.balance)}
+                      </span>
+                    </div>
                     <span className="text-muted-foreground text-xs">
-                      {sortOrder === "asc" ? "ASC" : "DESC"}
+                      OTP: {user.wallet?.totalOtp || 0}
                     </span>
-                  )}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </motion.div>
+                  </div>
 
-      {/* Users Table */}
-      <motion.div {...fadeUp(0.15)}>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {user.isAdmin && (
+                      <Badge variant="secondary" className="gap-1 text-xs">
+                        <Shield size={10} />
+                        Admin
+                      </Badge>
+                    )}
+                    {user.isPremium && (
+                      <Badge variant="outline" className="gap-1 text-xs">
+                        <Star size={10} />
+                        Pro
+                      </Badge>
+                    )}
+                    {user.userData?.status === "BLOCKED" && (
+                      <Badge variant="destructive" className="text-xs">Blocked</Badge>
+                    )}
+                    {user.userData?.status === "SUSPENDED" && (
+                      <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 text-xs">
+                        Suspended
+                      </Badge>
+                    )}
+                    {user.deletedAt && (
+                      <Badge variant="destructive" className="text-xs">Deleted</Badge>
+                    )}
+                    {!user.isAdmin && !user.isPremium && !user.deletedAt && !user.userData?.status && (
+                      <Badge variant="ghost" className="text-xs">Regular</Badge>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))
+        )}
+
+        {/* Mobile Pagination */}
+        {totalPages > 1 && (
+          <div className="pt-4">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                {Array.from({ length: Math.min(3, totalPages) }).map((_, i) => {
+                  let pageNum;
+                  if (totalPages <= 3) {
+                    pageNum = i + 1;
+                  } else if (page <= 2) {
+                    pageNum = i + 1;
+                  } else if (page >= totalPages - 1) {
+                    pageNum = totalPages - 2 + i;
+                  } else {
+                    pageNum = page - 1 + i;
+                  }
+
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        onClick={() => setPage(pageNum)}
+                        isActive={page === pageNum}
+                        className="cursor-pointer"
+                      >
+                        {pageNum}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    className={page === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <motion.div {...fadeUp(0.15)} className="hidden md:block">
         <div className="bg-card border border-border rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <Table>
@@ -635,7 +818,7 @@ export default function UsersListPage() {
             </Table>
           </div>
 
-          {/* Pagination */}
+          {/* Desktop Pagination */}
           {totalPages > 1 && (
             <div className="border-t border-border p-4">
               <Pagination>
