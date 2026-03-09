@@ -12,6 +12,9 @@ import {
   DollarSign,
   RefreshCw,
   Loader2,
+  TrendingUp,
+  TrendingDown,
+  ArrowDownUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,8 +22,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { formatCurrency } from "@/lib/utils";
 import {
-  LineChart,
-  Line,
   AreaChart,
   Area,
   BarChart,
@@ -31,7 +32,10 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  Cell,
 } from "recharts";
+import { StatsCard } from "@/components/admin/stats-card";
+import { PageHeader } from "@/components/admin/page-header";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },
@@ -39,47 +43,15 @@ const fadeUp = (delay = 0) => ({
   transition: { type: "spring" as const, stiffness: 280, damping: 24, delay },
 });
 
-function StatCard({
-  title,
-  value,
-  icon: Icon,
-  color,
-  bgColor,
-  loading = false,
-}: {
-  title: string;
-  value: string | number;
-  icon: React.ElementType;
-  color: string;
-  bgColor: string;
-  loading?: boolean;
-}) {
-  return (
-    <motion.div {...fadeUp()} className={`${bgColor} rounded-xl p-4 border border-border`}>
-      <div className="flex items-center gap-3">
-        <div className={`${color} p-2 rounded-lg`}>
-          <Icon size={18} />
-        </div>
-        <div className="flex-1">
-          <p className="text-xs text-muted-foreground">{title}</p>
-          {loading ? (
-            <Skeleton className="h-6 w-16 mt-1" />
-          ) : (
-            <p className="text-xl font-bold">{value}</p>
-          )}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 export default function DashboardPage() {
   // Stats queries using tRPC
   const { data: generalStats, isLoading: generalStatsLoading, refetch: refetchGeneralStats } = trpc.stats.getDashboardStats.useQuery();
 
   const { data: transactionStats, isLoading: transactionStatsLoading } = trpc.stats.getTransactionStats.useQuery();
 
-  const isLoading = generalStatsLoading || transactionStatsLoading;
+  const { data: chartData, isLoading: chartDataLoading } = trpc.stats.getRechargeSpentChart.useQuery({ days: 7 });
+
+  const isLoading = generalStatsLoading || transactionStatsLoading || chartDataLoading;
 
   // Calculate values
   const totalUsers = generalStats?.totalUsers || 0;
@@ -90,12 +62,11 @@ export default function DashboardPage() {
   const totalOtpSold = generalStats?.otpRevenue || 0;
   const totalRevenue = generalStats?.totalRevenue || 0;
 
-  // Generate mock data for charts
-  const revenueData = Array.from({ length: 7 }, (_, i) => ({
-    day: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i],
-    revenue: Math.floor(Math.random() * 5000) + 2000,
-    deposits: Math.floor(Math.random() * 3000) + 1000,
-  }));
+  // Chart data from API
+  const rechargeSpentData = chartData?.chartData || [];
+  const periodRecharge = chartData?.totals?.totalRecharge || 0;
+  const periodSpent = chartData?.totals?.totalSpent || 0;
+  const periodSms = chartData?.totals?.totalSms || 0;
 
   const transactionData = [
     { name: "Deposit", value: transactionStats?.byType?.DEPOSIT?.count || 0, color: "#22c55e" },
@@ -105,33 +76,31 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Welcome Header */}
-      <motion.div {...fadeUp()} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            Overview of your virtual number service
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetchGeneralStats()}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <Loader2 size={16} className="mr-2 animate-spin" />
-          ) : (
-            <RefreshCw size={16} className="mr-2" />
-          )}
-          Refresh
-        </Button>
-      </motion.div>
+    <div className="space-y-4 md:space-y-6">
+      {/* Page Header */}
+      <PageHeader
+        title="Dashboard"
+        description="Overview of your virtual number service"
+        actions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetchGeneralStats()}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Loader2 size={16} className="mr-2 animate-spin" />
+            ) : (
+              <RefreshCw size={16} className="mr-2" />
+            )}
+            Refresh
+          </Button>
+        }
+      />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <StatsCard
           title="Total Users"
           value={totalUsers}
           icon={Users}
@@ -139,7 +108,15 @@ export default function DashboardPage() {
           bgColor="bg-blue-500/5"
           loading={generalStatsLoading}
         />
-        <StatCard
+        <StatsCard
+          title="User Balance"
+          value={formatCurrency(generalStats?.totalWalletBalance || 0)}
+          icon={Wallet}
+          color="text-emerald-500"
+          bgColor="bg-emerald-500/5"
+          loading={generalStatsLoading}
+        />
+        <StatsCard
           title="Total Services"
           value={totalServices}
           icon={Server}
@@ -147,7 +124,7 @@ export default function DashboardPage() {
           bgColor="bg-amber-500/5"
           loading={generalStatsLoading}
         />
-        <StatCard
+        <StatsCard
           title="Total Servers"
           value={totalServers}
           icon={Server}
@@ -155,7 +132,7 @@ export default function DashboardPage() {
           bgColor="bg-purple-500/5"
           loading={generalStatsLoading}
         />
-        <StatCard
+        <StatsCard
           title="Total Transactions"
           value={totalTransactions}
           icon={Activity}
@@ -163,7 +140,7 @@ export default function DashboardPage() {
           bgColor="bg-cyan-500/5"
           loading={transactionStatsLoading}
         />
-        <StatCard
+        <StatsCard
           title="Total Recharge"
           value={formatCurrency(totalRecharge)}
           icon={CreditCard}
@@ -171,7 +148,7 @@ export default function DashboardPage() {
           bgColor="bg-green-500/5"
           loading={generalStatsLoading}
         />
-        <StatCard
+        <StatsCard
           title="OTP Sold"
           value={totalOtpSold}
           icon={MessageSquare}
@@ -179,7 +156,7 @@ export default function DashboardPage() {
           bgColor="bg-rose-500/5"
           loading={generalStatsLoading}
         />
-        <StatCard
+        <StatsCard
           title="Total Revenue"
           value={formatCurrency(totalRevenue)}
           icon={DollarSign}
@@ -189,45 +166,137 @@ export default function DashboardPage() {
         />
       </div>
 
+      {/* Period Stats - Recharge & Spent */}
+      <motion.div {...fadeUp(0.05)}>
+        <Card className="bg-gradient-to-r from-primary/5 to-transparent">
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <ArrowDownUp className="text-primary" size={20} />
+              <h3 className="font-semibold">Last 7 Days Overview</h3>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-green-500/10">
+                  <TrendingUp className="text-green-500" size={18} />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Recharge (UPI + Promo)</p>
+                  {chartDataLoading ? (
+                    <Skeleton className="h-5 w-20 mt-1" />
+                  ) : (
+                    <p className="text-lg font-bold text-green-500">{formatCurrency(periodRecharge)}</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-red-500/10">
+                  <TrendingDown className="text-red-500" size={18} />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Spent (SMS Received)</p>
+                  {chartDataLoading ? (
+                    <Skeleton className="h-5 w-20 mt-1" />
+                  ) : (
+                    <p className="text-lg font-bold text-red-500">{formatCurrency(periodSpent)}</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-blue-500/10">
+                  <MessageSquare className="text-blue-500" size={18} />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">SMS Received</p>
+                  {chartDataLoading ? (
+                    <Skeleton className="h-5 w-20 mt-1" />
+                  ) : (
+                    <p className="text-lg font-bold text-blue-500">{periodSms}</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-purple-500/10">
+                  <DollarSign className="text-purple-500" size={18} />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Net Flow</p>
+                  {chartDataLoading ? (
+                    <Skeleton className="h-5 w-20 mt-1" />
+                  ) : (
+                    <p className={`text-lg font-bold ${periodRecharge - periodSpent >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                      {formatCurrency(periodRecharge - periodSpent)}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Revenue Chart */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
+        {/* Recharge vs Spent Chart */}
         <motion.div {...fadeUp(0.1)}>
           <Card>
             <CardHeader>
-              <CardTitle>Revenue Trend (Last 7 Days)</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <ArrowDownUp size={18} />
+                Recharge vs Spent (Last 7 Days)
+              </CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">
+                Recharge = UPI + Promo | Spent = SMS Received
+              </p>
             </CardHeader>
             <CardContent>
-              {isLoading ? (
-                <Skeleton className="h-[200px] w-full" />
+              {chartDataLoading ? (
+                <Skeleton className="h-[250px] w-full" />
               ) : (
-                <ResponsiveContainer width="100%" height={200}>
-                  <AreaChart data={revenueData}>
+                <ResponsiveContainer width="100%" height={250}>
+                  <AreaChart data={rechargeSpentData}>
                     <defs>
-                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      <linearGradient id="colorRecharge" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0.05}/>
+                      </linearGradient>
+                      <linearGradient id="colorSpent" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4}/>
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0.05}/>
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis dataKey="day" className="text-xs" />
-                    <YAxis className="text-xs" />
+                    <XAxis dataKey="fullDate" className="text-xs" tick={{ fontSize: 11 }} />
+                    <YAxis className="text-xs" tick={{ fontSize: 11 }} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "hsl(var(--card))",
                         border: "1px solid hsl(var(--border))",
                         borderRadius: "8px",
                       }}
+                      formatter={(value: number, name: string) => [
+                        name === 'Recharge (UPI+Promo)' || name === 'Spent (SMS)' ? formatCurrency(value) : value,
+                        name
+                      ]}
+                      labelFormatter={(label) => `Date: ${label}`}
                     />
                     <Legend />
                     <Area
                       type="monotone"
-                      dataKey="revenue"
-                      stroke="#3b82f6"
+                      dataKey="recharge"
+                      stroke="#22c55e"
                       strokeWidth={2}
                       fillOpacity={1}
-                      fill="url(#colorRevenue)"
-                      name="Revenue"
+                      fill="url(#colorRecharge)"
+                      name="Recharge (UPI+Promo)"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="spent"
+                      stroke="#ef4444"
+                      strokeWidth={2}
+                      fillOpacity={1}
+                      fill="url(#colorSpent)"
+                      name="Spent (SMS)"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -243,14 +312,14 @@ export default function DashboardPage() {
               <CardTitle>Transactions by Type</CardTitle>
             </CardHeader>
             <CardContent>
-              {isLoading ? (
-                <Skeleton className="h-[200px] w-full" />
+              {transactionStatsLoading ? (
+                <Skeleton className="h-[250px] w-full" />
               ) : (
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={transactionData}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis dataKey="name" className="text-xs" />
-                    <YAxis className="text-xs" />
+                    <XAxis dataKey="name" className="text-xs" tick={{ fontSize: 11 }} />
+                    <YAxis className="text-xs" tick={{ fontSize: 11 }} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "hsl(var(--card))",
@@ -259,7 +328,11 @@ export default function DashboardPage() {
                       }}
                     />
                     <Legend />
-                    <Bar dataKey="value" radius={[4, 4, 0, 0]} name="Count" />
+                    <Bar dataKey="value" radius={[4, 4, 0, 0]} name="Count">
+                      {transactionData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               )}
