@@ -17,6 +17,20 @@ import {
   Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 
 const navItems = [
   { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -33,9 +47,8 @@ const navItems = [
 export function AdminSidebar() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
-  const [adminUser, setAdminUser] = useState<any>(null);
+  const [adminUser, setAdminUser] = useState<{ name?: string; telegramId?: string; username?: string } | null>(null);
 
-  // Only read localStorage after mount to avoid hydration mismatch
   useEffect(() => {
     setMounted(true);
     try {
@@ -51,62 +64,78 @@ export function AdminSidebar() {
   };
 
   return (
-    <div className="flex h-full w-64 flex-col border-r bg-card">
-      {/* Logo */}
-      <div className="h-16 flex items-center px-6 border-b">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-            <Shield className="w-5 h-5 text-white" />
-          </div>
-          <span className="font-bold text-lg">MeowSMS Admin</span>
-        </div>
-      </div>
+    <Sidebar collapsible="icon" className="border-r">
+      <SidebarHeader className="border-b border-border">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <Link href="/dashboard">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                  <Shield className="size-4" />
+                </div>
+                <div className="flex flex-col gap-0.5 leading-none">
+                  <span className="font-semibold">MeowSMS</span>
+                  <span className="text-xs text-muted-foreground">Admin Panel</span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive =
-            pathname === item.href || pathname.startsWith(item.href + "/");
-          return (
-            <Link key={item.href} href={item.href}>
-              <Button
-                variant={isActive ? "secondary" : "ghost"}
-                className={cn(
-                  "w-full justify-start gap-3",
-                  isActive && "bg-secondary",
-                )}
-              >
-                <Icon className="w-4 h-4" />
-                {item.title}
-              </Button>
-            </Link>
-          );
-        })}
-      </nav>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navItems.map((item) => {
+                const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={item.title}
+                    >
+                      <Link href={item.href}>
+                        <item.icon className="size-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
 
-      {/* User & Logout */}
-      <div className="p-4 border-t space-y-3">
-        {/* Only render user info after mount to avoid hydration mismatch */}
-        {mounted && adminUser && (
-          <div className="px-3">
-            <p className="text-sm font-medium">
-              {adminUser?.name || adminUser?.firstName || "Admin"}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {adminUser?.telegramId || adminUser?.username || "Administrator"}
-            </p>
-          </div>
-        )}
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-          onClick={handleLogout}
-        >
-          <LogOut className="w-4 h-4" />
-          Logout
-        </Button>
-      </div>
-    </div>
+      <SidebarFooter className="border-t border-border">
+        <SidebarMenu>
+          {mounted && adminUser && (
+            <SidebarMenuItem>
+              <div className="flex flex-col gap-0.5 px-3 py-2">
+                <span className="text-sm font-medium truncate">
+                  {adminUser?.name || "Admin"}
+                </span>
+                <span className="text-xs text-muted-foreground truncate">
+                  {adminUser?.telegramId || adminUser?.username || "Administrator"}
+                </span>
+              </div>
+            </SidebarMenuItem>
+          )}
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            >
+              <LogOut className="size-4" />
+              <span>Logout</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
   );
 }
