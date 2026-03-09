@@ -25,6 +25,7 @@ const paginationSchema = z.object({
 export const transactionsRouter = router({
   /**
    * List transactions with filtering and pagination
+   * By default shows only DEPOSIT and PROMO (recharge transactions)
    */
   list: protectedProcedure
     .input(
@@ -33,6 +34,7 @@ export const transactionsRouter = router({
           search: z.string().optional(),
           type: transactionTypeSchema.optional(),
           status: transactionStatusSchema.optional(),
+          showAll: z.boolean().optional(), // If true, show all types; otherwise only DEPOSIT & PROMO
         })
         .merge(paginationSchema)
     )
@@ -41,16 +43,22 @@ export const transactionsRouter = router({
 
       const where: any = {};
 
-      // Handle search
+      // By default only show DEPOSIT and PROMO (recharge transactions)
+      if (!input.showAll && !input.type) {
+        where.type = { in: ['DEPOSIT', 'PROMO'] };
+      } else if (input.type) {
+        where.type = input.type;
+      }
+
+      // Handle search (search in UTR/txnId and Telegram ID)
       if (input.search && input.search.length >= 2) {
         where.OR = [
-          { phoneNumber: { contains: input.search } },
-          { txnId: { contains: input.search } },
+          { txnId: { contains: input.search, mode: 'insensitive' } },
+          { wallet: { user: { telegramId: { contains: input.search } } } },
         ];
       }
 
-      // Handle filters
-      if (input.type) where.type = input.type;
+      // Handle status filter
       if (input.status) where.status = input.status;
 
       const [transactions, total] = await Promise.all([
@@ -62,8 +70,8 @@ export const transactionsRouter = router({
                 user: {
                   select: {
                     id: true,
-                    firstName: true,
-                    lastName: true,
+                    name: true,
+                    telegramId: true,
                     telegramUsername: true,
                   },
                 },
@@ -90,7 +98,7 @@ export const transactionsRouter = router({
 
   /**
    * Get transaction statistics grouped by type
-   * Optional date range filtering
+   * By default only counts DEPOSIT and PROMO (recharge transactions)
    */
   getStats: protectedProcedure
     .input(
@@ -98,12 +106,13 @@ export const transactionsRouter = router({
         .object({
           startDate: z.string().optional(),
           endDate: z.string().optional(),
+          showAll: z.boolean().optional(),
         })
         .optional()
     )
     .query(async ({ input, ctx }) => {
       const { prisma } = ctx;
-      const { startDate, endDate } = input || {};
+      const { startDate, endDate, showAll } = input || {};
 
       const dateFilter: any = {};
       if (startDate || endDate) {
@@ -112,11 +121,15 @@ export const transactionsRouter = router({
         if (endDate) dateFilter.createdAt.lte = new Date(endDate);
       }
 
+      // By default only count DEPOSIT and PROMO
+      const typeFilter = showAll ? {} : { type: { in: ['DEPOSIT', 'PROMO'] } };
+      const where = { ...dateFilter, ...typeFilter };
+
       const [totalCount, byType] = await Promise.all([
-        prisma.transaction.count({ where: dateFilter }),
+        prisma.transaction.count({ where }),
         prisma.transaction.groupBy({
           by: ['type'],
-          where: dateFilter,
+          where,
           _count: true,
           _sum: { amount: true },
         }),

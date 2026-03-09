@@ -31,19 +31,21 @@ export const statsRouter = router({
       prisma.promocode.count({ where: { isActive: true } }),
     ]);
 
-    // Total Revenue: Only count SMS received (COMPLETED ActiveNumber)
-    const totalRevenue = await prisma.activeNumber.aggregate({
+    // Total Revenue and OTP Sold: Only count SMS received (COMPLETED ActiveNumber)
+    const completedNumbers = await prisma.activeNumber.aggregate({
       where: { status: 'COMPLETED' },
       _sum: { price: true },
+      _count: true,
     });
 
     // Total Recharge: Only count DEPOSIT and PROMO transactions
-    const totalRecharge = await prisma.transaction.aggregate({
+    const rechargeStats = await prisma.transaction.aggregate({
       where: {
         status: 'COMPLETED',
         type: { in: ['DEPOSIT', 'PROMO'] },
       },
       _sum: { amount: true },
+      _count: true,
     });
 
     return {
@@ -53,15 +55,17 @@ export const statsRouter = router({
       activeNumbers,
       totalWalletBalance: Number(totalWalletBalance._sum.balance || 0),
       activePromocodes,
-      totalRevenue: Number(totalRevenue._sum.price || 0),
-      otpRevenue: Number(totalRevenue._sum.price || 0),
-      totalRecharge: Number(totalRecharge._sum.amount || 0),
+      totalRevenue: Number(completedNumbers._sum.price || 0),
+      otpRevenue: Number(completedNumbers._sum.price || 0),
+      otpSold: completedNumbers._count,
+      totalRecharge: Number(rechargeStats._sum.amount || 0),
+      totalRechargeTransactions: rechargeStats._count,
     };
   }),
 
   /**
    * Get transaction statistics grouped by type
-   * Optional date range filtering
+   * Only counts DEPOSIT and PROMO transactions (recharge transactions)
    */
   getTransactionStats: protectedProcedure
     .input(
@@ -76,7 +80,9 @@ export const statsRouter = router({
       const { prisma } = ctx;
       const { startDate, endDate } = input || {};
 
-      const dateFilter: any = {};
+      const dateFilter: any = {
+        type: { in: ['DEPOSIT', 'PROMO'] },
+      };
       if (startDate || endDate) {
         dateFilter.createdAt = {};
         if (startDate) dateFilter.createdAt.gte = new Date(startDate);

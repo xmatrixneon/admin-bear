@@ -57,9 +57,9 @@ export default function DashboardPage() {
   const totalUsers = generalStats?.totalUsers || 0;
   const totalServices = generalStats?.totalServices || 0;
   const totalServers = generalStats?.totalServers || 0;
-  const totalTransactions = transactionStats?.total || 0;
+  const totalTransactions = generalStats?.totalRechargeTransactions || 0;
   const totalRecharge = generalStats?.totalRecharge || 0;
-  const totalOtpSold = generalStats?.otpRevenue || 0;
+  const totalOtpSold = generalStats?.otpSold || 0;
   const totalRevenue = generalStats?.totalRevenue || 0;
 
   // Chart data from API
@@ -68,10 +68,9 @@ export default function DashboardPage() {
   const periodSpent = chartData?.totals?.totalSpent || 0;
   const periodSms = chartData?.totals?.totalSms || 0;
 
+  // Transaction chart - only Deposit and Promo
   const transactionData = [
     { name: "Deposit", value: transactionStats?.byType?.DEPOSIT?.count || 0, color: "#22c55e" },
-    { name: "Purchase", value: transactionStats?.byType?.PURCHASE?.count || 0, color: "#3b82f6" },
-    { name: "Refund", value: transactionStats?.byType?.REFUND?.count || 0, color: "#f59e0b" },
     { name: "Promo", value: transactionStats?.byType?.PROMO?.count || 0, color: "#8b5cf6" },
   ];
 
