@@ -8,6 +8,7 @@ interface PageHeaderProps {
   description?: string;
   actions?: React.ReactNode;
   className?: string;
+  badge?: string;
 }
 
 const fadeUp = () => ({
@@ -21,6 +22,7 @@ export function PageHeader({
   description,
   actions,
   className,
+  badge,
 }: PageHeaderProps) {
   return (
     <motion.div
@@ -30,13 +32,28 @@ export function PageHeader({
         className
       )}
     >
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+      <div className="space-y-1">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            {title}
+          </h1>
+          {badge && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+              {badge}
+            </span>
+          )}
+        </div>
         {description && (
-          <p className="text-sm text-muted-foreground mt-1">{description}</p>
+          <p className="text-sm text-muted-foreground max-w-lg">
+            {description}
+          </p>
         )}
       </div>
-      {actions && <div className="flex items-center gap-2">{actions}</div>}
+      {actions && (
+        <div className="flex items-center gap-2 shrink-0">
+          {actions}
+        </div>
+      )}
     </motion.div>
   );
 }

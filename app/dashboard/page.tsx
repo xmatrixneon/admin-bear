@@ -15,12 +15,17 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowDownUp,
+  Zap,
+  Settings,
+  FileText,
+  Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { formatCurrency } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
   AreaChart,
   Area,
@@ -36,12 +41,88 @@ import {
 } from "recharts";
 import { StatsCard } from "@/components/admin/stats-card";
 import { PageHeader } from "@/components/admin/page-header";
+import Link from "next/link";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 14 },
   animate: { opacity: 1, y: 0 },
   transition: { type: "spring" as const, stiffness: 280, damping: 24, delay },
 });
+
+const quickActions = [
+  {
+    title: "Users",
+    href: "/dashboard/users",
+    icon: Users,
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
+    borderColor: "hover:border-blue-500/30",
+    description: "Manage accounts",
+  },
+  {
+    title: "Wallets",
+    href: "/dashboard/wallets",
+    icon: Wallet,
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-500/10",
+    borderColor: "hover:border-emerald-500/30",
+    description: "View balances",
+  },
+  {
+    title: "Transactions",
+    href: "/dashboard/transactions",
+    icon: Activity,
+    color: "text-cyan-500",
+    bgColor: "bg-cyan-500/10",
+    borderColor: "hover:border-cyan-500/30",
+    description: "Payment history",
+  },
+  {
+    title: "Servers",
+    href: "/dashboard/servers",
+    icon: Server,
+    color: "text-purple-500",
+    bgColor: "bg-purple-500/10",
+    borderColor: "hover:border-purple-500/30",
+    description: "OTP servers",
+  },
+  {
+    title: "Services",
+    href: "/dashboard/services",
+    icon: Zap,
+    color: "text-amber-500",
+    bgColor: "bg-amber-500/10",
+    borderColor: "hover:border-amber-500/30",
+    description: "Manage services",
+  },
+  {
+    title: "Promocodes",
+    href: "/dashboard/promocodes",
+    icon: Tag,
+    color: "text-orange-500",
+    bgColor: "bg-orange-500/10",
+    borderColor: "hover:border-orange-500/30",
+    description: "Discount codes",
+  },
+  {
+    title: "Audit Logs",
+    href: "/dashboard/audit-logs",
+    icon: FileText,
+    color: "text-rose-500",
+    bgColor: "bg-rose-500/10",
+    borderColor: "hover:border-rose-500/30",
+    description: "Activity trail",
+  },
+  {
+    title: "Settings",
+    href: "/dashboard/settings",
+    icon: Settings,
+    color: "text-primary",
+    bgColor: "bg-primary/10",
+    borderColor: "hover:border-primary/30",
+    description: "App config",
+  },
+];
 
 export default function DashboardPage() {
   // Stats queries using tRPC
@@ -75,7 +156,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-6 md:space-y-8">
       {/* Page Header */}
       <PageHeader
         title="Dashboard"
@@ -167,62 +248,71 @@ export default function DashboardPage() {
 
       {/* Period Stats - Recharge & Spent */}
       <motion.div {...fadeUp(0.05)}>
-        <Card className="bg-gradient-to-r from-primary/5 to-transparent">
-          <CardContent className="p-4 md:p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <ArrowDownUp className="text-primary" size={20} />
-              <h3 className="font-semibold">Last 7 Days Overview</h3>
+        <Card className="overflow-hidden border-border/50">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" />
+          <CardContent className="p-5 md:p-6 relative">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <ArrowDownUp className="text-primary" size={18} />
+              </div>
+              <div>
+                <h3 className="font-semibold">Last 7 Days Overview</h3>
+                <p className="text-xs text-muted-foreground">Recharge vs Spent metrics</p>
+              </div>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-500/10">
-                  <TrendingUp className="text-green-500" size={18} />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-green-500/5 border border-green-500/10">
+                <div className="p-2.5 rounded-lg bg-green-500/10">
+                  <TrendingUp className="text-green-500" size={20} />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Recharge (UPI + Promo)</p>
                   {chartDataLoading ? (
-                    <Skeleton className="h-5 w-20 mt-1" />
+                    <Skeleton className="h-6 w-20 mt-1" />
                   ) : (
                     <p className="text-lg font-bold text-green-500">{formatCurrency(periodRecharge)}</p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-red-500/10">
-                  <TrendingDown className="text-red-500" size={18} />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/10">
+                <div className="p-2.5 rounded-lg bg-red-500/10">
+                  <TrendingDown className="text-red-500" size={20} />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Spent (SMS Received)</p>
                   {chartDataLoading ? (
-                    <Skeleton className="h-5 w-20 mt-1" />
+                    <Skeleton className="h-6 w-20 mt-1" />
                   ) : (
                     <p className="text-lg font-bold text-red-500">{formatCurrency(periodSpent)}</p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-blue-500/10">
-                  <MessageSquare className="text-blue-500" size={18} />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                <div className="p-2.5 rounded-lg bg-blue-500/10">
+                  <MessageSquare className="text-blue-500" size={20} />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">SMS Received</p>
                   {chartDataLoading ? (
-                    <Skeleton className="h-5 w-20 mt-1" />
+                    <Skeleton className="h-6 w-20 mt-1" />
                   ) : (
                     <p className="text-lg font-bold text-blue-500">{periodSms}</p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-500/10">
-                  <DollarSign className="text-purple-500" size={18} />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-purple-500/5 border border-purple-500/10">
+                <div className="p-2.5 rounded-lg bg-purple-500/10">
+                  <DollarSign className="text-purple-500" size={20} />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Net Flow</p>
                   {chartDataLoading ? (
-                    <Skeleton className="h-5 w-20 mt-1" />
+                    <Skeleton className="h-6 w-20 mt-1" />
                   ) : (
-                    <p className={`text-lg font-bold ${periodRecharge - periodSpent >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    <p className={cn(
+                      "text-lg font-bold",
+                      periodRecharge - periodSpent >= 0 ? "text-green-500" : "text-red-500"
+                    )}>
                       {formatCurrency(periodRecharge - periodSpent)}
                     </p>
                   )}
@@ -237,40 +327,55 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
         {/* Recharge vs Spent Chart */}
         <motion.div {...fadeUp(0.1)}>
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ArrowDownUp size={18} />
-                Recharge vs Spent (Last 7 Days)
-              </CardTitle>
-              <p className="text-xs text-muted-foreground mt-1">
-                Recharge = UPI + Promo | Spent = SMS Received
-              </p>
+          <Card className="border-border/50">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <ArrowDownUp size={16} className="text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">Recharge vs Spent</CardTitle>
+                  <CardDescription>Last 7 days trend</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               {chartDataLoading ? (
-                <Skeleton className="h-[250px] w-full" />
+                <Skeleton className="h-[280px] w-full" />
               ) : (
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={280}>
                   <AreaChart data={rechargeSpentData}>
                     <defs>
                       <linearGradient id="colorRecharge" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.4}/>
-                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0.05}/>
+                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
                       </linearGradient>
                       <linearGradient id="colorSpent" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4}/>
-                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0.05}/>
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis dataKey="fullDate" className="text-xs" tick={{ fontSize: 11 }} />
-                    <YAxis className="text-xs" tick={{ fontSize: 11 }} />
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                    <XAxis
+                      dataKey="fullDate"
+                      tick={{ fontSize: 11, fill: "currentColor" }}
+                      tickLine={false}
+                      axisLine={false}
+                      className="text-muted-foreground"
+                    />
+                    <YAxis
+                      tick={{ fontSize: 11, fill: "currentColor" }}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => `₹${value}`}
+                      className="text-muted-foreground"
+                    />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "hsl(var(--card))",
                         border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
+                        borderRadius: "12px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                       }}
                       formatter={(value: number, name: string) => [
                         name === 'Recharge (UPI+Promo)' || name === 'Spent (SMS)' ? formatCurrency(value) : value,
@@ -278,7 +383,10 @@ export default function DashboardPage() {
                       ]}
                       labelFormatter={(label) => `Date: ${label}`}
                     />
-                    <Legend />
+                    <Legend
+                      wrapperStyle={{ paddingTop: "16px" }}
+                      iconType="circle"
+                    />
                     <Area
                       type="monotone"
                       dataKey="recharge"
@@ -306,28 +414,52 @@ export default function DashboardPage() {
 
         {/* Transaction Chart */}
         <motion.div {...fadeUp(0.15)}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Transactions by Type</CardTitle>
+          <Card className="border-border/50">
+            <CardHeader className="pb-2">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Activity size={16} className="text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">Transactions by Type</CardTitle>
+                  <CardDescription>Distribution overview</CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               {transactionStatsLoading ? (
-                <Skeleton className="h-[250px] w-full" />
+                <Skeleton className="h-[280px] w-full" />
               ) : (
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={transactionData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis dataKey="name" className="text-xs" tick={{ fontSize: 11 }} />
-                    <YAxis className="text-xs" tick={{ fontSize: 11 }} />
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={transactionData} barSize={60}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                    <XAxis
+                      dataKey="name"
+                      className="text-xs"
+                      tick={{ fontSize: 12, fill: "currentColor" }}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      className="text-xs"
+                      tick={{ fontSize: 11, fill: "currentColor" }}
+                      tickLine={false}
+                      axisLine={false}
+                      
+                    />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
+                        backgroundColor: "bg-primary",
+                        border: "1px solid bg-border",
+                        borderRadius: "12px",
+                        boxShadow: "0 4px 12px ",
                       }}
                     />
-                    <Legend />
-                    <Bar dataKey="value" radius={[4, 4, 0, 0]} name="Count">
+                    <Legend
+                      wrapperStyle={{ paddingTop: "16px" }}
+                      iconType="circle"
+                    />
+                    <Bar dataKey="value" radius={[8, 8, 0, 0]} name="Count">
                       {transactionData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
@@ -342,72 +474,45 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <motion.div {...fadeUp(0.2)}>
-        <h2 className="text-lg font-semibold mb-3">Quick Actions</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <a
-            href="/dashboard/users"
-            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
-          >
-            <Users size={24} className="text-blue-500" />
-            <span className="text-sm font-medium">Users</span>
-            <ArrowUpRight size={14} className="text-muted-foreground" />
-          </a>
-          <a
-            href="/dashboard/wallets"
-            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
-          >
-            <Wallet size={24} className="text-emerald-500" />
-            <span className="text-sm font-medium">Wallets</span>
-            <ArrowUpRight size={14} className="text-muted-foreground" />
-          </a>
-          <a
-            href="/dashboard/transactions"
-            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
-          >
-            <Activity size={24} className="text-cyan-500" />
-            <span className="text-sm font-medium">Transactions</span>
-            <ArrowUpRight size={14} className="text-muted-foreground" />
-          </a>
-          <a
-            href="/dashboard/servers"
-            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
-          >
-            <Server size={24} className="text-purple-500" />
-            <span className="text-sm font-medium">Servers</span>
-            <ArrowUpRight size={14} className="text-muted-foreground" />
-          </a>
-          <a
-            href="/dashboard/services"
-            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
-          >
-            <Server size={24} className="text-amber-500" />
-            <span className="text-sm font-medium">Services</span>
-            <ArrowUpRight size={14} className="text-muted-foreground" />
-          </a>
-          <a
-            href="/dashboard/promocodes"
-            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
-          >
-            <CreditCard size={24} className="text-orange-500" />
-            <span className="text-sm font-medium">Promocodes</span>
-            <ArrowUpRight size={14} className="text-muted-foreground" />
-          </a>
-          <a
-            href="/dashboard/audit-logs"
-            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
-          >
-            <MessageSquare size={24} className="text-rose-500" />
-            <span className="text-sm font-medium">Audit Logs</span>
-            <ArrowUpRight size={14} className="text-muted-foreground" />
-          </a>
-          <a
-            href="/dashboard/settings"
-            className="bg-card hover:bg-muted border border-border rounded-xl p-4 flex flex-col items-center gap-2 transition-colors"
-          >
-            <Wallet size={24} className="text-primary" />
-            <span className="text-sm font-medium">Settings</span>
-            <ArrowUpRight size={14} className="text-muted-foreground" />
-          </a>
+        <div className="flex items-center gap-2 mb-4">
+          <Zap size={18} className="text-primary" />
+          <h2 className="text-lg font-semibold">Quick Actions</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          {quickActions.map((action) => (
+            <Link
+              key={action.href}
+              href={action.href}
+              className={cn(
+                "group relative overflow-hidden bg-card hover:bg-muted/50 border border-border rounded-xl p-4 md:p-5 transition-all duration-300",
+                "hover:shadow-lg hover:shadow-primary/5",
+                action.borderColor
+              )}
+            >
+              <div className={cn(
+                "absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-30 transition-opacity -translate-y-1/2 translate-x-1/2",
+                action.bgColor
+              )} />
+              <div className="relative">
+                <div className={cn(
+                  "inline-flex p-2.5 rounded-xl mb-3 transition-transform group-hover:scale-110",
+                  action.bgColor
+                )}>
+                  <action.icon size={22} className={action.color} />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-medium block">{action.title}</span>
+                    <span className="text-xs text-muted-foreground">{action.description}</span>
+                  </div>
+                  <ArrowUpRight
+                    size={16}
+                    className="text-muted-foreground group-hover:text-primary transition-colors group-hover:translate-x-0.5 group-hover:-translate-y-0.5 duration-200"
+                  />
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </motion.div>
     </div>
