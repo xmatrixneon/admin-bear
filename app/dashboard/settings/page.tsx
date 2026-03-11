@@ -305,12 +305,12 @@ export default function SettingsPage() {
       'minRedeem',
       'numberExpiryMinutes',
       'minCancelMinutes',
-    ];
+    ] as const;
 
-    const converted = { ...partial };
+    const converted = { ...partial } as Record<string, unknown>;
     for (const key of numericFields) {
       if (key in converted && typeof converted[key] === 'string') {
-        (converted as Record<string, unknown>)[key] = parseFloat(converted[key] as string) || 0;
+        converted[key] = parseFloat(converted[key] as string) || 0;
       }
     }
 
