@@ -14,6 +14,7 @@ import {
   CheckCircle,
   XCircle,
   Package,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,6 +71,7 @@ export default function ServicesPage() {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Form state
   const [formData, setFormData] = useState({
@@ -163,6 +165,16 @@ export default function ServicesPage() {
   const inactiveCount = services?.filter((s: any) => !s.isActive).length || 0;
   const totalPurchases = services?.reduce((sum: number, s: any) => sum + (s._count?.purchases || 0), 0) || 0;
 
+  // Filter services based on search query
+  const filteredServices = services?.filter((service: any) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      service.name.toLowerCase().includes(query) ||
+      service.code.toLowerCase().includes(query) ||
+      service.server?.name?.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Header */}
@@ -171,6 +183,15 @@ export default function ServicesPage() {
         description="Manage services offered on each server"
         actions={
           <>
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search services..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 w-48 md:w-64"
+              />
+            </div>
             <Button
               variant="outline"
               size="sm"
@@ -248,19 +269,23 @@ export default function ServicesPage() {
               </CardContent>
             </Card>
           ))
-        ) : services?.length === 0 ? (
+        ) : filteredServices?.length === 0 ? (
           <Card className="border-border">
             <CardContent className="py-12 text-center">
-              <Server size={48} className="mx-auto text-muted-foreground/40 mb-3" />
-              <p className="text-muted-foreground">No services found</p>
-              <Button size="sm" className="mt-3" onClick={() => setCreateDialogOpen(true)}>
-                <Plus size={16} className="mr-2" />
-                Add First Service
-              </Button>
+              <Search size={48} className="mx-auto text-muted-foreground/40 mb-3" />
+              <p className="text-muted-foreground">
+                {searchQuery ? `No services matching "${searchQuery}"` : "No services found"}
+              </p>
+              {!searchQuery && (
+                <Button size="sm" className="mt-3" onClick={() => setCreateDialogOpen(true)}>
+                  <Plus size={16} className="mr-2" />
+                  Add First Service
+                </Button>
+              )}
             </CardContent>
           </Card>
         ) : (
-          services?.map((service: any, index: number) => (
+          filteredServices?.map((service: any, index: number) => (
             <motion.div
               key={service.id}
               initial={{ opacity: 0, y: 8 }}
@@ -374,21 +399,25 @@ export default function ServicesPage() {
                       <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
                     </TableRow>
                   ))
-                ) : services?.length === 0 ? (
+                ) : filteredServices?.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-12">
                       <div className="flex flex-col items-center gap-3">
-                        <Server size={48} className="text-muted-foreground/40" />
-                        <p className="text-muted-foreground">No services found</p>
-                        <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
-                          <Plus size={16} className="mr-2" />
-                          Add First Service
-                        </Button>
+                        <Search size={48} className="text-muted-foreground/40" />
+                        <p className="text-muted-foreground">
+                          {searchQuery ? `No services matching "${searchQuery}"` : "No services found"}
+                        </p>
+                        {!searchQuery && (
+                          <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
+                            <Plus size={16} className="mr-2" />
+                            Add First Service
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
-                  services?.map((service, index) => (
+                  filteredServices?.map((service, index) => (
                     <motion.tr
                       key={service.id}
                       initial={{ opacity: 0, y: 8 }}

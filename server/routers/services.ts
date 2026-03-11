@@ -125,7 +125,7 @@ export const servicesRouter = router({
       // Create audit log
       await prisma.userAuditLog.create({
         data: {
-          userId: admin.id, // Use adminId as userId for system operations
+          userId: admin.id,
           adminId: admin.id,
           action: 'CREATE_SERVICE',
           changes: service,
@@ -182,7 +182,7 @@ export const servicesRouter = router({
       // Create audit log
       await prisma.userAuditLog.create({
         data: {
-          userId: admin.id, // Use adminId as userId for system operations
+          userId: admin.id,
           adminId: admin.id,
           action: 'UPDATE_SERVICE',
           changes: {
@@ -222,7 +222,7 @@ export const servicesRouter = router({
       // Create audit log
       await prisma.userAuditLog.create({
         data: {
-          userId: admin.id, // Use adminId as userId for system operations
+          userId: admin.id,
           adminId: admin.id,
           action: 'DELETE_SERVICE',
           changes: { id: input.id, name: existing.name, code: existing.code },

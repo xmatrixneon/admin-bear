@@ -297,7 +297,24 @@ export default function SettingsPage() {
 
   // Called by each section with only its own changed fields
   const handleSectionSave = async (partial: Partial<SettingsData>) => {
-    await updateSettingsMutation.mutateAsync(partial as any);
+    // Convert numeric string fields to actual numbers
+    const numericFields = [
+      'minRechargeAmount',
+      'maxRechargeAmount',
+      'referralPercent',
+      'minRedeem',
+      'numberExpiryMinutes',
+      'minCancelMinutes',
+    ];
+
+    const converted = { ...partial };
+    for (const key of numericFields) {
+      if (key in converted && typeof converted[key] === 'string') {
+        (converted as Record<string, unknown>)[key] = parseFloat(converted[key] as string) || 0;
+      }
+    }
+
+    await updateSettingsMutation.mutateAsync(converted as any);
   };
 
   if (isLoading || !settings) {
