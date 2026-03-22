@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MeowSMS Admin Panel",
-  description: "Admin panel for MeowSMS virtual number service - Manage users, services, transactions, and more",
-  keywords: "admin, meowsms, virtual numbers, otp, sms",
+  title: "Admin Panel",
+  description: "Admin panel for managing virtual number service - users, services, transactions, and more",
+  keywords: "admin, virtual numbers, otp, sms",
 };
 
 export default function RootLayout({

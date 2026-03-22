@@ -16,7 +16,6 @@ import {
   FileText,
   Shield,
   Sparkles,
-  Cat,
   ChevronUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -101,11 +100,11 @@ export function AdminSidebar() {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/dashboard">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
-                  <Cat className="size-4" />
+                  <Shield className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">MeowSMS</span>
-                  <span className="text-xs text-muted-foreground">Admin Panel</span>
+                  <span className="font-semibold">Admin Panel</span>
+                  <span className="text-xs text-muted-foreground">Management</span>
                 </div>
               </Link>
             </SidebarMenuButton>

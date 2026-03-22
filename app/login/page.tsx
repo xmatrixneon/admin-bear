@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Lock, User, AlertCircle, Loader2, Shield, Cat } from "lucide-react";
+import { Lock, User, AlertCircle, Loader2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,9 +46,9 @@ export default function LoginPage() {
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
             <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
-              <Cat className="size-5" />
+              <Shield className="size-5" />
             </div>
-            MeowSMS
+            Admin Panel
           </a>
         </div>
         <div className="flex flex-1 items-center justify-center">
@@ -135,20 +135,6 @@ export default function LoginPage() {
                     "Sign In"
                   )}
                 </Button>
-
-                <div className="text-center text-sm text-muted-foreground mt-4 p-4 bg-muted/50 rounded-lg border">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <Shield size={14} />
-                    <span className="font-medium">Default Admin Credentials</span>
-                  </div>
-                  <div className="space-y-1">
-                    <p><span className="text-foreground">Username:</span> admin</p>
-                    <p><span className="text-foreground">Password:</span> Line@9798</p>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-3">
-                    Please change password after first login!
-                  </p>
-                </div>
               </form>
             </motion.div>
           </div>
@@ -165,9 +151,9 @@ export default function LoginPage() {
           className="relative z-10 text-center text-white px-12"
         >
           <div className="w-24 h-24 mx-auto mb-6 bg-white/10 backdrop-blur-sm rounded-3xl flex items-center justify-center border border-white/20">
-            <Cat className="w-12 h-12" />
+            <Shield className="w-12 h-12" />
           </div>
-          <h2 className="text-3xl font-bold mb-4">MeowSMS Admin</h2>
+          <h2 className="text-3xl font-bold mb-4">Admin Panel</h2>
           <p className="text-blue-100 text-lg max-w-md">
             Manage your virtual number service platform with powerful tools and insights
           </p>
