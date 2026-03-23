@@ -97,7 +97,6 @@ export default function CustomPricesPage() {
     serviceId: "",
     discount: "",
     type: "PERCENT" as "FLAT" | "PERCENT",
-    country: "" as string,
   });
 
   // User search state
@@ -143,23 +142,19 @@ export default function CustomPricesPage() {
 
     try {
       if (formData.serviceId === "all") {
-        // Bulk create for all services
+        // Bulk create using new global discount method
         const result = await createBulkMutation.mutateAsync({
           userId: formData.userId,
           discount: parseFloat(formData.discount),
           type: formData.type,
-          country: formData.country || undefined,
         });
 
-        // Show detailed result
-        const parts = [`Created: ${result.created}`];
-        if (result.alreadyExists > 0) {
-          parts.push(`Already exists: ${result.alreadyExists}`);
+        // Show result for new global method
+        const parts = [`Global discount set: ${result.type === "PERCENT" ? `${result.discount}%` : `₹${result.discount}`}`];
+        if (result.oldCustomPricesRemoved > 0) {
+          parts.push(`Removed ${result.oldCustomPricesRemoved} old entries`);
         }
-        if (result.skipped > 0) {
-          parts.push(`Skipped: ${result.skipped} (price too high)`);
-        }
-        parts.push(`Total: ${result.total}`);
+        parts.push(`Applies to all ${result.totalServices} services`);
 
         toast.success(parts.join(" | "));
       } else {
@@ -216,7 +211,7 @@ export default function CustomPricesPage() {
   };
 
   const resetForm = () => {
-    setFormData({ userId: "", serviceId: "", discount: "", type: "PERCENT", country: "" });
+    setFormData({ userId: "", serviceId: "", discount: "", type: "PERCENT" });
     setSelectedUser(null);
     setUserSearchQuery("");
   };
@@ -228,7 +223,6 @@ export default function CustomPricesPage() {
       serviceId: price.serviceId,
       discount: price.discount.toString(),
       type: price.type,
-      country: "",
     });
     setSelectedUser(price.user);
     setEditDialogOpen(true);
@@ -634,7 +628,7 @@ export default function CustomPricesPage() {
               <Label>Service</Label>
               <Select
                 value={formData.serviceId}
-                onValueChange={(value) => setFormData({ ...formData, serviceId: value, country: "" })}
+                onValueChange={(value) => setFormData({ ...formData, serviceId: value })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a service" />
@@ -660,33 +654,16 @@ export default function CustomPricesPage() {
                 </SelectContent>
               </Select>
 
-              {/* Country filter when "All Services" is selected */}
+              {/* Note about global discount when "All Services" is selected */}
               {formData.serviceId === "all" && (
-                <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">Filter by Country (Optional)</Label>
-                  <Select
-                    value={formData.country}
-                    onValueChange={(value) => setFormData({ ...formData, country: value === "all" ? "" : value })}
-                  >
-                    <SelectTrigger className="h-8">
-                      <SelectValue placeholder="All Countries" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Countries</SelectItem>
-                      {Array.from(new Set(services?.map((s: any) => s.server?.countryCode).filter(Boolean)))
-                        .sort()
-                        .map((country) => (
-                          <SelectItem key={country} value={country}>
-                            {country}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                  {formData.country && (
-                    <p className="text-xs text-muted-foreground">
-                      Filtering for services in: <span className="font-medium">{formData.country}</span>
-                    </p>
-                  )}
+                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <Sparkles size={14} className="text-blue-500 mt-0.5" />
+                    <div className="text-sm text-blue-600 dark:text-blue-400">
+                      <p className="font-medium">Global Discount</p>
+                      <p className="text-xs mt-1">This will set a default discount on the user account that applies to ALL services automatically. Old service-specific entries will be removed.</p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -734,11 +711,15 @@ export default function CustomPricesPage() {
             {formData.discount && services && (
               <div className="p-3 bg-muted rounded-lg text-sm">
                 {formData.serviceId === "all" ? (
-                  // Bulk discount preview
+                  // Global discount preview
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 font-medium text-foreground">
-                      <Globe size={16} />
-                      <span>Bulk Discount Summary</span>
+                      <Sparkles size={16} />
+                      <span>Global Discount Summary</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Method:</span>
+                      <span className="text-blue-600 dark:text-blue-400">User Default Discount</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Discount Type:</span>
@@ -750,22 +731,10 @@ export default function CustomPricesPage() {
                         {formData.type === "PERCENT" ? `${formData.discount}% off all services` : `₹${formData.discount} off all services`}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Target Services:</span>
-                      <span>
-                        {formData.country
-                          ? `Services in ${formData.country}`
-                          : "All active services"}
-                      </span>
-                    </div>
                     <div className="pt-2 border-t">
                       <div className="flex justify-between font-semibold">
-                        <span>Services Affected:</span>
-                        <span>
-                          {formData.country
-                            ? services.filter((s: any) => s.server?.countryCode === formData.country).length
-                            : services.length}
-                        </span>
+                        <span>Applies to:</span>
+                        <span>All {services.length} active services</span>
                       </div>
                     </div>
                   </div>

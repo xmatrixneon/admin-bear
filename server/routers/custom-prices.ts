@@ -371,6 +371,7 @@ export const customPricesRouter = router({
 
   /**
    * Create discount for all services (bulk)
+   * Uses the new global default discount method on User table
    */
   createBulk: protectedProcedure
     .input(bulkDiscountCreateSchema)
@@ -380,113 +381,87 @@ export const customPricesRouter = router({
       // Verify user exists
       const user = await prisma.user.findUnique({
         where: { id: input.userId },
+        select: { id: true, telegramUsername: true, defaultDiscount: true, defaultDiscountType: true },
       });
 
       if (!user) {
         throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
       }
 
-      // Build where clause for services
-      const serviceWhere: Prisma.ServiceWhereInput = {
-        isActive: true,
-      };
-
+      // Country filter is not supported with global discounts - use service-specific CustomPrice instead
       if (input.country) {
-        serviceWhere.server = {
-          countryCode: input.country,
-          isActive: true,
-        };
-      }
-
-      // Get all services
-      const services = await prisma.service.findMany({
-        where: serviceWhere,
-      });
-
-      if (services.length === 0) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'No active services found' });
-      }
-
-      // Prepare bulk create data
-      const createData: Prisma.CustomPriceCreateManyInput[] = [];
-      const skippedServices: string[] = [];
-
-      for (const service of services) {
-        // Validate FLAT discount doesn't exceed base price
-        if (input.type === 'FLAT') {
-          const discount = new Prisma.Decimal(input.discount);
-          if (discount.greaterThan(service.basePrice)) {
-            // Skip this service - discount too high
-            skippedServices.push(`${service.name} (base price: ₹${service.basePrice})`);
-            continue;
-          }
-        }
-
-        createData.push({
-          userId: input.userId,
-          serviceId: service.id,
-          discount: new Prisma.Decimal(input.discount),
-          type: input.type,
-        });
-      }
-
-      if (createData.length === 0) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: 'No valid services to apply discount - FLAT discount exceeds all base prices',
+          message: 'Country-specific bulk discounts are not supported. Use the new global discount method instead, or create individual CustomPrice entries.',
         });
       }
 
-      // Get existing custom prices for this user to calculate actual new vs skipped
-      const existingCustomPrices = await prisma.customPrice.findMany({
-        where: {
-          userId: input.userId,
-          serviceId: { in: createData.map(d => d.serviceId) },
+      // For FLAT discounts, validate against the lowest service base price
+      if (input.type === 'FLAT') {
+        const lowestPrice = await prisma.service.findFirst({
+          where: { isActive: true },
+          orderBy: { basePrice: 'asc' },
+          select: { basePrice: true },
+        });
+
+        if (lowestPrice) {
+          const discount = new Prisma.Decimal(input.discount);
+          if (discount.greaterThan(lowestPrice.basePrice)) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: `Flat discount ₹${input.discount} exceeds lowest service base price (₹${lowestPrice.basePrice}). Some services will get free numbers.`,
+            });
+          }
+        }
+      }
+
+      // Get current discount values for audit
+      const previousDiscount = user.defaultDiscount?.toString();
+      const previousType = user.defaultDiscountType;
+
+      // Update user with global default discount
+      const updated = await prisma.user.update({
+        where: { id: input.userId },
+        data: {
+          defaultDiscount: input.discount,
+          defaultDiscountType: input.type,
         },
-        select: { serviceId: true },
       });
 
-      const existingServiceIds = new Set(existingCustomPrices.map(cp => cp.serviceId));
-
-      // Bulk create (ignore duplicates due to unique constraint)
-      const result = await prisma.customPrice.createMany({
-        data: createData,
-        skipDuplicates: true,
+      // Count and delete old CustomPrice entries for this user (they're now redundant)
+      const deletedCustomPrices = await prisma.customPrice.deleteMany({
+        where: { userId: input.userId },
       });
 
-      // Calculate accurate counts
-      const newCount = result.count;
-      const alreadyExistsCount = existingServiceIds.size;
-      const skippedCount = skippedServices.length;
-      const totalProcessed = newCount + alreadyExistsCount;
+      // Get total active services count for response
+      const totalServices = await prisma.service.count({
+        where: { isActive: true },
+      });
 
       // Audit log
       await prisma.userAuditLog.create({
         data: {
           userId: admin.id,
           adminId: admin.id,
-          action: 'CREATE_BULK_CUSTOM_PRICE',
+          action: 'SET_DEFAULT_DISCOUNT',
           changes: {
             userId: input.userId,
             discount: input.discount,
             type: input.type,
-            country: input.country || 'all',
-            newDiscountsCreated: newCount,
-            alreadyExists: alreadyExistsCount,
-            skippedDueToPrice: skippedCount,
-            skippedServices,
+            previousDiscount,
+            previousType,
+            oldCustomPricesRemoved: deletedCustomPrices.count,
           },
         },
       });
 
       return {
         success: true,
-        created: newCount,
-        alreadyExists: alreadyExistsCount,
-        skipped: skippedCount,
-        total: services.length,
-        totalProcessed,
-        skippedServices: skippedServices.slice(0, 10), // Return first 10 for UI
+        method: 'global',
+        discount: input.discount,
+        type: input.type,
+        oldCustomPricesRemoved: deletedCustomPrices.count,
+        totalServices,
       };
     }),
 
