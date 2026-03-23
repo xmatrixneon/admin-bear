@@ -21,6 +21,7 @@ import {
   Ban,
   Unlock,
   CreditCard,
+  Percent,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -151,6 +152,12 @@ export default function UsersListPage() {
   const [statusAction, setStatusAction] = useState<"block" | "unlock">("block");
   const [statusReason, setStatusReason] = useState("");
 
+  // Default discount dialog
+  const [discountDialogOpen, setDiscountDialogOpen] = useState(false);
+  const [discountUser, setDiscountUser] = useState<any>(null);
+  const [discountValue, setDiscountValue] = useState("");
+  const [discountType, setDiscountType] = useState<"FLAT" | "PERCENT">("PERCENT");
+
   // tRPC query for users
   const { data, isLoading, refetch } = trpc.users.list.useQuery({
     search: search || undefined,
@@ -166,6 +173,8 @@ export default function UsersListPage() {
   const setAdminMutation = trpc.users.setAdmin.useMutation();
   const adjustBalanceMutation = trpc.users.adjustBalance.useMutation();
   const setStatusMutation = trpc.users.setStatus.useMutation();
+  const setDefaultDiscountMutation = trpc.users.setDefaultDiscount.useMutation();
+  const removeDefaultDiscountMutation = trpc.users.removeDefaultDiscount.useMutation();
 
   // Handlers
   const handleSearch = (value: string) => {
@@ -264,6 +273,52 @@ export default function UsersListPage() {
       refetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to update user status");
+    }
+  };
+
+  const openDiscountDialog = (user: any) => {
+    setDiscountUser(user);
+    setDiscountValue(user.defaultDiscount?.toString() || "");
+    setDiscountType(user.defaultDiscountType || "PERCENT");
+    setDiscountDialogOpen(true);
+  };
+
+  const handleSetDefaultDiscount = async () => {
+    if (!discountUser || !discountValue) {
+      toast.error("Please enter a discount value");
+      return;
+    }
+
+    try {
+      await setDefaultDiscountMutation.mutateAsync({
+        userId: discountUser.id,
+        discount: parseFloat(discountValue),
+        type: discountType,
+      });
+      toast.success(`Default ${discountType === "FLAT" ? "flat" : "percentage"} discount set successfully`);
+      setDiscountDialogOpen(false);
+      setDiscountUser(null);
+      setDiscountValue("");
+      setDiscountType("PERCENT");
+      refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to set default discount");
+    }
+  };
+
+  const handleRemoveDefaultDiscount = async () => {
+    if (!discountUser) return;
+
+    try {
+      await removeDefaultDiscountMutation.mutateAsync({
+        userId: discountUser.id,
+      });
+      toast.success("Default discount removed successfully");
+      setDiscountDialogOpen(false);
+      setDiscountUser(null);
+      refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to remove default discount");
     }
   };
 
@@ -445,6 +500,13 @@ export default function UsersListPage() {
                           <CreditCard size={14} className="mr-2" />
                           Adjust Balance
                         </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => openDiscountDialog(user)}
+                          disabled={!!user.deletedAt}
+                        >
+                          <Percent size={14} className="mr-2" />
+                          {user.defaultDiscount ? "Edit Default Discount" : "Set Default Discount"}
+                        </DropdownMenuItem>
                         {!user.deletedAt && user.userData?.status !== "BLOCKED" && (
                           <DropdownMenuItem
                             onClick={() => {
@@ -536,10 +598,15 @@ export default function UsersListPage() {
                         Suspended
                       </Badge>
                     )}
+                    {user.defaultDiscount && (
+                      <Badge variant="default" className="text-xs bg-green-500 hover:bg-green-600">
+                        {user.defaultDiscountType === 'FLAT' ? `₹${user.defaultDiscount} off` : `${user.defaultDiscount}% off`}
+                      </Badge>
+                    )}
                     {user.deletedAt && (
                       <Badge variant="destructive" className="text-xs">Deleted</Badge>
                     )}
-                    {!user.isAdmin && !user.isPremium && !user.deletedAt && !user.userData?.status && (
+                    {!user.isAdmin && !user.isPremium && !user.deletedAt && !user.userData?.status && !user.defaultDiscount && (
                       <Badge variant="ghost" className="text-xs">Regular</Badge>
                     )}
                   </div>
@@ -724,10 +791,16 @@ export default function UsersListPage() {
                               Suspended
                             </Badge>
                           )}
+                          {user.defaultDiscount && (
+                            <Badge variant="default" className="bg-green-500 hover:bg-green-600 gap-1">
+                              <Percent size={10} />
+                              {user.defaultDiscountType === 'FLAT' ? `₹${user.defaultDiscount}` : `${user.defaultDiscount}%`}
+                            </Badge>
+                          )}
                           {user.deletedAt && (
                             <Badge variant="destructive">Deleted</Badge>
                           )}
-                          {!user.isAdmin && !user.isPremium && !user.deletedAt && !user.userData?.status && (
+                          {!user.isAdmin && !user.isPremium && !user.deletedAt && !user.userData?.status && !user.defaultDiscount && (
                             <Badge variant="ghost">Regular</Badge>
                           )}
                         </div>
@@ -753,6 +826,13 @@ export default function UsersListPage() {
                             >
                               <CreditCard size={14} className="mr-2" />
                               Adjust Balance
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => openDiscountDialog(user)}
+                              disabled={!!user.deletedAt}
+                            >
+                              <Percent size={14} className="mr-2" />
+                              {user.defaultDiscount ? "Edit Default Discount" : "Set Default Discount"}
                             </DropdownMenuItem>
                             {!user.deletedAt && user.userData?.status !== "BLOCKED" && (
                               <DropdownMenuItem
@@ -984,6 +1064,104 @@ export default function UsersListPage() {
             >
               {statusAction === "block" ? "Block User" : "Unlock User"}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Default Discount Dialog */}
+      <Dialog open={discountDialogOpen} onOpenChange={setDiscountDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {discountUser?.defaultDiscount ? "Edit Default Discount" : "Set Default Discount"}
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              This discount will apply to ALL services automatically, including new services added in the future.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {discountUser && (
+              <div className="p-3 bg-muted rounded-lg text-sm">
+                <span className="text-muted-foreground">User: </span>
+                <span className="font-medium">{discountUser.telegramUsername || discountUser.firstName || discountUser.email || discountUser.id}</span>
+              </div>
+            )}
+
+            {/* Discount Type */}
+            <div className="space-y-2">
+              <Label>Discount Type</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={discountType === "PERCENT" ? "default" : "outline"}
+                  onClick={() => setDiscountType("PERCENT")}
+                  className="flex-1"
+                >
+                  Percent (%)
+                </Button>
+                <Button
+                  type="button"
+                  variant={discountType === "FLAT" ? "default" : "outline"}
+                  onClick={() => setDiscountType("FLAT")}
+                  className="flex-1"
+                >
+                  Flat (₹)
+                </Button>
+              </div>
+            </div>
+
+            {/* Discount Value */}
+            <div className="space-y-2">
+              <Label>
+                Discount Value ({discountType === "PERCENT" ? "%" : "₹"})
+              </Label>
+              <Input
+                type="number"
+                placeholder={discountType === "PERCENT" ? "10" : "5"}
+                value={discountValue}
+                onChange={(e) => setDiscountValue(e.target.value)}
+                min="0"
+                max={discountType === "PERCENT" ? 100 : undefined}
+                step="0.01"
+              />
+            </div>
+
+            {/* Info Box */}
+            <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg text-xs text-blue-600 dark:text-blue-400">
+              <p><strong>Note:</strong> Service-specific custom prices will override this default discount.</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <div className="flex gap-2 w-full">
+              {discountUser?.defaultDiscount && (
+                <Button
+                  variant="outline"
+                  onClick={handleRemoveDefaultDiscount}
+                  disabled={removeDefaultDiscountMutation.isPending}
+                  className="flex-1"
+                >
+                  {removeDefaultDiscountMutation.isPending ? "Removing..." : "Remove"}
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setDiscountDialogOpen(false);
+                  setDiscountUser(null);
+                  setDiscountValue("");
+                }}
+                className={!discountUser?.defaultDiscount ? "flex-1" : ""}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSetDefaultDiscount}
+                disabled={!discountValue || setDefaultDiscountMutation.isPending}
+                className="flex-1"
+              >
+                {setDefaultDiscountMutation.isPending ? "Setting..." : "Set Discount"}
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

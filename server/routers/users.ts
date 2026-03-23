@@ -73,7 +73,10 @@ export const usersRouter = router({
       const [users, total] = await Promise.all([
         prisma.user.findMany({
           where,
-          include: { wallet: true, userData: true },
+          include: {
+            wallet: true,
+            userData: true,
+          },
           orderBy,
           skip: (input.page - 1) * input.pageSize,
           take: input.pageSize,
@@ -366,5 +369,126 @@ export const usersRouter = router({
       });
 
       return { success: true, permanent: input.permanent };
+    }),
+
+  /**
+   * Set default discount for user (applies to ALL services)
+   */
+  setDefaultDiscount: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        discount: z.number().positive('Discount must be positive'),
+        type: z.enum(['FLAT', 'PERCENT']),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { prisma, admin } = ctx;
+
+      // Check if user exists
+      const user = await prisma.user.findUnique({
+        where: { id: input.userId },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found',
+        });
+      }
+
+      // For FLAT discounts, check against lowest base price to avoid issues
+      if (input.type === 'FLAT') {
+        const lowestPrice = await prisma.service.findFirst({
+          where: { isActive: true },
+          orderBy: { basePrice: 'asc' },
+          select: { basePrice: true },
+        });
+
+        if (lowestPrice && input.discount > Number(lowestPrice.basePrice)) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `Flat discount ₹${input.discount} exceeds lowest service base price (₹${lowestPrice.basePrice}). Some services will get free numbers.`,
+          });
+        }
+      }
+
+      const updated = await prisma.user.update({
+        where: { id: input.userId },
+        data: {
+          defaultDiscount: input.discount,
+          defaultDiscountType: input.type,
+        },
+      });
+
+      // Create audit log
+      await prisma.userAuditLog.create({
+        data: {
+          userId: input.userId,
+          adminId: admin.id,
+          action: 'SET_DEFAULT_DISCOUNT',
+          changes: {
+            discount: input.discount,
+            type: input.type,
+          },
+        },
+      });
+
+      return { success: true, user: updated };
+    }),
+
+  /**
+   * Remove default discount from user
+   */
+  removeDefaultDiscount: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { prisma, admin } = ctx;
+
+      const user = await prisma.user.findUnique({
+        where: { id: input.userId },
+        select: { defaultDiscount: true, defaultDiscountType: true },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found',
+        });
+      }
+
+      if (!user.defaultDiscount) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'User has no default discount to remove',
+        });
+      }
+
+      await prisma.user.update({
+        where: { id: input.userId },
+        data: {
+          defaultDiscount: null,
+          defaultDiscountType: null,
+        },
+      });
+
+      // Create audit log
+      await prisma.userAuditLog.create({
+        data: {
+          userId: input.userId,
+          adminId: admin.id,
+          action: 'REMOVE_DEFAULT_DISCOUNT',
+          changes: {
+            previousDiscount: user.defaultDiscount,
+            previousType: user.defaultDiscountType,
+          },
+        },
+      });
+
+      return { success: true };
     }),
 });

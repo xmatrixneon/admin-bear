@@ -109,6 +109,8 @@ export const UserScalarFieldEnum = {
   startParam: 'startParam',
   canSendAfter: 'canSendAfter',
   isAdmin: 'isAdmin',
+  defaultDiscount: 'defaultDiscount',
+  defaultDiscountType: 'defaultDiscountType',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

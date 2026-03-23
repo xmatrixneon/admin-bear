@@ -66,11 +66,13 @@ model User {
   chatInstance    String?
   chatType        String?
   startParam      String?
-  canSendAfter    Int?
-  isAdmin         Boolean   @default(false)
-  deletedAt       DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  canSendAfter        Int?
+  isAdmin             Boolean   @default(false)
+  defaultDiscount     Decimal?  @db.Decimal(10, 2)
+  defaultDiscountType DiscountType?
+  deletedAt           DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
   accounts        Account[]
   sessions        Session[]
   wallet          Wallet?

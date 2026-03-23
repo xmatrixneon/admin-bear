@@ -150,7 +150,18 @@ export default function CustomPricesPage() {
           type: formData.type,
           country: formData.country || undefined,
         });
-        toast.success(`Discount created for ${result.created} services`);
+
+        // Show detailed result
+        const parts = [`Created: ${result.created}`];
+        if (result.alreadyExists > 0) {
+          parts.push(`Already exists: ${result.alreadyExists}`);
+        }
+        if (result.skipped > 0) {
+          parts.push(`Skipped: ${result.skipped} (price too high)`);
+        }
+        parts.push(`Total: ${result.total}`);
+
+        toast.success(parts.join(" | "));
       } else {
         // Single service create
         await createMutation.mutateAsync({

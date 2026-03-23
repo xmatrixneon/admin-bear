@@ -1814,6 +1814,8 @@ export const UserScalarFieldEnum = {
   startParam: 'startParam',
   canSendAfter: 'canSendAfter',
   isAdmin: 'isAdmin',
+  defaultDiscount: 'defaultDiscount',
+  defaultDiscountType: 'defaultDiscountType',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -2185,6 +2187,20 @@ export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMo
 
 
 /**
+ * Reference to a field of type 'DiscountType'
+ */
+export type EnumDiscountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiscountType'>
+    
+
+
+/**
+ * Reference to a field of type 'DiscountType[]'
+ */
+export type ListEnumDiscountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiscountType[]'>
+    
+
+
+/**
  * Reference to a field of type 'TransactionType'
  */
 export type EnumTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionType'>
@@ -2251,20 +2267,6 @@ export type EnumActiveStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'ActiveStatus[]'
  */
 export type ListEnumActiveStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ActiveStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'DiscountType'
- */
-export type EnumDiscountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiscountType'>
-    
-
-
-/**
- * Reference to a field of type 'DiscountType[]'
- */
-export type ListEnumDiscountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiscountType[]'>
     
 
 

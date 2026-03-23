@@ -8,13 +8,13 @@ import { router, protectedProcedure } from '../trpc';
 const customPriceCreateSchema = z.object({
   userId:     z.string().min(1, 'User ID is required'),
   serviceId:  z.string().min(1, 'Service ID is required'),
-  discount:   z.number().positive('Discount must be positive').max(100, 'Discount cannot exceed 100'),
+  discount:   z.number().positive('Discount must be positive'),
   type:       z.enum(['FLAT', 'PERCENT']),
 });
 
 const customPriceUpdateSchema = z.object({
   id:       z.string().cuid(),
-  discount: z.number().positive('Discount must be positive').max(100, 'Discount cannot exceed 100').optional(),
+  discount: z.number().positive('Discount must be positive').optional(),
   type:     z.enum(['FLAT', 'PERCENT']).optional(),
 });
 
@@ -240,9 +240,12 @@ export const customPricesRouter = router({
       // Prepare update data
       const updateData: Prisma.CustomPriceUpdateInput = {};
 
+      // Determine the final type after update (existing or new)
+      const finalType = input.type ?? existing.type;
+
       if (input.discount !== undefined) {
-        // Validate for FLAT type
-        if (input.type === 'FLAT' || (input.type === undefined && existing.type === 'FLAT')) {
+        // Validate for FLAT type (either existing or changing to FLAT)
+        if (finalType === 'FLAT') {
           const discount = new Prisma.Decimal(input.discount);
           if (discount.greaterThan(existing.service.basePrice)) {
             throw new TRPCError({
@@ -252,6 +255,16 @@ export const customPricesRouter = router({
           }
         }
         updateData.discount = new Prisma.Decimal(input.discount);
+      }
+
+      // Additional validation: if changing type to FLAT, validate existing discount
+      if (input.type === 'FLAT' && input.discount === undefined) {
+        if (existing.discount.greaterThan(existing.service.basePrice)) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `Cannot change to FLAT - existing discount (₹${existing.discount}) exceeds base price (₹${existing.service.basePrice})`,
+          });
+        }
       }
 
       if (input.type !== undefined) {
@@ -396,13 +409,15 @@ export const customPricesRouter = router({
 
       // Prepare bulk create data
       const createData: Prisma.CustomPriceCreateManyInput[] = [];
+      const skippedServices: string[] = [];
 
       for (const service of services) {
         // Validate FLAT discount doesn't exceed base price
         if (input.type === 'FLAT') {
           const discount = new Prisma.Decimal(input.discount);
           if (discount.greaterThan(service.basePrice)) {
-            // Skip this service or adjust discount to base price
+            // Skip this service - discount too high
+            skippedServices.push(`${service.name} (base price: ₹${service.basePrice})`);
             continue;
           }
         }
@@ -415,11 +430,35 @@ export const customPricesRouter = router({
         });
       }
 
+      if (createData.length === 0) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'No valid services to apply discount - FLAT discount exceeds all base prices',
+        });
+      }
+
+      // Get existing custom prices for this user to calculate actual new vs skipped
+      const existingCustomPrices = await prisma.customPrice.findMany({
+        where: {
+          userId: input.userId,
+          serviceId: { in: createData.map(d => d.serviceId) },
+        },
+        select: { serviceId: true },
+      });
+
+      const existingServiceIds = new Set(existingCustomPrices.map(cp => cp.serviceId));
+
       // Bulk create (ignore duplicates due to unique constraint)
       const result = await prisma.customPrice.createMany({
         data: createData,
         skipDuplicates: true,
       });
+
+      // Calculate accurate counts
+      const newCount = result.count;
+      const alreadyExistsCount = existingServiceIds.size;
+      const skippedCount = skippedServices.length;
+      const totalProcessed = newCount + alreadyExistsCount;
 
       // Audit log
       await prisma.userAuditLog.create({
@@ -432,15 +471,22 @@ export const customPricesRouter = router({
             discount: input.discount,
             type: input.type,
             country: input.country || 'all',
-            servicesAffected: result.count,
+            newDiscountsCreated: newCount,
+            alreadyExists: alreadyExistsCount,
+            skippedDueToPrice: skippedCount,
+            skippedServices,
           },
         },
       });
 
       return {
         success: true,
-        created: result.count,
+        created: newCount,
+        alreadyExists: alreadyExistsCount,
+        skipped: skippedCount,
         total: services.length,
+        totalProcessed,
+        skippedServices: skippedServices.slice(0, 10), // Return first 10 for UI
       };
     }),
 

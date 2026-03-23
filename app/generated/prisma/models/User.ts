@@ -28,10 +28,12 @@ export type AggregateUser = {
 
 export type UserAvgAggregateOutputType = {
   canSendAfter: number | null
+  defaultDiscount: runtime.Decimal | null
 }
 
 export type UserSumAggregateOutputType = {
   canSendAfter: number | null
+  defaultDiscount: runtime.Decimal | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -56,6 +58,8 @@ export type UserMinAggregateOutputType = {
   startParam: string | null
   canSendAfter: number | null
   isAdmin: boolean | null
+  defaultDiscount: runtime.Decimal | null
+  defaultDiscountType: $Enums.DiscountType | null
   deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -83,6 +87,8 @@ export type UserMaxAggregateOutputType = {
   startParam: string | null
   canSendAfter: number | null
   isAdmin: boolean | null
+  defaultDiscount: runtime.Decimal | null
+  defaultDiscountType: $Enums.DiscountType | null
   deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -110,6 +116,8 @@ export type UserCountAggregateOutputType = {
   startParam: number
   canSendAfter: number
   isAdmin: number
+  defaultDiscount: number
+  defaultDiscountType: number
   deletedAt: number
   createdAt: number
   updatedAt: number
@@ -119,10 +127,12 @@ export type UserCountAggregateOutputType = {
 
 export type UserAvgAggregateInputType = {
   canSendAfter?: true
+  defaultDiscount?: true
 }
 
 export type UserSumAggregateInputType = {
   canSendAfter?: true
+  defaultDiscount?: true
 }
 
 export type UserMinAggregateInputType = {
@@ -147,6 +157,8 @@ export type UserMinAggregateInputType = {
   startParam?: true
   canSendAfter?: true
   isAdmin?: true
+  defaultDiscount?: true
+  defaultDiscountType?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -174,6 +186,8 @@ export type UserMaxAggregateInputType = {
   startParam?: true
   canSendAfter?: true
   isAdmin?: true
+  defaultDiscount?: true
+  defaultDiscountType?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -201,6 +215,8 @@ export type UserCountAggregateInputType = {
   startParam?: true
   canSendAfter?: true
   isAdmin?: true
+  defaultDiscount?: true
+  defaultDiscountType?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -315,6 +331,8 @@ export type UserGroupByOutputType = {
   startParam: string | null
   canSendAfter: number | null
   isAdmin: boolean
+  defaultDiscount: runtime.Decimal | null
+  defaultDiscountType: $Enums.DiscountType | null
   deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
@@ -365,6 +383,8 @@ export type UserWhereInput = {
   startParam?: Prisma.StringNullableFilter<"User"> | string | null
   canSendAfter?: Prisma.IntNullableFilter<"User"> | number | null
   isAdmin?: Prisma.BoolFilter<"User"> | boolean
+  defaultDiscount?: Prisma.DecimalNullableFilter<"User"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.EnumDiscountTypeNullableFilter<"User"> | $Enums.DiscountType | null
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -402,6 +422,8 @@ export type UserOrderByWithRelationInput = {
   startParam?: Prisma.SortOrderInput | Prisma.SortOrder
   canSendAfter?: Prisma.SortOrderInput | Prisma.SortOrder
   isAdmin?: Prisma.SortOrder
+  defaultDiscount?: Prisma.SortOrderInput | Prisma.SortOrder
+  defaultDiscountType?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -442,6 +464,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   startParam?: Prisma.StringNullableFilter<"User"> | string | null
   canSendAfter?: Prisma.IntNullableFilter<"User"> | number | null
   isAdmin?: Prisma.BoolFilter<"User"> | boolean
+  defaultDiscount?: Prisma.DecimalNullableFilter<"User"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.EnumDiscountTypeNullableFilter<"User"> | $Enums.DiscountType | null
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -479,6 +503,8 @@ export type UserOrderByWithAggregationInput = {
   startParam?: Prisma.SortOrderInput | Prisma.SortOrder
   canSendAfter?: Prisma.SortOrderInput | Prisma.SortOrder
   isAdmin?: Prisma.SortOrder
+  defaultDiscount?: Prisma.SortOrderInput | Prisma.SortOrder
+  defaultDiscountType?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -514,6 +540,8 @@ export type UserScalarWhereWithAggregatesInput = {
   startParam?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   canSendAfter?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
   isAdmin?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  defaultDiscount?: Prisma.DecimalNullableWithAggregatesFilter<"User"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.EnumDiscountTypeNullableWithAggregatesFilter<"User"> | $Enums.DiscountType | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -541,6 +569,8 @@ export type UserCreateInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -578,6 +608,8 @@ export type UserUncheckedCreateInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -615,6 +647,8 @@ export type UserUpdateInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -652,6 +686,8 @@ export type UserUncheckedUpdateInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -689,6 +725,8 @@ export type UserCreateManyInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -716,6 +754,8 @@ export type UserUpdateManyMutationInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -743,6 +783,8 @@ export type UserUncheckedUpdateManyInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -770,6 +812,8 @@ export type UserCountOrderByAggregateInput = {
   startParam?: Prisma.SortOrder
   canSendAfter?: Prisma.SortOrder
   isAdmin?: Prisma.SortOrder
+  defaultDiscount?: Prisma.SortOrder
+  defaultDiscountType?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -777,6 +821,7 @@ export type UserCountOrderByAggregateInput = {
 
 export type UserAvgOrderByAggregateInput = {
   canSendAfter?: Prisma.SortOrder
+  defaultDiscount?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -801,6 +846,8 @@ export type UserMaxOrderByAggregateInput = {
   startParam?: Prisma.SortOrder
   canSendAfter?: Prisma.SortOrder
   isAdmin?: Prisma.SortOrder
+  defaultDiscount?: Prisma.SortOrder
+  defaultDiscountType?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -828,6 +875,8 @@ export type UserMinOrderByAggregateInput = {
   startParam?: Prisma.SortOrder
   canSendAfter?: Prisma.SortOrder
   isAdmin?: Prisma.SortOrder
+  defaultDiscount?: Prisma.SortOrder
+  defaultDiscountType?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -835,6 +884,7 @@ export type UserMinOrderByAggregateInput = {
 
 export type UserSumOrderByAggregateInput = {
   canSendAfter?: Prisma.SortOrder
+  defaultDiscount?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -868,6 +918,18 @@ export type NullableIntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type NullableDecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type NullableEnumDiscountTypeFieldUpdateOperationsInput = {
+  set?: $Enums.DiscountType | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -1036,6 +1098,8 @@ export type UserCreateWithoutAccountsInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1072,6 +1136,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1124,6 +1190,8 @@ export type UserUpdateWithoutAccountsInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1160,6 +1228,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1196,6 +1266,8 @@ export type UserCreateWithoutSessionsInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1232,6 +1304,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1284,6 +1358,8 @@ export type UserUpdateWithoutSessionsInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1320,6 +1396,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1356,6 +1434,8 @@ export type UserCreateWithoutWalletInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1392,6 +1472,8 @@ export type UserUncheckedCreateWithoutWalletInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1444,6 +1526,8 @@ export type UserUpdateWithoutWalletInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1480,6 +1564,8 @@ export type UserUncheckedUpdateWithoutWalletInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1516,6 +1602,8 @@ export type UserCreateWithoutNumbersInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1552,6 +1640,8 @@ export type UserUncheckedCreateWithoutNumbersInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1604,6 +1694,8 @@ export type UserUpdateWithoutNumbersInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1640,6 +1732,8 @@ export type UserUncheckedUpdateWithoutNumbersInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1676,6 +1770,8 @@ export type UserCreateWithoutPromoHistoryInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1712,6 +1808,8 @@ export type UserUncheckedCreateWithoutPromoHistoryInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1764,6 +1862,8 @@ export type UserUpdateWithoutPromoHistoryInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1800,6 +1900,8 @@ export type UserUncheckedUpdateWithoutPromoHistoryInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1836,6 +1938,8 @@ export type UserCreateWithoutCustomPricesInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1872,6 +1976,8 @@ export type UserUncheckedCreateWithoutCustomPricesInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1924,6 +2030,8 @@ export type UserUpdateWithoutCustomPricesInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1960,6 +2068,8 @@ export type UserUncheckedUpdateWithoutCustomPricesInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1996,6 +2106,8 @@ export type UserCreateWithoutUserApiInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2032,6 +2144,8 @@ export type UserUncheckedCreateWithoutUserApiInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2084,6 +2198,8 @@ export type UserUpdateWithoutUserApiInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2120,6 +2236,8 @@ export type UserUncheckedUpdateWithoutUserApiInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2156,6 +2274,8 @@ export type UserCreateWithoutUserDataInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2192,6 +2312,8 @@ export type UserUncheckedCreateWithoutUserDataInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2244,6 +2366,8 @@ export type UserUpdateWithoutUserDataInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2280,6 +2404,8 @@ export type UserUncheckedUpdateWithoutUserDataInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2316,6 +2442,8 @@ export type UserCreateWithoutAuditLogsAsTargetInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2352,6 +2480,8 @@ export type UserUncheckedCreateWithoutAuditLogsAsTargetInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2393,6 +2523,8 @@ export type UserCreateWithoutAuditLogsAsPerformerInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2429,6 +2561,8 @@ export type UserUncheckedCreateWithoutAuditLogsAsPerformerInput = {
   startParam?: string | null
   canSendAfter?: number | null
   isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2481,6 +2615,8 @@ export type UserUpdateWithoutAuditLogsAsTargetInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2517,6 +2653,8 @@ export type UserUncheckedUpdateWithoutAuditLogsAsTargetInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2564,6 +2702,8 @@ export type UserUpdateWithoutAuditLogsAsPerformerInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2600,6 +2740,8 @@ export type UserUncheckedUpdateWithoutAuditLogsAsPerformerInput = {
   startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2721,6 +2863,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   startParam?: boolean
   canSendAfter?: boolean
   isAdmin?: boolean
+  defaultDiscount?: boolean
+  defaultDiscountType?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -2759,6 +2903,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   startParam?: boolean
   canSendAfter?: boolean
   isAdmin?: boolean
+  defaultDiscount?: boolean
+  defaultDiscountType?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -2786,6 +2932,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   startParam?: boolean
   canSendAfter?: boolean
   isAdmin?: boolean
+  defaultDiscount?: boolean
+  defaultDiscountType?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -2813,12 +2961,14 @@ export type UserSelectScalar = {
   startParam?: boolean
   canSendAfter?: boolean
   isAdmin?: boolean
+  defaultDiscount?: boolean
+  defaultDiscountType?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "emailVerified" | "name" | "image" | "telegramId" | "telegramUsername" | "firstName" | "lastName" | "languageCode" | "isPremium" | "allowsWriteToPm" | "photoUrl" | "addedToAttachmentMenu" | "authDate" | "queryId" | "chatInstance" | "chatType" | "startParam" | "canSendAfter" | "isAdmin" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "emailVerified" | "name" | "image" | "telegramId" | "telegramUsername" | "firstName" | "lastName" | "languageCode" | "isPremium" | "allowsWriteToPm" | "photoUrl" | "addedToAttachmentMenu" | "authDate" | "queryId" | "chatInstance" | "chatType" | "startParam" | "canSendAfter" | "isAdmin" | "defaultDiscount" | "defaultDiscountType" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
@@ -2871,6 +3021,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     startParam: string | null
     canSendAfter: number | null
     isAdmin: boolean
+    defaultDiscount: runtime.Decimal | null
+    defaultDiscountType: $Enums.DiscountType | null
     deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -3328,6 +3480,8 @@ export interface UserFieldRefs {
   readonly startParam: Prisma.FieldRef<"User", 'String'>
   readonly canSendAfter: Prisma.FieldRef<"User", 'Int'>
   readonly isAdmin: Prisma.FieldRef<"User", 'Boolean'>
+  readonly defaultDiscount: Prisma.FieldRef<"User", 'Decimal'>
+  readonly defaultDiscountType: Prisma.FieldRef<"User", 'DiscountType'>
   readonly deletedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
