@@ -358,7 +358,7 @@ export default function DashboardPage() {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
-                      <XAxis dataKey="shortDate" tick={{ fontSize: 9 }} tickLine={false} axisLine={false} className="text-muted-foreground" interval={0} />
+                      <XAxis dataKey="date" tick={{ fontSize: 9 }} tickLine={false} axisLine={false} className="text-muted-foreground" interval={0} />
                       <YAxis tick={{ fontSize: 9 }} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} className="text-muted-foreground" width={35} />
                       <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "11px" }} formatter={(value: number, name: string) => [formatCurrency(value), name]} />
                       <Area type="monotone" dataKey="recharge" stroke="#22c55e" strokeWidth={1.5} fillOpacity={1} fill="url(#colorRechargeMobile)" name="Recharge (UPI+Promo)" />
@@ -378,7 +378,7 @@ export default function DashboardPage() {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
-                      <XAxis dataKey="shortDate" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} className="text-muted-foreground" interval={0} />
+                      <XAxis dataKey="date" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} className="text-muted-foreground" interval={0} />
                       <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} className="text-muted-foreground" width={40} />
                       <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "10px", fontSize: "12px" }} formatter={(value: number, name: string) => [formatCurrency(value), name]} />
                       <Legend wrapperStyle={{ paddingTop: "12px" }} iconType="circle" />
@@ -435,8 +435,8 @@ export default function DashboardPage() {
                   <ResponsiveContainer width="100%" height={180} className="sm:hidden">
                     <BarChart data={transactionData} barSize={40}>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
-                      <XAxis dataKey="name" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
-                      <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} width={30} />
+                      <XAxis dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} />
+                      <YAxis tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} width={30} />
                       <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "11px" }} formatter={(value: number) => [value, "Count"]} />
                       <Bar dataKey="value" radius={[6, 6, 0, 0]} name="Count">
                         {transactionData.map((entry, index) => (
@@ -448,8 +448,8 @@ export default function DashboardPage() {
                   <ResponsiveContainer width="100%" height={220} className="hidden sm:block md:hidden">
                     <BarChart data={transactionData} barSize={50}>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
-                      <XAxis dataKey="name" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
-                      <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} width={35} />
+                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} />
+                      <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} width={35} />
                       <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "10px", fontSize: "12px" }} formatter={(value: number) => [value, "Count"]} />
                       <Legend wrapperStyle={{ paddingTop: "12px" }} iconType="circle" />
                       <Bar dataKey="value" radius={[8, 8, 0, 0]} name="Count">
@@ -462,8 +462,8 @@ export default function DashboardPage() {
                   <ResponsiveContainer width="100%" height={280} className="hidden md:block">
                     <BarChart data={transactionData} barSize={60}>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
-                      <XAxis dataKey="name" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
-                      <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                      <XAxis dataKey="name" tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} />
+                      <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickLine={false} axisLine={false} />
                       <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", fontSize: "12px" }} formatter={(value: number) => [value, "Count"]} />
                       <Legend wrapperStyle={{ paddingTop: "16px" }} iconType="circle" />
                       <Bar dataKey="value" radius={[8, 8, 0, 0]} name="Count">
