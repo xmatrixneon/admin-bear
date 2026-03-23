@@ -84,6 +84,11 @@ function getUserDisplayName(user: { firstName?: string | null; lastName?: string
   return user.telegramUsername || "Unknown";
 }
 
+// Helper to check if display name will be the telegram username (avoid duplicate display)
+function displayNameIsTelegramUsername(user: { firstName?: string | null; lastName?: string | null; telegramUsername?: string | null }): boolean {
+  return !user.firstName && !user.lastName && !!user.telegramUsername;
+}
+
 export default function CustomPricesPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -406,8 +411,11 @@ export default function CustomPricesPage() {
                         <User size={14} className="text-muted-foreground" />
                         <div>
                           <p className="text-sm font-medium">{getUserDisplayName(user)}</p>
-                          {user.telegramUsername && (
+                          {user.telegramUsername && !displayNameIsTelegramUsername(user) && (
                             <p className="text-xs text-muted-foreground">@{user.telegramUsername}</p>
+                          )}
+                          {user.telegramId && displayNameIsTelegramUsername(user) && (
+                            <p className="text-xs text-muted-foreground">ID: {user.telegramId}</p>
                           )}
                         </div>
                       </div>
@@ -522,8 +530,11 @@ export default function CustomPricesPage() {
                             <User size={14} className="text-muted-foreground" />
                             <div>
                               <p className="text-sm font-medium">{getUserDisplayName(cp.user)}</p>
-                              {cp.user.telegramUsername && (
+                              {cp.user.telegramUsername && !displayNameIsTelegramUsername(cp.user) && (
                                 <p className="text-xs text-muted-foreground">@{cp.user.telegramUsername}</p>
+                              )}
+                              {cp.user.telegramId && displayNameIsTelegramUsername(cp.user) && (
+                                <p className="text-xs text-muted-foreground">ID: {cp.user.telegramId}</p>
                               )}
                             </div>
                           </div>
@@ -632,8 +643,11 @@ export default function CustomPricesPage() {
                         <User size={14} className="text-muted-foreground" />
                         <div>
                           <p className="text-sm font-medium">{getUserDisplayName(cp.user)}</p>
-                          {cp.user.telegramUsername && (
+                          {cp.user.telegramUsername && !displayNameIsTelegramUsername(cp.user) && (
                             <p className="text-xs text-muted-foreground">@{cp.user.telegramUsername}</p>
+                          )}
+                          {cp.user.telegramId && displayNameIsTelegramUsername(cp.user) && (
+                            <p className="text-xs text-muted-foreground">ID: {cp.user.telegramId}</p>
                           )}
                         </div>
                       </div>
@@ -731,8 +745,11 @@ export default function CustomPricesPage() {
                       className="w-full text-left px-3 py-2 hover:bg-muted transition-colors text-sm"
                     >
                       <div className="font-medium">{getUserDisplayName(user)}</div>
-                      {user.telegramUsername && (
+                      {user.telegramUsername && !displayNameIsTelegramUsername(user) && (
                         <div className="text-xs text-muted-foreground">@{user.telegramUsername}</div>
+                      )}
+                      {user.telegramId && displayNameIsTelegramUsername(user) && (
+                        <div className="text-xs text-muted-foreground">ID: {user.telegramId}</div>
                       )}
                     </button>
                   ))}
