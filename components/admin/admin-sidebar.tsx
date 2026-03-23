@@ -17,6 +17,7 @@ import {
   Shield,
   Sparkles,
   ChevronUp,
+  Percent,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,6 +52,7 @@ const navItems = [
   { title: "Servers", href: "/dashboard/servers", icon: Server },
   { title: "Services", href: "/dashboard/services", icon: Sparkles },
   { title: "Promocodes", href: "/dashboard/promocodes", icon: Tag },
+  { title: "Custom Prices", href: "/dashboard/custom-prices", icon: Percent },
   { title: "Audit Logs", href: "/dashboard/audit-logs", icon: FileText },
   { title: "Settings", href: "/dashboard/settings", icon: Settings },
 ];

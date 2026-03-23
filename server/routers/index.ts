@@ -5,6 +5,7 @@ import { transactionsRouter } from './transactions';
 import { servicesRouter } from './services';
 import { serversRouter } from './servers';
 import { promocodesRouter } from './promocodes';
+import { customPricesRouter } from './custom-prices';
 import { auditLogsRouter } from './audit-logs';
 import { settingsRouter } from './settings';
 import { walletsRouter } from './wallets';
@@ -22,6 +23,7 @@ export const adminRouter = router({
   services: servicesRouter,
   servers: serversRouter,
   promocodes: promocodesRouter,
+  customPrices: customPricesRouter,
   auditLogs: auditLogsRouter,
   settings: settingsRouter,
   wallets: walletsRouter,
