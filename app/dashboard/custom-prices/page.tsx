@@ -111,6 +111,23 @@ export default function CustomPricesPage() {
     { enabled: userSearchQuery.length >= 2 }
   );
 
+  // Query users with global default discounts
+  const { data: usersWithGlobalDiscounts } = trpc.users.list.useQuery(
+    {},
+    {
+      select: {
+        data: {
+          id: true,
+          telegramUsername: true,
+          firstName: true,
+          lastName: true,
+          defaultDiscount: true,
+          defaultDiscountType: true,
+        },
+      },
+    }
+  );
+
   // tRPC mutations
   const createMutation = trpc.customPrices.create.useMutation();
   const createBulkMutation = trpc.customPrices.createBulk.useMutation();
@@ -321,6 +338,52 @@ export default function CustomPricesPage() {
           />
         </div>
       </motion.div>
+
+      {/* Global Default Discounts Section */}
+      {usersWithGlobalDiscounts && usersWithGlobalDiscounts.data.filter((u: any) => u.defaultDiscount).length > 0 && (
+        <motion.div {...fadeUp(0.12)} className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Globe size={16} className="text-primary" />
+            <h3 className="font-semibold">Global Default Discounts</h3>
+            <Badge variant="secondary" className="text-xs">
+              {usersWithGlobalDiscounts.data.filter((u: any) => u.defaultDiscount).length} users
+            </Badge>
+          </div>
+          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+            {usersWithGlobalDiscounts.data
+              .filter((u: any) => u.defaultDiscount)
+              .slice(0, 6)
+              .map((user: any) => (
+                <Card key={user.id} className="border-primary/20 bg-primary/5">
+                  <CardContent className="p-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <User size={14} className="text-muted-foreground" />
+                        <div>
+                          <p className="text-sm font-medium">{getUserDisplayName(user)}</p>
+                          {user.telegramUsername && (
+                            <p className="text-xs text-muted-foreground">@{user.telegramUsername}</p>
+                          )}
+                        </div>
+                      </div>
+                      <Badge variant="default" className="text-xs">
+                        {user.defaultDiscountType === 'FLAT' ? `₹${user.defaultDiscount}` : `${user.defaultDiscount}%`}
+                      </Badge>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-border/50 text-xs text-muted-foreground">
+                      Applies to all services • Manage on Users page
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+          {usersWithGlobalDiscounts.data.filter((u: any) => u.defaultDiscount).length > 6 && (
+            <p className="text-xs text-muted-foreground text-center">
+              And {usersWithGlobalDiscounts.data.filter((u: any) => u.defaultDiscount).length - 6} more...
+            </p>
+          )}
+        </motion.div>
+      )}
 
       {/* Desktop Table View */}
       <motion.div {...fadeUp(0.15)} className="hidden md:block">
