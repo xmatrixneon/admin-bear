@@ -600,4 +600,124 @@ export const customPricesRouter = router({
         take: 100,
       });
     }),
+
+  /**
+   * Update global default discount for a user
+   */
+  updateGlobalDiscount: protectedProcedure
+    .input(z.object({
+      userId: z.string().min(1, 'User ID is required'),
+      discount: z.number().positive('Discount must be positive'),
+      type: z.enum(['FLAT', 'PERCENT']),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma, admin } = ctx;
+
+      // Get max discount from settings
+      const settings = await prisma.settings.findUnique({ where: { id: '1' } });
+      const maxDiscountPercent = settings?.maxDiscountPercent ?? 20;
+
+      // Validate discount against settings
+      if (input.type === 'PERCENT') {
+        if (input.discount > maxDiscountPercent) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `Discount cannot exceed ${maxDiscountPercent}%`,
+          });
+        }
+      }
+
+      // Get user for audit
+      const user = await prisma.user.findUnique({
+        where: { id: input.userId },
+        select: { id: true, telegramUsername: true, defaultDiscount: true, defaultDiscountType: true },
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+      }
+
+      const previousDiscount = user.defaultDiscount?.toString();
+      const previousType = user.defaultDiscountType;
+
+      // Update user's global default discount
+      const updated = await prisma.user.update({
+        where: { id: input.userId },
+        data: {
+          defaultDiscount: input.discount,
+          defaultDiscountType: input.type,
+        },
+      });
+
+      // Audit log
+      await prisma.userAuditLog.create({
+        data: {
+          userId: admin.id,
+          adminId: admin.id,
+          action: 'UPDATE_GLOBAL_DISCOUNT',
+          changes: {
+            userId: input.userId,
+            discount: input.discount,
+            type: input.type,
+            previousDiscount,
+            previousType,
+          },
+        },
+      });
+
+      return {
+        success: true,
+        discount: input.discount,
+        type: input.type,
+      };
+    }),
+
+  /**
+   * Delete global default discount for a user
+   */
+  deleteGlobalDiscount: protectedProcedure
+    .input(z.object({
+      userId: z.string().min(1, 'User ID is required'),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { prisma, admin } = ctx;
+
+      // Get user for audit
+      const user = await prisma.user.findUnique({
+        where: { id: input.userId },
+        select: { id: true, telegramUsername: true, defaultDiscount: true, defaultDiscountType: true },
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+      }
+
+      const previousDiscount = user.defaultDiscount?.toString();
+      const previousType = user.defaultDiscountType;
+
+      // Remove global default discount
+      await prisma.user.update({
+        where: { id: input.userId },
+        data: {
+          defaultDiscount: null,
+          defaultDiscountType: null,
+        },
+      });
+
+      // Audit log
+      await prisma.userAuditLog.create({
+        data: {
+          userId: admin.id,
+          adminId: admin.id,
+          action: 'DELETE_GLOBAL_DISCOUNT',
+          changes: {
+            userId: input.userId,
+            previousDiscount,
+            previousType,
+          },
+        },
+      });
+
+      return { success: true };
+    }),
 });

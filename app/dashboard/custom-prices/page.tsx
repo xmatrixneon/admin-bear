@@ -88,13 +88,22 @@ export default function CustomPricesPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [globalEditDialogOpen, setGlobalEditDialogOpen] = useState(false);
+  const [globalDeleteDialogOpen, setGlobalDeleteDialogOpen] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState<any>(null);
+  const [selectedGlobalUser, setSelectedGlobalUser] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Form state
   const [formData, setFormData] = useState({
     userId: "",
     serviceId: "",
+    discount: "",
+    type: "PERCENT" as "FLAT" | "PERCENT",
+  });
+
+  // Global discount form state
+  const [globalDiscountForm, setGlobalDiscountForm] = useState({
     discount: "",
     type: "PERCENT" as "FLAT" | "PERCENT",
   });
@@ -119,6 +128,8 @@ export default function CustomPricesPage() {
   const createBulkMutation = trpc.customPrices.createBulk.useMutation();
   const updateMutation = trpc.customPrices.update.useMutation();
   const deleteMutation = trpc.customPrices.delete.useMutation();
+  const updateGlobalMutation = trpc.customPrices.updateGlobalDiscount.useMutation();
+  const deleteGlobalMutation = trpc.customPrices.deleteGlobalDiscount.useMutation();
 
   // Filter custom prices by search
   const filteredPrices = useMemo(() => {
@@ -229,6 +240,51 @@ export default function CustomPricesPage() {
     });
     setSelectedUser(price.user);
     setEditDialogOpen(true);
+  };
+
+  // Global discount handlers
+  const openGlobalEditDialog = (user: any) => {
+    setSelectedGlobalUser(user);
+    setGlobalDiscountForm({
+      discount: user.defaultDiscount.toString(),
+      type: user.defaultDiscountType || "PERCENT",
+    });
+    setGlobalEditDialogOpen(true);
+  };
+
+  const handleGlobalEdit = async () => {
+    if (!selectedGlobalUser || !globalDiscountForm.discount) {
+      toast.error("Please provide a discount value");
+      return;
+    }
+
+    try {
+      await updateGlobalMutation.mutateAsync({
+        userId: selectedGlobalUser.id,
+        discount: parseFloat(globalDiscountForm.discount),
+        type: globalDiscountForm.type,
+      });
+      toast.success("Global discount updated successfully");
+      setGlobalEditDialogOpen(false);
+      setSelectedGlobalUser(null);
+      setGlobalDiscountForm({ discount: "", type: "PERCENT" });
+      refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update global discount");
+    }
+  };
+
+  const handleGlobalDelete = async () => {
+    if (!selectedGlobalUser) return;
+    try {
+      await deleteGlobalMutation.mutateAsync({ userId: selectedGlobalUser.id });
+      toast.success("Global discount removed successfully");
+      setGlobalDeleteDialogOpen(false);
+      setSelectedGlobalUser(null);
+      refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to remove global discount");
+    }
   };
 
   // Calculate stats (include both CustomPrice entries and global User discounts)
@@ -345,7 +401,7 @@ export default function CustomPricesPage() {
               .map((user: any) => (
                 <Card key={user.id} className="border-primary/20 bg-primary/5">
                   <CardContent className="p-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
                         <User size={14} className="text-muted-foreground" />
                         <div>
@@ -355,12 +411,40 @@ export default function CustomPricesPage() {
                           )}
                         </div>
                       </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-7 w-7">
+                            <MoreVertical size={12} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => openGlobalEditDialog(user)}>
+                            <Edit size={12} className="mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={() => {
+                              setSelectedGlobalUser(user);
+                              setGlobalDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 size={12} className="mr-2" />
+                            Remove
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    <div className="flex items-center justify-between">
                       <Badge variant="default" className="text-xs">
                         {user.defaultDiscountType === 'FLAT' ? `₹${user.defaultDiscount}` : `${user.defaultDiscount}%`}
                       </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {services?.length || 0} services
+                      </span>
                     </div>
                     <div className="mt-2 pt-2 border-t border-border/50 text-xs text-muted-foreground">
-                      Applies to all services • Manage on Users page
+                      Applies to all services
                     </div>
                   </CardContent>
                 </Card>
@@ -969,6 +1053,82 @@ export default function CustomPricesPage() {
               className="bg-destructive hover:bg-destructive/90"
             >
               Delete Discount
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Global Discount Edit Dialog */}
+      <Dialog open={globalEditDialogOpen} onOpenChange={setGlobalEditDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Global Discount</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>User</Label>
+              <div className="text-sm text-muted-foreground">
+                {selectedGlobalUser?.telegramUsername || (selectedGlobalUser ? getUserDisplayName(selectedGlobalUser) : "Unknown")}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="global-discount-type">Discount Type</Label>
+              <Select
+                value={globalDiscountForm.type}
+                onValueChange={(value) => setGlobalDiscountForm({ ...globalDiscountForm, type: value as "FLAT" | "PERCENT" })}
+              >
+                <SelectTrigger id="global-discount-type">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PERCENT">Percentage (%)</SelectItem>
+                  <SelectItem value="FLAT">Flat Amount (₹)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="global-discount-value">
+                Discount Value {globalDiscountForm.type === "PERCENT" ? "(%)" : "(₹)"}
+              </Label>
+              <Input
+                id="global-discount-value"
+                type="number"
+                min="0"
+                step="0.01"
+                value={globalDiscountForm.discount}
+                onChange={(e) => setGlobalDiscountForm({ ...globalDiscountForm, discount: e.target.value })}
+                placeholder={globalDiscountForm.type === "PERCENT" ? "Enter percentage" : "Enter amount"}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setGlobalEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleGlobalEdit} disabled={updateGlobalMutation.isPending}>
+              {updateGlobalMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Update Discount
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Global Discount Delete AlertDialog */}
+      <AlertDialog open={globalDeleteDialogOpen} onOpenChange={setGlobalDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove Global Discount</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove the global discount for <strong>{selectedGlobalUser?.telegramUsername || (selectedGlobalUser ? getUserDisplayName(selectedGlobalUser) : "this user")}</strong>? This user will no longer receive automatic discounts on any services.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleGlobalDelete}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Remove Discount
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
