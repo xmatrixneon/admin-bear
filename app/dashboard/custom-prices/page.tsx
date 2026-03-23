@@ -245,10 +245,14 @@ export default function CustomPricesPage() {
     setEditDialogOpen(true);
   };
 
-  // Calculate stats
-  const totalDiscounts = customPrices?.length || 0;
-  const flatDiscounts = customPrices?.filter((cp: any) => cp.type === "FLAT").length || 0;
-  const percentDiscounts = customPrices?.filter((cp: any) => cp.type === "PERCENT").length || 0;
+  // Calculate stats (include both CustomPrice entries and global User discounts)
+  const globalDiscountsCount = usersWithGlobalDiscounts?.data.filter((u: any) => u.defaultDiscount).length || 0;
+  const globalFlatDiscounts = usersWithGlobalDiscounts?.data.filter((u: any) => u.defaultDiscountType === "FLAT").length || 0;
+  const globalPercentDiscounts = usersWithGlobalDiscounts?.data.filter((u: any) => u.defaultDiscountType === "PERCENT").length || 0;
+
+  const totalDiscounts = (customPrices?.length || 0) + globalDiscountsCount;
+  const flatDiscounts = (customPrices?.filter((cp: any) => cp.type === "FLAT").length || 0) + globalFlatDiscounts;
+  const percentDiscounts = (customPrices?.filter((cp: any) => cp.type === "PERCENT").length || 0) + globalPercentDiscounts;
 
   // Calculate final price helper
   const getFinalPrice = (basePrice: number, discount: number, type: string) => {
@@ -298,7 +302,7 @@ export default function CustomPricesPage() {
           icon={Percent}
           color="text-blue-500"
           bgColor="bg-blue-500/5"
-          loading={isLoading}
+          loading={isLoading || !usersWithGlobalDiscounts}
         />
         <StatsCard
           title="Flat Discounts"
