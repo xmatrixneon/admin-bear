@@ -311,6 +311,7 @@ export const SettingsScalarFieldEnum = {
   numberExpiryMinutes: 'numberExpiryMinutes',
   currency: 'currency',
   minCancelMinutes: 'minCancelMinutes',
+  maxDiscountPercent: 'maxDiscountPercent',
   maintenanceMode: 'maintenanceMode',
   telegramHelpUrl: 'telegramHelpUrl',
   telegramSupportUsername: 'telegramSupportUsername',

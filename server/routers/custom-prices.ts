@@ -24,7 +24,7 @@ const customPriceDeleteSchema = z.object({
 
 const bulkDiscountCreateSchema = z.object({
   userId:    z.string().min(1, 'User ID is required'),
-  discount:  z.number().positive('Discount must be positive').max(100, 'Discount cannot exceed 100'),
+  discount:  z.number().positive('Discount must be positive'),
   type:      z.enum(['FLAT', 'PERCENT']),
   country:   z.string().optional(), // Optional: filter by country
 });
@@ -125,6 +125,10 @@ export const customPricesRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { prisma, admin } = ctx;
 
+      // Get max discount from settings
+      const settings = await prisma.settings.findUnique({ where: { id: '1' } });
+      const maxDiscountPercent = settings?.maxDiscountPercent ?? 20;
+
       // Verify user exists
       const user = await prisma.user.findUnique({
         where: { id: input.userId },
@@ -160,8 +164,16 @@ export const customPricesRouter = router({
         });
       }
 
-      // Validate discount doesn't exceed base price for FLAT type
-      if (input.type === 'FLAT') {
+      // Validate discount against settings
+      if (input.type === 'PERCENT') {
+        if (input.discount > maxDiscountPercent) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `Discount cannot exceed ${maxDiscountPercent}%`,
+          });
+        }
+      } else {
+        // FLAT: Validate discount doesn't exceed base price
         const discount = new Prisma.Decimal(input.discount);
         const basePrice = service.basePrice;
 
@@ -226,6 +238,10 @@ export const customPricesRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { prisma, admin } = ctx;
 
+      // Get max discount from settings
+      const settings = await prisma.settings.findUnique({ where: { id: '1' } });
+      const maxDiscountPercent = settings?.maxDiscountPercent ?? 20;
+
       const existing = await prisma.customPrice.findUnique({
         where: { id: input.id },
         include: {
@@ -244,8 +260,16 @@ export const customPricesRouter = router({
       const finalType = input.type ?? existing.type;
 
       if (input.discount !== undefined) {
-        // Validate for FLAT type (either existing or changing to FLAT)
-        if (finalType === 'FLAT') {
+        // Validate against max discount for PERCENT type
+        if (finalType === 'PERCENT') {
+          if (input.discount > maxDiscountPercent) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: `Discount cannot exceed ${maxDiscountPercent}%`,
+            });
+          }
+        } else if (finalType === 'FLAT') {
+          // Validate for FLAT type
           const discount = new Prisma.Decimal(input.discount);
           if (discount.greaterThan(existing.service.basePrice)) {
             throw new TRPCError({
@@ -263,6 +287,16 @@ export const customPricesRouter = router({
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message: `Cannot change to FLAT - existing discount (₹${existing.discount}) exceeds base price (₹${existing.service.basePrice})`,
+          });
+        }
+      }
+
+      // If changing to PERCENT, validate existing discount against max
+      if (input.type === 'PERCENT' && input.discount === undefined) {
+        if (existing.discount.toNumber() > maxDiscountPercent) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `Cannot change to PERCENT - existing discount (${existing.discount}%) exceeds maximum (${maxDiscountPercent}%)`,
           });
         }
       }
@@ -378,6 +412,10 @@ export const customPricesRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { prisma, admin } = ctx;
 
+      // Get max discount from settings
+      const settings = await prisma.settings.findUnique({ where: { id: '1' } });
+      const maxDiscountPercent = settings?.maxDiscountPercent ?? 20;
+
       // Verify user exists
       const user = await prisma.user.findUnique({
         where: { id: input.userId },
@@ -396,8 +434,16 @@ export const customPricesRouter = router({
         });
       }
 
-      // For FLAT discounts, validate against the lowest service base price
-      if (input.type === 'FLAT') {
+      // Validate discount against settings
+      if (input.type === 'PERCENT') {
+        if (input.discount > maxDiscountPercent) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `Discount cannot exceed ${maxDiscountPercent}%`,
+          });
+        }
+      } else if (input.type === 'FLAT') {
+        // For FLAT discounts, validate against the lowest service base price
         const lowestPrice = await prisma.service.findFirst({
           where: { isActive: true },
           orderBy: { basePrice: 'asc' },

@@ -307,6 +307,7 @@ model Settings {
   // FIX (Bug 7): store ₹ symbol directly — consistent with UI expectation
   currency                String  @default("₹")
   minCancelMinutes        Int     @default(2)
+  maxDiscountPercent      Int     @default(20)
   maintenanceMode         Boolean @default(false)
   telegramHelpUrl         String?
   telegramSupportUsername String?
