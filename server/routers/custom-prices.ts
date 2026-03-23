@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { Prisma } from '@app/generated/prisma/client';
+import { Prisma } from '@/app/generated/prisma/client';
 import { router, protectedProcedure } from '../trpc';
 
 // ─── Schemas ──────────────────────────────────────────────────────────────────
 
 const customPriceCreateSchema = z.object({
-  userId:     z.string().cuid('Invalid user ID'),
+  userId:     z.string().min(1, 'User ID is required'),
   serviceId:  z.string().min(1, 'Service ID is required'),
   discount:   z.number().positive('Discount must be positive').max(100, 'Discount cannot exceed 100'),
   type:       z.enum(['FLAT', 'PERCENT']),
@@ -20,6 +20,13 @@ const customPriceUpdateSchema = z.object({
 
 const customPriceDeleteSchema = z.object({
   id: z.string().cuid(),
+});
+
+const bulkDiscountCreateSchema = z.object({
+  userId:    z.string().min(1, 'User ID is required'),
+  discount:  z.number().positive('Discount must be positive').max(100, 'Discount cannot exceed 100'),
+  type:      z.enum(['FLAT', 'PERCENT']),
+  country:   z.string().optional(), // Optional: filter by country
 });
 
 // ─── Router ───────────────────────────────────────────────────────────────────
@@ -68,7 +75,7 @@ export const customPricesRouter = router({
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { id: 'desc' },
       });
     }),
 
@@ -350,6 +357,94 @@ export const customPricesRouter = router({
     }),
 
   /**
+   * Create discount for all services (bulk)
+   */
+  createBulk: protectedProcedure
+    .input(bulkDiscountCreateSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { prisma, admin } = ctx;
+
+      // Verify user exists
+      const user = await prisma.user.findUnique({
+        where: { id: input.userId },
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
+      }
+
+      // Build where clause for services
+      const serviceWhere: Prisma.ServiceWhereInput = {
+        isActive: true,
+      };
+
+      if (input.country) {
+        serviceWhere.server = {
+          countryCode: input.country,
+          isActive: true,
+        };
+      }
+
+      // Get all services
+      const services = await prisma.service.findMany({
+        where: serviceWhere,
+      });
+
+      if (services.length === 0) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'No active services found' });
+      }
+
+      // Prepare bulk create data
+      const createData: Prisma.CustomPriceCreateManyInput[] = [];
+
+      for (const service of services) {
+        // Validate FLAT discount doesn't exceed base price
+        if (input.type === 'FLAT') {
+          const discount = new Prisma.Decimal(input.discount);
+          if (discount.greaterThan(service.basePrice)) {
+            // Skip this service or adjust discount to base price
+            continue;
+          }
+        }
+
+        createData.push({
+          userId: input.userId,
+          serviceId: service.id,
+          discount: new Prisma.Decimal(input.discount),
+          type: input.type,
+        });
+      }
+
+      // Bulk create (ignore duplicates due to unique constraint)
+      const result = await prisma.customPrice.createMany({
+        data: createData,
+        skipDuplicates: true,
+      });
+
+      // Audit log
+      await prisma.userAuditLog.create({
+        data: {
+          userId: admin.id,
+          adminId: admin.id,
+          action: 'CREATE_BULK_CUSTOM_PRICE',
+          changes: {
+            userId: input.userId,
+            discount: input.discount,
+            type: input.type,
+            country: input.country || 'all',
+            servicesAffected: result.count,
+          },
+        },
+      });
+
+      return {
+        success: true,
+        created: result.count,
+        total: services.length,
+      };
+    }),
+
+  /**
    * Get users search results for dropdown
    */
   searchUsers: protectedProcedure
@@ -411,7 +506,6 @@ export const customPricesRouter = router({
           },
         },
         orderBy: [{ server: { countryCode: 'asc' } }, { name: 'asc' }],
-        take: 100,
       });
     }),
 });

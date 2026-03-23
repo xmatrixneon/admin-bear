@@ -16,6 +16,7 @@ import {
   Sparkles,
   IndianRupee,
   Tag,
+  Globe,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -96,6 +97,7 @@ export default function CustomPricesPage() {
     serviceId: "",
     discount: "",
     type: "PERCENT" as "FLAT" | "PERCENT",
+    country: "" as string,
   });
 
   // User search state
@@ -112,6 +114,7 @@ export default function CustomPricesPage() {
 
   // tRPC mutations
   const createMutation = trpc.customPrices.create.useMutation();
+  const createBulkMutation = trpc.customPrices.createBulk.useMutation();
   const updateMutation = trpc.customPrices.update.useMutation();
   const deleteMutation = trpc.customPrices.delete.useMutation();
 
@@ -128,19 +131,36 @@ export default function CustomPricesPage() {
   }, [customPrices, searchQuery]);
 
   const handleCreate = async () => {
-    if (!formData.userId || !formData.serviceId || !formData.discount) {
-      toast.error("Please fill all fields");
+    if (!formData.userId || !formData.discount) {
+      toast.error("Please select a user and enter discount value");
+      return;
+    }
+
+    if (formData.serviceId !== "all" && !formData.serviceId) {
+      toast.error("Please select a service");
       return;
     }
 
     try {
-      await createMutation.mutateAsync({
-        userId: formData.userId,
-        serviceId: formData.serviceId,
-        discount: parseFloat(formData.discount),
-        type: formData.type,
-      });
-      toast.success("Custom price created successfully");
+      if (formData.serviceId === "all") {
+        // Bulk create for all services
+        const result = await createBulkMutation.mutateAsync({
+          userId: formData.userId,
+          discount: parseFloat(formData.discount),
+          type: formData.type,
+          country: formData.country || undefined,
+        });
+        toast.success(`Discount created for ${result.created} services`);
+      } else {
+        // Single service create
+        await createMutation.mutateAsync({
+          userId: formData.userId,
+          serviceId: formData.serviceId,
+          discount: parseFloat(formData.discount),
+          type: formData.type,
+        });
+        toast.success("Custom price created successfully");
+      }
       setCreateDialogOpen(false);
       resetForm();
       refetch();
@@ -185,7 +205,7 @@ export default function CustomPricesPage() {
   };
 
   const resetForm = () => {
-    setFormData({ userId: "", serviceId: "", discount: "", type: "PERCENT" });
+    setFormData({ userId: "", serviceId: "", discount: "", type: "PERCENT", country: "" });
     setSelectedUser(null);
     setUserSearchQuery("");
   };
@@ -197,6 +217,7 @@ export default function CustomPricesPage() {
       serviceId: price.serviceId,
       discount: price.discount.toString(),
       type: price.type,
+      country: "",
     });
     setSelectedUser(price.user);
     setEditDialogOpen(true);
@@ -602,12 +623,19 @@ export default function CustomPricesPage() {
               <Label>Service</Label>
               <Select
                 value={formData.serviceId}
-                onValueChange={(value) => setFormData({ ...formData, serviceId: value })}
+                onValueChange={(value) => setFormData({ ...formData, serviceId: value, country: "" })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a service" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">
+                    <div className="flex items-center gap-2">
+                      <Globe size={14} className="text-primary" />
+                      <span className="font-medium">All Services</span>
+                      <Badge variant="secondary" className="text-xs">{services?.length || 0}</Badge>
+                    </div>
+                  </SelectItem>
                   {services?.map((service: any) => (
                     <SelectItem key={service.id} value={service.id}>
                       <div className="flex items-center gap-2">
@@ -620,6 +648,36 @@ export default function CustomPricesPage() {
                   ))}
                 </SelectContent>
               </Select>
+
+              {/* Country filter when "All Services" is selected */}
+              {formData.serviceId === "all" && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Filter by Country (Optional)</Label>
+                  <Select
+                    value={formData.country}
+                    onValueChange={(value) => setFormData({ ...formData, country: value === "all" ? "" : value })}
+                  >
+                    <SelectTrigger className="h-8">
+                      <SelectValue placeholder="All Countries" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Countries</SelectItem>
+                      {Array.from(new Set(services?.map((s: any) => s.server?.countryCode).filter(Boolean)))
+                        .sort()
+                        .map((country) => (
+                          <SelectItem key={country} value={country}>
+                            {country}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  {formData.country && (
+                    <p className="text-xs text-muted-foreground">
+                      Filtering for services in: <span className="font-medium">{formData.country}</span>
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Discount Type */}
@@ -662,30 +720,71 @@ export default function CustomPricesPage() {
             </div>
 
             {/* Preview */}
-            {formData.serviceId && formData.discount && services && (
+            {formData.discount && services && (
               <div className="p-3 bg-muted rounded-lg text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Base Price:</span>
-                  <span>{formatCurrency(services.find((s: any) => s.id === formData.serviceId)?.basePrice || 0)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Discount:</span>
-                  <span className="text-green-600 dark:text-green-400">
-                    {formData.type === "PERCENT" ? `${formData.discount}%` : formatCurrency(parseFloat(formData.discount) || 0)}
-                  </span>
-                </div>
-                <div className="flex justify-between pt-2 border-t font-semibold">
-                  <span>Final Price:</span>
-                  <span>
-                    {formatCurrency(
-                      getFinalPrice(
-                        services.find((s: any) => s.id === formData.serviceId)?.basePrice || 0,
-                        parseFloat(formData.discount) || 0,
-                        formData.type
-                      )
-                    )}
-                  </span>
-                </div>
+                {formData.serviceId === "all" ? (
+                  // Bulk discount preview
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 font-medium text-foreground">
+                      <Globe size={16} />
+                      <span>Bulk Discount Summary</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Discount Type:</span>
+                      <span>{formData.type === "PERCENT" ? "Percentage" : "Flat (₹)"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Discount:</span>
+                      <span className="text-green-600 dark:text-green-400">
+                        {formData.type === "PERCENT" ? `${formData.discount}% off all services` : `₹${formData.discount} off all services`}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Target Services:</span>
+                      <span>
+                        {formData.country
+                          ? `Services in ${formData.country}`
+                          : "All active services"}
+                      </span>
+                    </div>
+                    <div className="pt-2 border-t">
+                      <div className="flex justify-between font-semibold">
+                        <span>Services Affected:</span>
+                        <span>
+                          {formData.country
+                            ? services.filter((s: any) => s.server?.countryCode === formData.country).length
+                            : services.length}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  // Single service preview
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Base Price:</span>
+                      <span>{formatCurrency(services.find((s: any) => s.id === formData.serviceId)?.basePrice || 0)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Discount:</span>
+                      <span className="text-green-600 dark:text-green-400">
+                        {formData.type === "PERCENT" ? `${formData.discount}%` : formatCurrency(parseFloat(formData.discount) || 0)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between pt-2 border-t font-semibold">
+                      <span>Final Price:</span>
+                      <span>
+                        {formatCurrency(
+                          getFinalPrice(
+                            Number(services.find((s: any) => s.id === formData.serviceId)?.basePrice || 0),
+                            parseFloat(formData.discount) || 0,
+                            formData.type
+                          )
+                        )}
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -701,9 +800,13 @@ export default function CustomPricesPage() {
             </Button>
             <Button
               onClick={handleCreate}
-              disabled={createMutation.isPending || !selectedUser || !formData.serviceId || !formData.discount}
+              disabled={createMutation.isPending || createBulkMutation.isPending || !selectedUser || !formData.serviceId || !formData.discount}
             >
-              {createMutation.isPending ? "Creating..." : "Create Discount"}
+              {(createMutation.isPending || createBulkMutation.isPending)
+                ? "Creating..."
+                : formData.serviceId === "all"
+                ? "Create Bulk Discount"
+                : "Create Discount"}
             </Button>
           </DialogFooter>
         </DialogContent>
