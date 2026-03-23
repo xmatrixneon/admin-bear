@@ -156,7 +156,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6 md:space-y-8">
+    <div className="space-y-4 sm:space-y-6 md:space-y-8">
       {/* Page Header */}
       <PageHeader
         title="Dashboard"
@@ -169,17 +169,18 @@ export default function DashboardPage() {
             disabled={isLoading}
           >
             {isLoading ? (
-              <Loader2 size={16} className="mr-2 animate-spin" />
+              <Loader2 size={14} className="mr-2 animate-spin" />
             ) : (
-              <RefreshCw size={16} className="mr-2" />
+              <RefreshCw size={14} className="mr-2" />
             )}
-            Refresh
+            <span className="hidden sm:inline">Refresh</span>
+            <span className="sm:hidden">Refresh</span>
           </Button>
         }
       />
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
         <StatsCard
           title="Total Users"
           value={totalUsers}
@@ -250,67 +251,67 @@ export default function DashboardPage() {
       <motion.div {...fadeUp(0.05)}>
         <Card className="overflow-hidden border-border/50">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent" />
-          <CardContent className="p-5 md:p-6 relative">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <ArrowDownUp className="text-primary" size={18} />
+          <CardContent className="p-3 sm:p-4 md:p-5 lg:p-6 relative">
+            <div className="flex items-center gap-2 mb-3 sm:mb-4 md:mb-5">
+              <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 shrink-0">
+                <ArrowDownUp className="text-primary size-3.5 sm:size-4" />
               </div>
               <div>
-                <h3 className="font-semibold">Last 7 Days Overview</h3>
-                <p className="text-xs text-muted-foreground">Recharge vs Spent metrics</p>
+                <h3 className="text-sm sm:text-base font-semibold">Last 7 Days Overview</h3>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Recharge vs Spent metrics</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-green-500/5 border border-green-500/10">
-                <div className="p-2.5 rounded-lg bg-green-500/10">
-                  <TrendingUp className="text-green-500" size={20} />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
+              <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 p-2 sm:p-2.5 md:p-3 rounded-xl bg-green-500/5 border border-green-500/10">
+                <div className="p-1.5 sm:p-2 md:p-2.5 rounded-lg bg-green-500/10 shrink-0">
+                  <TrendingUp className="text-green-500 size-3.5 sm:size-4 md:size-5" />
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Recharge (UPI + Promo)</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">Recharge (UPI + Promo)</p>
                   {chartDataLoading ? (
-                    <Skeleton className="h-6 w-20 mt-1" />
+                    <Skeleton className="h-4 sm:h-5 md:h-6 w-12 sm:w-16 md:w-20 mt-0.5 sm:mt-1" />
                   ) : (
-                    <p className="text-lg font-bold text-green-500">{formatCurrency(periodRecharge)}</p>
+                    <p className="text-sm sm:text-base md:text-lg font-bold text-green-500 truncate">{formatCurrency(periodRecharge)}</p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/10">
-                <div className="p-2.5 rounded-lg bg-red-500/10">
-                  <TrendingDown className="text-red-500" size={20} />
+              <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 p-2 sm:p-2.5 md:p-3 rounded-xl bg-red-500/5 border border-red-500/10">
+                <div className="p-1.5 sm:p-2 md:p-2.5 rounded-lg bg-red-500/10 shrink-0">
+                  <TrendingDown className="text-red-500 size-3.5 sm:size-4 md:size-5" />
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Spent (SMS Received)</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">Spent (SMS Received)</p>
                   {chartDataLoading ? (
-                    <Skeleton className="h-6 w-20 mt-1" />
+                    <Skeleton className="h-4 sm:h-5 md:h-6 w-12 sm:w-16 md:w-20 mt-0.5 sm:mt-1" />
                   ) : (
-                    <p className="text-lg font-bold text-red-500">{formatCurrency(periodSpent)}</p>
+                    <p className="text-sm sm:text-base md:text-lg font-bold text-red-500 truncate">{formatCurrency(periodSpent)}</p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-500/5 border border-blue-500/10">
-                <div className="p-2.5 rounded-lg bg-blue-500/10">
-                  <MessageSquare className="text-blue-500" size={20} />
+              <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 p-2 sm:p-2.5 md:p-3 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                <div className="p-1.5 sm:p-2 md:p-2.5 rounded-lg bg-blue-500/10 shrink-0">
+                  <MessageSquare className="text-blue-500 size-3.5 sm:size-4 md:size-5" />
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">SMS Received</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">SMS Received</p>
                   {chartDataLoading ? (
-                    <Skeleton className="h-6 w-20 mt-1" />
+                    <Skeleton className="h-4 sm:h-5 md:h-6 w-12 sm:w-16 md:w-20 mt-0.5 sm:mt-1" />
                   ) : (
-                    <p className="text-lg font-bold text-blue-500">{periodSms}</p>
+                    <p className="text-sm sm:text-base md:text-lg font-bold text-blue-500 truncate">{periodSms}</p>
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-purple-500/5 border border-purple-500/10">
-                <div className="p-2.5 rounded-lg bg-purple-500/10">
-                  <DollarSign className="text-purple-500" size={20} />
+              <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 p-2 sm:p-2.5 md:p-3 rounded-xl bg-purple-500/5 border border-purple-500/10">
+                <div className="p-1.5 sm:p-2 md:p-2.5 rounded-lg bg-purple-500/10 shrink-0">
+                  <DollarSign className="text-purple-500 size-3.5 sm:size-4 md:size-5" />
                 </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Net Flow</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">Net Flow</p>
                   {chartDataLoading ? (
-                    <Skeleton className="h-6 w-20 mt-1" />
+                    <Skeleton className="h-4 sm:h-5 md:h-6 w-12 sm:w-16 md:w-20 mt-0.5 sm:mt-1" />
                   ) : (
                     <p className={cn(
-                      "text-lg font-bold",
+                      "text-sm sm:text-base md:text-lg font-bold truncate",
                       periodRecharge - periodSpent >= 0 ? "text-green-500" : "text-red-500"
                     )}>
                       {formatCurrency(periodRecharge - periodSpent)}
@@ -324,89 +325,89 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
         {/* Recharge vs Spent Chart */}
         <motion.div {...fadeUp(0.1)}>
           <Card className="border-border/50">
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 p-3 sm:p-4 md:p-6">
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <ArrowDownUp size={16} className="text-primary" />
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 shrink-0">
+                  <ArrowDownUp className="text-primary size-3 sm:size-4" />
                 </div>
-                <div>
-                  <CardTitle className="text-base">Recharge vs Spent</CardTitle>
-                  <CardDescription>Last 7 days trend</CardDescription>
+                <div className="min-w-0">
+                  <CardTitle className="text-sm sm:text-base">Recharge vs Spent</CardTitle>
+                  <CardDescription className="text-[10px] sm:text-xs">Last 7 days trend</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-2 sm:p-4 md:p-6">
               {chartDataLoading ? (
-                <Skeleton className="h-[280px] w-full" />
+                <Skeleton className="h-[180px] sm:h-[220px] md:h-[280px] w-full" />
               ) : (
-                <ResponsiveContainer width="100%" height={280}>
-                  <AreaChart data={rechargeSpentData}>
-                    <defs>
-                      <linearGradient id="colorRecharge" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
-                      </linearGradient>
-                      <linearGradient id="colorSpent" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
-                    <XAxis
-                      dataKey="fullDate"
-                      tick={{ fontSize: 11, fill: "currentColor" }}
-                      tickLine={false}
-                      axisLine={false}
-                      className="text-muted-foreground"
-                    />
-                    <YAxis
-                      tick={{ fontSize: 11, fill: "currentColor" }}
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={(value) => `₹${value}`}
-                      className="text-muted-foreground"
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "12px",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                      }}
-                      formatter={(value: number, name: string) => [
-                        name === 'Recharge (UPI+Promo)' || name === 'Spent (SMS)' ? formatCurrency(value) : value,
-                        name
-                      ]}
-                      labelFormatter={(label) => `Date: ${label}`}
-                    />
-                    <Legend
-                      wrapperStyle={{ paddingTop: "16px" }}
-                      iconType="circle"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="recharge"
-                      stroke="#22c55e"
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill="url(#colorRecharge)"
-                      name="Recharge (UPI+Promo)"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="spent"
-                      stroke="#ef4444"
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill="url(#colorSpent)"
-                      name="Spent (SMS)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <>
+                  <ResponsiveContainer width="100%" height={180} className="sm:hidden">
+                    <AreaChart data={rechargeSpentData}>
+                      <defs>
+                        <linearGradient id="colorRechargeMobile" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                        </linearGradient>
+                        <linearGradient id="colorSpentMobile" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                      <XAxis dataKey="shortDate" tick={{ fontSize: 9 }} tickLine={false} axisLine={false} className="text-muted-foreground" interval={0} />
+                      <YAxis tick={{ fontSize: 9 }} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} className="text-muted-foreground" width={35} />
+                      <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "11px" }} formatter={(value: number, name: string) => [formatCurrency(value), name]} />
+                      <Area type="monotone" dataKey="recharge" stroke="#22c55e" strokeWidth={1.5} fillOpacity={1} fill="url(#colorRechargeMobile)" name="Recharge (UPI+Promo)" />
+                      <Area type="monotone" dataKey="spent" stroke="#ef4444" strokeWidth={1.5} fillOpacity={1} fill="url(#colorSpentMobile)" name="Spent (SMS)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                  <ResponsiveContainer width="100%" height={220} className="hidden sm:block md:hidden">
+                    <AreaChart data={rechargeSpentData}>
+                      <defs>
+                        <linearGradient id="colorRechargeMd" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                        </linearGradient>
+                        <linearGradient id="colorSpentMd" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                      <XAxis dataKey="shortDate" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} className="text-muted-foreground" interval={0} />
+                      <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} className="text-muted-foreground" width={40} />
+                      <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "10px", fontSize: "12px" }} formatter={(value: number, name: string) => [formatCurrency(value), name]} />
+                      <Legend wrapperStyle={{ paddingTop: "12px" }} iconType="circle" />
+                      <Area type="monotone" dataKey="recharge" stroke="#22c55e" strokeWidth={1.5} fillOpacity={1} fill="url(#colorRechargeMd)" name="Recharge (UPI+Promo)" />
+                      <Area type="monotone" dataKey="spent" stroke="#ef4444" strokeWidth={1.5} fillOpacity={1} fill="url(#colorSpentMd)" name="Spent (SMS)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                  <ResponsiveContainer width="100%" height={280} className="hidden md:block">
+                    <AreaChart data={rechargeSpentData}>
+                      <defs>
+                        <linearGradient id="colorRecharge" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                        </linearGradient>
+                        <linearGradient id="colorSpent" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                      <XAxis dataKey="fullDate" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} className="text-muted-foreground" />
+                      <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} className="text-muted-foreground" />
+                      <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", fontSize: "12px" }} formatter={(value: number, name: string) => [formatCurrency(value), name]} />
+                      <Legend wrapperStyle={{ paddingTop: "16px" }} iconType="circle" />
+                      <Area type="monotone" dataKey="recharge" stroke="#22c55e" strokeWidth={2} fillOpacity={1} fill="url(#colorRecharge)" name="Recharge (UPI+Promo)" />
+                      <Area type="monotone" dataKey="spent" stroke="#ef4444" strokeWidth={2} fillOpacity={1} fill="url(#colorSpent)" name="Spent (SMS)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </>
               )}
             </CardContent>
           </Card>
@@ -415,57 +416,64 @@ export default function DashboardPage() {
         {/* Transaction Chart */}
         <motion.div {...fadeUp(0.15)}>
           <Card className="border-border/50">
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 p-3 sm:p-4 md:p-6">
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Activity size={16} className="text-primary" />
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 shrink-0">
+                  <Activity className="text-primary size-3 sm:size-4" />
                 </div>
-                <div>
-                  <CardTitle className="text-base">Transactions by Type</CardTitle>
-                  <CardDescription>Distribution overview</CardDescription>
+                <div className="min-w-0">
+                  <CardTitle className="text-sm sm:text-base">Transactions by Type</CardTitle>
+                  <CardDescription className="text-[10px] sm:text-xs">Distribution overview</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-2 sm:p-4 md:p-6">
               {transactionStatsLoading ? (
-                <Skeleton className="h-[280px] w-full" />
+                <Skeleton className="h-[180px] sm:h-[220px] md:h-[280px] w-full" />
               ) : (
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={transactionData} barSize={60}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
-                    <XAxis
-                      dataKey="name"
-                      className="text-xs"
-                      tick={{ fontSize: 12, fill: "currentColor" }}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <YAxis
-                      className="text-xs"
-                      tick={{ fontSize: 11, fill: "currentColor" }}
-                      tickLine={false}
-                      axisLine={false}
-                      
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: "bg-primary",
-                        border: "1px solid bg-border",
-                        borderRadius: "12px",
-                        boxShadow: "0 4px 12px ",
-                      }}
-                    />
-                    <Legend
-                      wrapperStyle={{ paddingTop: "16px" }}
-                      iconType="circle"
-                    />
-                    <Bar dataKey="value" radius={[8, 8, 0, 0]} name="Count">
-                      {transactionData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+                <>
+                  <ResponsiveContainer width="100%" height={180} className="sm:hidden">
+                    <BarChart data={transactionData} barSize={40}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                      <XAxis dataKey="name" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                      <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} width={30} />
+                      <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "11px" }} formatter={(value: number) => [value, "Count"]} />
+                      <Bar dataKey="value" radius={[6, 6, 0, 0]} name="Count">
+                        {transactionData.map((entry, index) => (
+                          <Cell key={`cell-mobile-${index}`} fill={entry.color} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <ResponsiveContainer width="100%" height={220} className="hidden sm:block md:hidden">
+                    <BarChart data={transactionData} barSize={50}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                      <XAxis dataKey="name" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                      <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} width={35} />
+                      <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "10px", fontSize: "12px" }} formatter={(value: number) => [value, "Count"]} />
+                      <Legend wrapperStyle={{ paddingTop: "12px" }} iconType="circle" />
+                      <Bar dataKey="value" radius={[8, 8, 0, 0]} name="Count">
+                        {transactionData.map((entry, index) => (
+                          <Cell key={`cell-sm-${index}`} fill={entry.color} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <ResponsiveContainer width="100%" height={280} className="hidden md:block">
+                    <BarChart data={transactionData} barSize={60}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+                      <XAxis dataKey="name" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
+                      <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                      <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", fontSize: "12px" }} formatter={(value: number) => [value, "Count"]} />
+                      <Legend wrapperStyle={{ paddingTop: "16px" }} iconType="circle" />
+                      <Bar dataKey="value" radius={[8, 8, 0, 0]} name="Count">
+                        {transactionData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </>
               )}
             </CardContent>
           </Card>
@@ -474,41 +482,38 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <motion.div {...fadeUp(0.2)}>
-        <div className="flex items-center gap-2 mb-4">
-          <Zap size={18} className="text-primary" />
-          <h2 className="text-lg font-semibold">Quick Actions</h2>
+        <div className="flex items-center gap-2 mb-3 sm:mb-4">
+          <Zap className="text-primary size-3.5 sm:size-4" />
+          <h2 className="text-base sm:text-lg font-semibold">Quick Actions</h2>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
           {quickActions.map((action) => (
             <Link
               key={action.href}
               href={action.href}
               className={cn(
-                "group relative overflow-hidden bg-card hover:bg-muted/50 border border-border rounded-xl p-4 md:p-5 transition-all duration-300",
+                "group relative overflow-hidden bg-card hover:bg-muted/50 border border-border rounded-xl p-3 sm:p-4 md:p-5 transition-all duration-300",
                 "hover:shadow-lg hover:shadow-primary/5",
                 action.borderColor
               )}
             >
               <div className={cn(
-                "absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-30 transition-opacity -translate-y-1/2 translate-x-1/2",
+                "absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-30 transition-opacity -translate-y-1/2 translate-x-1/2",
                 action.bgColor
               )} />
               <div className="relative">
                 <div className={cn(
-                  "inline-flex p-2.5 rounded-xl mb-3 transition-transform group-hover:scale-110",
+                  "inline-flex p-1.5 sm:p-2 md:p-2.5 rounded-xl mb-2 sm:mb-3 transition-transform group-hover:scale-110",
                   action.bgColor
                 )}>
-                  <action.icon size={22} className={action.color} />
+                  <action.icon size={16} className="sm:size-5" />
                 </div>
                 <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-sm font-medium block">{action.title}</span>
-                    <span className="text-xs text-muted-foreground">{action.description}</span>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-xs sm:text-sm font-medium block truncate">{action.title}</span>
+                    <span className="text-[10px] sm:text-xs text-muted-foreground hidden xs:block truncate">{action.description}</span>
                   </div>
-                  <ArrowUpRight
-                    size={16}
-                    className="text-muted-foreground group-hover:text-primary transition-colors group-hover:translate-x-0.5 group-hover:-translate-y-0.5 duration-200"
-                  />
+                  <ArrowUpRight className="text-muted-foreground group-hover:text-primary transition-colors group-hover:translate-x-0.5 group-hover:-translate-y-0.5 duration-200 shrink-0 ml-1 size-3 sm:size-4" />
                 </div>
               </div>
             </Link>

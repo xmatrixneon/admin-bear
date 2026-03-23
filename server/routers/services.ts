@@ -10,7 +10,7 @@ const serviceInputSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   serverId: z.string().min(1, 'Server ID is required'),
   basePrice: z.number().positive('Price must be positive'),
-  iconUrl: z.string().url().optional().or(z.literal('')),
+  iconUrl: z.string().max(500, 'Icon URL too long').optional().default(''),
   isActive: z.boolean().default(true),
 });
 
@@ -117,7 +117,7 @@ export const servicesRouter = router({
           name: input.name,
           serverId: input.serverId,
           basePrice: input.basePrice,
-          iconUrl: input.iconUrl || null,
+          iconUrl: input.iconUrl ?? '',
           isActive: input.isActive,
         },
       });
@@ -176,7 +176,10 @@ export const servicesRouter = router({
 
       const service = await prisma.service.update({
         where: { id: input.id },
-        data: input.data,
+        data: {
+          ...input.data,
+          iconUrl: input.data.iconUrl ?? '',
+        },
       });
 
       // Create audit log

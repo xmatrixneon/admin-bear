@@ -183,7 +183,7 @@ export default function ServicesPage() {
         description="Manage services offered on each server"
         actions={
           <>
-            <div className="relative">
+            <div className="relative hidden sm:block">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search services..."
@@ -203,15 +203,29 @@ export default function ServicesPage() {
               ) : (
                 <RefreshCw size={16} className="mr-2" />
               )}
-              Refresh
+              <span className="hidden sm:inline">Refresh</span>
             </Button>
             <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
               <Plus size={16} className="mr-2" />
-              Add Service
+              <span className="hidden sm:inline">Add Service</span>
+              <span className="sm:hidden">Add</span>
             </Button>
           </>
         }
       />
+
+      {/* Mobile Search Bar */}
+      <motion.div {...fadeUp(0.02)} className="sm:hidden">
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search services..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 w-full"
+          />
+        </div>
+      </motion.div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">

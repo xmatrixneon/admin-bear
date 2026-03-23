@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Filter, ArrowUpDown, ChevronDown, X } from "lucide-react";
+import { Search, Filter, ArrowUpDown, ChevronDown, X, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,23 +60,24 @@ export function FilterBar({
 }: FilterBarProps) {
   const hasFilters = filterOptions && filterOptions.length > 0;
   const hasSort = sortOptions && sortOptions.length > 0;
+  const hasMultipleActions = (hasFilters ? 1 : 0) + (hasSort ? 1 : 0) > 1;
 
   return (
     <motion.div {...fadeUp()} className={className}>
       <Card className="border-border">
-        <CardContent className="p-3 sm:p-4">
-          <div className="flex flex-col sm:flex-row gap-3">
+        <CardContent className="p-2 sm:p-3 md:p-4">
+          <div className="flex flex-col gap-2 sm:gap-3">
             {/* Search */}
-            <div className="relative flex-1">
+            <div className="relative">
               <Search
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                size={14}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
               />
               <Input
                 placeholder={searchPlaceholder}
                 value={searchValue}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-9"
+                className="pl-8 h-9 text-sm"
               />
               {searchValue && (
                 <Button
@@ -85,7 +86,7 @@ export function FilterBar({
                   className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
                   onClick={() => onSearchChange("")}
                 >
-                  <X size={14} />
+                  <X size={12} />
                 </Button>
               )}
             </div>
@@ -95,16 +96,15 @@ export function FilterBar({
               {hasFilters && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="gap-2 flex-1 sm:flex-none">
-                      <Filter size={14} />
-                      <span className="sm:hidden">Filter</span>
-                      <span className="hidden sm:inline">
+                    <Button variant="outline" size="sm" className="flex-1 sm:flex-none gap-1.5 h-8 sm:h-9 text-xs sm:text-sm justify-start">
+                      <Filter size={12} className="sm:size-4 shrink-0" />
+                      <span className="truncate">
                         {filterOptions.find((f) => f.value === filterValue)?.label || "Filter"}
                       </span>
-                      <ChevronDown size={14} className="hidden sm:inline" />
+                      <ChevronDown size={12} className="sm:size-4 ml-auto shrink-0" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="min-w-[180px]">
                     <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {filterOptions.map((option) => (
@@ -123,26 +123,31 @@ export function FilterBar({
               {hasSort && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="gap-2 flex-1 sm:flex-none">
-                      <ArrowUpDown size={14} />
-                      <span className="sm:hidden">Sort</span>
-                      <span className="hidden sm:inline">
+                    <Button variant="outline" size="sm" className="flex-1 sm:flex-none gap-1.5 h-8 sm:h-9 text-xs sm:text-sm justify-start">
+                      <ArrowUpDown size={12} className="sm:size-4 shrink-0" />
+                      <span className="truncate">
                         {sortOptions.find((s) => s.value === sortValue)?.label || "Sort"}
                       </span>
+                      {sortValue && (
+                        <span className="text-[10px] sm:text-xs text-muted-foreground ml-auto shrink-0">
+                          {sortOrder === "asc" ? "↑" : "↓"}
+                        </span>
+                      )}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="min-w-[180px]">
                     <DropdownMenuLabel>Sort by</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {sortOptions.map((option) => (
                       <DropdownMenuItem
                         key={option.value}
                         onClick={() => onSortChange?.(option.value)}
+                        className="flex justify-between gap-4"
                       >
-                        <span className="flex-1">{option.label}</span>
+                        <span>{option.label}</span>
                         {sortValue === option.value && (
                           <span className="text-muted-foreground text-xs">
-                            {sortOrder === "asc" ? "ASC" : "DESC"}
+                            {sortOrder === "asc" ? "↑" : "↓"}
                           </span>
                         )}
                       </DropdownMenuItem>
