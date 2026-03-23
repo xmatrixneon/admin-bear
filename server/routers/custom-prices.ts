@@ -575,4 +575,29 @@ export const customPricesRouter = router({
         orderBy: [{ server: { countryCode: 'asc' } }, { name: 'asc' }],
       });
     }),
+
+  /**
+   * Get users with global default discounts
+   */
+  listUsersWithDiscounts: protectedProcedure
+    .query(async ({ ctx }) => {
+      const { prisma } = ctx;
+
+      return prisma.user.findMany({
+        where: {
+          defaultDiscount: { not: null },
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          telegramUsername: true,
+          firstName: true,
+          lastName: true,
+          defaultDiscount: true,
+          defaultDiscountType: true,
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 100,
+      });
+    }),
 });

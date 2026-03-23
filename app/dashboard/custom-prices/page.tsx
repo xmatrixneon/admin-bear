@@ -112,21 +112,7 @@ export default function CustomPricesPage() {
   );
 
   // Query users with global default discounts
-  const { data: usersWithGlobalDiscounts } = trpc.users.list.useQuery(
-    {},
-    {
-      select: {
-        data: {
-          id: true,
-          telegramUsername: true,
-          firstName: true,
-          lastName: true,
-          defaultDiscount: true,
-          defaultDiscountType: true,
-        },
-      },
-    }
-  );
+  const { data: usersWithDiscounts } = trpc.customPrices.listUsersWithDiscounts.useQuery();
 
   // tRPC mutations
   const createMutation = trpc.customPrices.create.useMutation();
@@ -246,9 +232,9 @@ export default function CustomPricesPage() {
   };
 
   // Calculate stats (include both CustomPrice entries and global User discounts)
-  const globalDiscountsCount = usersWithGlobalDiscounts?.data.filter((u: any) => u.defaultDiscount).length || 0;
-  const globalFlatDiscounts = usersWithGlobalDiscounts?.data.filter((u: any) => u.defaultDiscountType === "FLAT").length || 0;
-  const globalPercentDiscounts = usersWithGlobalDiscounts?.data.filter((u: any) => u.defaultDiscountType === "PERCENT").length || 0;
+  const globalDiscountsCount = usersWithDiscounts?.length || 0;
+  const globalFlatDiscounts = usersWithDiscounts?.filter((u: any) => u.defaultDiscountType === "FLAT").length || 0;
+  const globalPercentDiscounts = usersWithDiscounts?.filter((u: any) => u.defaultDiscountType === "PERCENT").length || 0;
 
   const totalDiscounts = (customPrices?.length || 0) + globalDiscountsCount;
   const flatDiscounts = (customPrices?.filter((cp: any) => cp.type === "FLAT").length || 0) + globalFlatDiscounts;
@@ -302,7 +288,7 @@ export default function CustomPricesPage() {
           icon={Percent}
           color="text-blue-500"
           bgColor="bg-blue-500/5"
-          loading={isLoading || !usersWithGlobalDiscounts}
+          loading={isLoading}
         />
         <StatsCard
           title="Flat Discounts"
@@ -344,18 +330,17 @@ export default function CustomPricesPage() {
       </motion.div>
 
       {/* Global Default Discounts Section */}
-      {usersWithGlobalDiscounts && usersWithGlobalDiscounts.data.filter((u: any) => u.defaultDiscount).length > 0 && (
+      {usersWithDiscounts && usersWithDiscounts.length > 0 && (
         <motion.div {...fadeUp(0.12)} className="space-y-3">
           <div className="flex items-center gap-2">
             <Globe size={16} className="text-primary" />
             <h3 className="font-semibold">Global Default Discounts</h3>
             <Badge variant="secondary" className="text-xs">
-              {usersWithGlobalDiscounts.data.filter((u: any) => u.defaultDiscount).length} users
+              {usersWithDiscounts.length} users
             </Badge>
           </div>
           <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3">
-            {usersWithGlobalDiscounts.data
-              .filter((u: any) => u.defaultDiscount)
+            {usersWithDiscounts
               .slice(0, 6)
               .map((user: any) => (
                 <Card key={user.id} className="border-primary/20 bg-primary/5">
@@ -381,9 +366,9 @@ export default function CustomPricesPage() {
                 </Card>
               ))}
           </div>
-          {usersWithGlobalDiscounts.data.filter((u: any) => u.defaultDiscount).length > 6 && (
+          {usersWithDiscounts.length > 6 && (
             <p className="text-xs text-muted-foreground text-center">
-              And {usersWithGlobalDiscounts.data.filter((u: any) => u.defaultDiscount).length - 6} more...
+              And {usersWithDiscounts.length - 6} more...
             </p>
           )}
         </motion.div>
