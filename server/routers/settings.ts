@@ -21,6 +21,10 @@ const DEFAULT_SETTINGS = {
   telegramSupportUsername: '',
   apiDocsBaseUrl: '',
   telegramHelpUrl: '',
+  // Announcement banner
+  announcementEnabled: false,
+  announcementMessage: '',
+  announcementType: 'info',
 };
 
 /**
@@ -44,6 +48,10 @@ const settingsUpdateSchema = z
     telegramHelpUrl: z.string().url().optional(),
     telegramSupportUsername: z.string().optional(),
     apiDocsBaseUrl: z.string().url().optional(),
+    // Announcement banner
+    announcementEnabled: z.boolean().optional(),
+    announcementMessage: z.string().optional(),
+    announcementType: z.enum(['info', 'warning', 'success', 'error']).optional(),
   })
   .strict();
 

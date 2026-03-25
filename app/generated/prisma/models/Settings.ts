@@ -64,6 +64,9 @@ export type SettingsMinAggregateOutputType = {
   telegramHelpUrl: string | null
   telegramSupportUsername: string | null
   apiDocsBaseUrl: string | null
+  announcementEnabled: boolean | null
+  announcementMessage: string | null
+  announcementType: string | null
 }
 
 export type SettingsMaxAggregateOutputType = {
@@ -84,6 +87,9 @@ export type SettingsMaxAggregateOutputType = {
   telegramHelpUrl: string | null
   telegramSupportUsername: string | null
   apiDocsBaseUrl: string | null
+  announcementEnabled: boolean | null
+  announcementMessage: string | null
+  announcementType: string | null
 }
 
 export type SettingsCountAggregateOutputType = {
@@ -104,6 +110,9 @@ export type SettingsCountAggregateOutputType = {
   telegramHelpUrl: number
   telegramSupportUsername: number
   apiDocsBaseUrl: number
+  announcementEnabled: number
+  announcementMessage: number
+  announcementType: number
   _all: number
 }
 
@@ -146,6 +155,9 @@ export type SettingsMinAggregateInputType = {
   telegramHelpUrl?: true
   telegramSupportUsername?: true
   apiDocsBaseUrl?: true
+  announcementEnabled?: true
+  announcementMessage?: true
+  announcementType?: true
 }
 
 export type SettingsMaxAggregateInputType = {
@@ -166,6 +178,9 @@ export type SettingsMaxAggregateInputType = {
   telegramHelpUrl?: true
   telegramSupportUsername?: true
   apiDocsBaseUrl?: true
+  announcementEnabled?: true
+  announcementMessage?: true
+  announcementType?: true
 }
 
 export type SettingsCountAggregateInputType = {
@@ -186,6 +201,9 @@ export type SettingsCountAggregateInputType = {
   telegramHelpUrl?: true
   telegramSupportUsername?: true
   apiDocsBaseUrl?: true
+  announcementEnabled?: true
+  announcementMessage?: true
+  announcementType?: true
   _all?: true
 }
 
@@ -293,6 +311,9 @@ export type SettingsGroupByOutputType = {
   telegramHelpUrl: string | null
   telegramSupportUsername: string | null
   apiDocsBaseUrl: string | null
+  announcementEnabled: boolean
+  announcementMessage: string | null
+  announcementType: string | null
   _count: SettingsCountAggregateOutputType | null
   _avg: SettingsAvgAggregateOutputType | null
   _sum: SettingsSumAggregateOutputType | null
@@ -336,6 +357,9 @@ export type SettingsWhereInput = {
   telegramHelpUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
   telegramSupportUsername?: Prisma.StringNullableFilter<"Settings"> | string | null
   apiDocsBaseUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
+  announcementEnabled?: Prisma.BoolFilter<"Settings"> | boolean
+  announcementMessage?: Prisma.StringNullableFilter<"Settings"> | string | null
+  announcementType?: Prisma.StringNullableFilter<"Settings"> | string | null
 }
 
 export type SettingsOrderByWithRelationInput = {
@@ -356,6 +380,9 @@ export type SettingsOrderByWithRelationInput = {
   telegramHelpUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrderInput | Prisma.SortOrder
   apiDocsBaseUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  announcementEnabled?: Prisma.SortOrder
+  announcementMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  announcementType?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type SettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -379,6 +406,9 @@ export type SettingsWhereUniqueInput = Prisma.AtLeast<{
   telegramHelpUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
   telegramSupportUsername?: Prisma.StringNullableFilter<"Settings"> | string | null
   apiDocsBaseUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
+  announcementEnabled?: Prisma.BoolFilter<"Settings"> | boolean
+  announcementMessage?: Prisma.StringNullableFilter<"Settings"> | string | null
+  announcementType?: Prisma.StringNullableFilter<"Settings"> | string | null
 }, "id">
 
 export type SettingsOrderByWithAggregationInput = {
@@ -399,6 +429,9 @@ export type SettingsOrderByWithAggregationInput = {
   telegramHelpUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrderInput | Prisma.SortOrder
   apiDocsBaseUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  announcementEnabled?: Prisma.SortOrder
+  announcementMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  announcementType?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SettingsCountOrderByAggregateInput
   _avg?: Prisma.SettingsAvgOrderByAggregateInput
   _max?: Prisma.SettingsMaxOrderByAggregateInput
@@ -427,6 +460,9 @@ export type SettingsScalarWhereWithAggregatesInput = {
   telegramHelpUrl?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   telegramSupportUsername?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   apiDocsBaseUrl?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  announcementEnabled?: Prisma.BoolWithAggregatesFilter<"Settings"> | boolean
+  announcementMessage?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  announcementType?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
 }
 
 export type SettingsCreateInput = {
@@ -447,6 +483,9 @@ export type SettingsCreateInput = {
   telegramHelpUrl?: string | null
   telegramSupportUsername?: string | null
   apiDocsBaseUrl?: string | null
+  announcementEnabled?: boolean
+  announcementMessage?: string | null
+  announcementType?: string | null
 }
 
 export type SettingsUncheckedCreateInput = {
@@ -467,6 +506,9 @@ export type SettingsUncheckedCreateInput = {
   telegramHelpUrl?: string | null
   telegramSupportUsername?: string | null
   apiDocsBaseUrl?: string | null
+  announcementEnabled?: boolean
+  announcementMessage?: string | null
+  announcementType?: string | null
 }
 
 export type SettingsUpdateInput = {
@@ -487,6 +529,9 @@ export type SettingsUpdateInput = {
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiDocsBaseUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  announcementEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  announcementMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SettingsUncheckedUpdateInput = {
@@ -507,6 +552,9 @@ export type SettingsUncheckedUpdateInput = {
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiDocsBaseUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  announcementEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  announcementMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SettingsCreateManyInput = {
@@ -527,6 +575,9 @@ export type SettingsCreateManyInput = {
   telegramHelpUrl?: string | null
   telegramSupportUsername?: string | null
   apiDocsBaseUrl?: string | null
+  announcementEnabled?: boolean
+  announcementMessage?: string | null
+  announcementType?: string | null
 }
 
 export type SettingsUpdateManyMutationInput = {
@@ -547,6 +598,9 @@ export type SettingsUpdateManyMutationInput = {
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiDocsBaseUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  announcementEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  announcementMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SettingsUncheckedUpdateManyInput = {
@@ -567,6 +621,9 @@ export type SettingsUncheckedUpdateManyInput = {
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiDocsBaseUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  announcementEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  announcementMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SettingsCountOrderByAggregateInput = {
@@ -587,6 +644,9 @@ export type SettingsCountOrderByAggregateInput = {
   telegramHelpUrl?: Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrder
   apiDocsBaseUrl?: Prisma.SortOrder
+  announcementEnabled?: Prisma.SortOrder
+  announcementMessage?: Prisma.SortOrder
+  announcementType?: Prisma.SortOrder
 }
 
 export type SettingsAvgOrderByAggregateInput = {
@@ -617,6 +677,9 @@ export type SettingsMaxOrderByAggregateInput = {
   telegramHelpUrl?: Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrder
   apiDocsBaseUrl?: Prisma.SortOrder
+  announcementEnabled?: Prisma.SortOrder
+  announcementMessage?: Prisma.SortOrder
+  announcementType?: Prisma.SortOrder
 }
 
 export type SettingsMinOrderByAggregateInput = {
@@ -637,6 +700,9 @@ export type SettingsMinOrderByAggregateInput = {
   telegramHelpUrl?: Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrder
   apiDocsBaseUrl?: Prisma.SortOrder
+  announcementEnabled?: Prisma.SortOrder
+  announcementMessage?: Prisma.SortOrder
+  announcementType?: Prisma.SortOrder
 }
 
 export type SettingsSumOrderByAggregateInput = {
@@ -677,6 +743,9 @@ export type SettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
   apiDocsBaseUrl?: boolean
+  announcementEnabled?: boolean
+  announcementMessage?: boolean
+  announcementType?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -697,6 +766,9 @@ export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
   apiDocsBaseUrl?: boolean
+  announcementEnabled?: boolean
+  announcementMessage?: boolean
+  announcementType?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -717,6 +789,9 @@ export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
   apiDocsBaseUrl?: boolean
+  announcementEnabled?: boolean
+  announcementMessage?: boolean
+  announcementType?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectScalar = {
@@ -737,9 +812,12 @@ export type SettingsSelectScalar = {
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
   apiDocsBaseUrl?: boolean
+  announcementEnabled?: boolean
+  announcementMessage?: boolean
+  announcementType?: boolean
 }
 
-export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maintenanceMode" | "telegramHelpUrl" | "telegramSupportUsername" | "apiDocsBaseUrl", ExtArgs["result"]["settings"]>
+export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maintenanceMode" | "telegramHelpUrl" | "telegramSupportUsername" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType", ExtArgs["result"]["settings"]>
 
 export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Settings"
@@ -762,6 +840,9 @@ export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     telegramHelpUrl: string | null
     telegramSupportUsername: string | null
     apiDocsBaseUrl: string | null
+    announcementEnabled: boolean
+    announcementMessage: string | null
+    announcementType: string | null
   }, ExtArgs["result"]["settings"]>
   composites: {}
 }
@@ -1202,6 +1283,9 @@ export interface SettingsFieldRefs {
   readonly telegramHelpUrl: Prisma.FieldRef<"Settings", 'String'>
   readonly telegramSupportUsername: Prisma.FieldRef<"Settings", 'String'>
   readonly apiDocsBaseUrl: Prisma.FieldRef<"Settings", 'String'>
+  readonly announcementEnabled: Prisma.FieldRef<"Settings", 'Boolean'>
+  readonly announcementMessage: Prisma.FieldRef<"Settings", 'String'>
+  readonly announcementType: Prisma.FieldRef<"Settings", 'String'>
 }
     
 

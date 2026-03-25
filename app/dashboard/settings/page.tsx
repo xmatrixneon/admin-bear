@@ -11,9 +11,11 @@ import {
   Clock,
   MessageCircle,
   CheckCircle2,
+  Megaphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,9 +42,13 @@ type SettingsData = {
   bharatpeQrImage: string;
   telegramSupportUsername: string;
   apiDocsBaseUrl: string;
+  // Announcement banner
+  announcementEnabled: boolean;
+  announcementMessage: string;
+  announcementType: string;
 };
 
-type SectionKey = "general" | "limits" | "timing" | "payment" | "support";
+type SectionKey = "general" | "limits" | "timing" | "payment" | "support" | "announcement";
 
 // ─── Animation ────────────────────────────────────────────────────────────────
 
@@ -62,9 +68,10 @@ const SECTIONS: {
   fields: {
     key: keyof SettingsData;
     label: string;
-    type?: "text" | "number" | "password" | "url" | "switch";
+    type?: "text" | "number" | "password" | "url" | "switch" | "textarea" | "select";
     placeholder?: string;
     hint?: string;
+    options?: string[];
   }[];
 }[] = [
   {
@@ -119,6 +126,17 @@ const SECTIONS: {
     fields: [
       { key: "telegramSupportUsername", label: "Telegram Username", placeholder: "meowsmsxbot", hint: "Without the @ sign" },
       { key: "apiDocsBaseUrl", label: "API Docs Base URL", type: "url", placeholder: "https://yourdomain.com" },
+    ],
+  },
+  {
+    key: "announcement",
+    title: "Announcement Banner",
+    icon: <Megaphone size={16} />,
+    description: "Show announcements to users on the home page",
+    fields: [
+      { key: "announcementEnabled", label: "Enable Announcement", type: "switch", hint: "Show announcement banner on home page" },
+      { key: "announcementMessage", label: "Message", type: "textarea", placeholder: "Enter your announcement message here...", hint: "Supports plain text and emojis" },
+      { key: "announcementType", label: "Type", type: "select", options: ["info", "warning", "success", "error"], hint: "info (blue) | warning (amber) | success (green) | error (red)" },
     ],
   },
 ];
@@ -195,7 +213,7 @@ function SettingSection({
         </CardHeader>
 
         <CardContent className="pt-4 pb-4 space-y-4">
-          {section.fields.map(({ key, label, type = "text", placeholder, hint }) => {
+          {section.fields.map(({ key, label, type = "text", placeholder, hint, options }) => {
             const value = local[key];
 
             if (type === "switch") {
@@ -209,6 +227,41 @@ function SettingSection({
                     checked={!!value}
                     onCheckedChange={(checked) => handleChange(key, checked)}
                   />
+                </div>
+              );
+            }
+
+            if (type === "textarea") {
+              return (
+                <div key={key} className="space-y-1.5">
+                  <Label className="text-xs font-medium text-foreground/80">{label}</Label>
+                  <Textarea
+                    value={value !== undefined && value !== null ? String(value) : ""}
+                    onChange={(e) => handleChange(key, e.target.value)}
+                    placeholder={placeholder}
+                    className="min-h-[80px] text-sm resize-y"
+                  />
+                  {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
+                </div>
+              );
+            }
+
+            if (type === "select") {
+              return (
+                <div key={key} className="space-y-1.5">
+                  <Label className="text-xs font-medium text-foreground/80">{label}</Label>
+                  <select
+                    value={value !== undefined && value !== null ? String(value) : options?.[0] || ""}
+                    onChange={(e) => handleChange(key, e.target.value)}
+                    className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {options?.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                  {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
                 </div>
               );
             }
@@ -282,6 +335,10 @@ export default function SettingsPage() {
     bharatpeQrImage: rawSettings.bharatpeQrImage || '',
     telegramSupportUsername: rawSettings.telegramSupportUsername || '',
     apiDocsBaseUrl: rawSettings.apiDocsBaseUrl || '',
+    // Announcement banner
+    announcementEnabled: rawSettings.announcementEnabled || false,
+    announcementMessage: rawSettings.announcementMessage || '',
+    announcementType: rawSettings.announcementType || 'info',
   } : null;
 
   // tRPC mutation for updating settings

@@ -315,7 +315,10 @@ export const SettingsScalarFieldEnum = {
   maintenanceMode: 'maintenanceMode',
   telegramHelpUrl: 'telegramHelpUrl',
   telegramSupportUsername: 'telegramSupportUsername',
-  apiDocsBaseUrl: 'apiDocsBaseUrl'
+  apiDocsBaseUrl: 'apiDocsBaseUrl',
+  announcementEnabled: 'announcementEnabled',
+  announcementMessage: 'announcementMessage',
+  announcementType: 'announcementType'
 } as const
 
 export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]

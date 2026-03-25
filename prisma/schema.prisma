@@ -312,6 +312,10 @@ model Settings {
   telegramHelpUrl         String?
   telegramSupportUsername String?
   apiDocsBaseUrl          String?
+  // Announcement banner
+  announcementEnabled  Boolean @default(false)
+  announcementMessage  String?  @db.Text
+  announcementType     String?  @default("info") // "info" | "warning" | "success" | "error"
 }
 
 model UserApi {
