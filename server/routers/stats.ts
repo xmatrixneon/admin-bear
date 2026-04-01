@@ -52,7 +52,7 @@ export const statsRouter = router({
     ]);
 
     // Total Recharge: Separate UPI (DEPOSIT) and PROMO transactions
-    const [depositStats, promoStats, referralStats] = await Promise.all([
+    const [depositStats, promoStats, referralStats, purchaseStats] = await Promise.all([
       prisma.transaction.aggregate({
         where: { status: 'COMPLETED', type: 'DEPOSIT' },
         _sum: { amount: true },
@@ -65,6 +65,11 @@ export const statsRouter = router({
       }),
       prisma.transaction.aggregate({
         where: { status: 'COMPLETED', type: 'REFERRAL' },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      prisma.transaction.aggregate({
+        where: { status: 'COMPLETED', type: 'PURCHASE' },
         _sum: { amount: true },
         _count: true,
       }),
@@ -96,6 +101,9 @@ export const statsRouter = router({
       promoCount: promoStats._count || 0,
       totalReferral: Number(referralStats._sum.amount || 0),
       referralCount: referralStats._count || 0,
+      // Total spent by users
+      totalSpent: Number(purchaseStats._sum.amount || 0),
+      totalPurchaseCount: purchaseStats._count || 0,
     };
   }),
 

@@ -95,6 +95,30 @@ export default function DashboardPage() {
           bg="bg-emerald-500/10"
           loading={generalStatsLoading}
         />
+        <MiniStatCard
+          icon={Activity}
+          value={formatCurrency(generalStats?.totalRevenue || 0)}
+          label="Revenue"
+          color="text-green-500"
+          bg="bg-green-500/10"
+          loading={generalStatsLoading}
+        />
+        <MiniStatCard
+          icon={Zap}
+          value={formatCurrency(generalStats?.totalSpent || 0)}
+          label="Spent"
+          color="text-orange-500"
+          bg="bg-orange-500/10"
+          loading={generalStatsLoading}
+        />
+        <MiniStatCard
+          icon={CheckCircle}
+          value={generalStats?.totalPurchaseCount || 0}
+          label="Orders"
+          color="text-cyan-500"
+          bg="bg-cyan-500/10"
+          loading={generalStatsLoading}
+        />
       </div>
 
       {/* Money In Detail Row */}
