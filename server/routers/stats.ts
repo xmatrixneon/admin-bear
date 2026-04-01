@@ -51,15 +51,24 @@ export const statsRouter = router({
       }),
     ]);
 
-    // Total Recharge: Only count DEPOSIT and PROMO transactions
-    const rechargeStats = await prisma.transaction.aggregate({
-      where: {
-        status: 'COMPLETED',
-        type: { in: ['DEPOSIT', 'PROMO'] },
-      },
-      _sum: { amount: true },
-      _count: true,
-    });
+    // Total Recharge: Separate UPI (DEPOSIT) and PROMO transactions
+    const [depositStats, promoStats, referralStats] = await Promise.all([
+      prisma.transaction.aggregate({
+        where: { status: 'COMPLETED', type: 'DEPOSIT' },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      prisma.transaction.aggregate({
+        where: { status: 'COMPLETED', type: 'PROMO' },
+        _sum: { amount: true },
+        _count: true,
+      }),
+      prisma.transaction.aggregate({
+        where: { status: 'COMPLETED', type: 'REFERRAL' },
+        _sum: { amount: true },
+        _count: true,
+      }),
+    ]);
 
     return {
       totalUsers,
@@ -77,9 +86,16 @@ export const statsRouter = router({
       totalRevenue: Number(completedNumbers._sum.price || 0),
       otpRevenue: Number(completedNumbers._sum.price || 0),
       otpSold: completedNumbers._count,
-      // Recharge metrics
-      totalRecharge: Number(rechargeStats._sum.amount || 0),
-      totalRechargeTransactions: rechargeStats._count,
+      // Recharge metrics - broken down by type
+      totalRecharge: Number(depositStats._sum.amount || 0) + Number(promoStats._sum.amount || 0) + Number(referralStats._sum.amount || 0),
+      totalRechargeTransactions: (depositStats._count || 0) + (promoStats._count || 0) + (referralStats._count || 0),
+      // Separate breakdown
+      totalDeposits: Number(depositStats._sum.amount || 0),
+      depositCount: depositStats._count || 0,
+      totalPromo: Number(promoStats._sum.amount || 0),
+      promoCount: promoStats._count || 0,
+      totalReferral: Number(referralStats._sum.amount || 0),
+      referralCount: referralStats._count || 0,
     };
   }),
 

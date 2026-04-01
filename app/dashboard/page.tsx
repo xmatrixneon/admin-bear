@@ -105,16 +105,52 @@ export default function DashboardPage() {
         />
         <MiniStatCard
           icon={Zap}
-          value={formatCurrency(generalStats?.totalRevenue || 0)}
-          label="Revenue"
-          color="text-green-500"
-          bg="bg-green-500/10"
+          value={formatCurrency(generalStats?.totalDeposits || 0)}
+          label="UPI Deposits"
+          color="text-blue-500"
+          bg="bg-blue-500/10"
           loading={generalStatsLoading}
         />
       </div>
 
-      {/* Active Numbers Detail Row */}
+      {/* Money In Detail Row */}
       <motion.div {...fadeUp(0.02)} className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        <MiniStatCard
+          icon={Zap}
+          value={formatCurrency(generalStats?.totalDeposits || 0)}
+          label="UPI Total"
+          color="text-blue-500"
+          bg="bg-blue-500/10"
+          loading={generalStatsLoading}
+        />
+        <MiniStatCard
+          icon={Crown}
+          value={formatCurrency(generalStats?.totalPromo || 0)}
+          label="Promo Given"
+          color="text-purple-500"
+          bg="bg-purple-500/10"
+          loading={generalStatsLoading}
+        />
+        <MiniStatCard
+          icon={CheckCircle}
+          value={formatCurrency(generalStats?.totalReferral || 0)}
+          label="Referral Given"
+          color="text-cyan-500"
+          bg="bg-cyan-500/10"
+          loading={generalStatsLoading}
+        />
+        <MiniStatCard
+          icon={DollarSign}
+          value={generalStats?.depositCount || 0}
+          label="UPI Txns"
+          color="text-orange-500"
+          bg="bg-orange-500/10"
+          loading={generalStatsLoading}
+        />
+      </motion.div>
+
+      {/* Active Numbers Detail Row */}
+      <motion.div {...fadeUp(0.025)} className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <MiniStatCard
           icon={Clock}
           value={generalStats?.activeNumbersPending || 0}
@@ -140,7 +176,7 @@ export default function DashboardPage() {
           loading={generalStatsLoading}
         />
         <MiniStatCard
-          icon={DollarSign}
+          icon={Wallet}
           value={formatCurrency(generalStats?.pendingRevenueHeld || 0)}
           label="Held ₹"
           color="text-orange-500"
