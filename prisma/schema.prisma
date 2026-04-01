@@ -316,6 +316,10 @@ model Settings {
   announcementEnabled  Boolean @default(false)
   announcementMessage  String?  @db.Text
   announcementType     String?  @default("info") // "info" | "warning" | "success" | "error"
+
+  // App branding
+  appVersion    String? @default("v1.0.0")
+  builtWithText String? @default("Built with 🇷🇺")
 }
 
 model UserApi {

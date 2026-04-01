@@ -117,6 +117,7 @@ export const statsRouter = router({
    * Get recharge and spent chart data for the last N days
    * - Recharge = UPI (DEPOSIT) + PROMO transactions
    * - Spent = ActiveNumber COMPLETED (SMS received = successful purchases)
+   * - Uses IST timezone (UTC+5:30) for day boundary (resets at 12:00 AM)
    */
   getRechargeSpentChart: protectedProcedure
     .input(
@@ -130,19 +131,27 @@ export const statsRouter = router({
       const { prisma } = ctx;
       const days = input?.days || 7;
 
-      // Get start date (N days ago)
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - days);
-      startDate.setHours(0, 0, 0, 0);
+      // Helper: convert UTC date to IST date string
+      const toISTDateString = (date: Date): string => {
+        const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+        const istDate = new Date(date.getTime() + istOffset);
+        return istDate.toISOString().split('T')[0];
+      };
 
-      // Generate date labels for the last N days
+      // Get start date (N days ago in IST)
+      const now = new Date();
+      const istOffset = 5.5 * 60 * 60 * 1000;
+      const istNow = new Date(now.getTime() + istOffset);
+      istNow.setHours(0, 0, 0, 0);
+      const startDate = new Date(istNow.getTime() - (days - 1) * 24 * 60 * 60 * 1000 - istOffset);
+
+      // Generate date labels for the last N days in IST
       const dateMap: Record<string, { recharge: number; spent: number; smsCount: number; date: string; fullDate: string }> = {};
       for (let i = days - 1; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        const dateStr = date.toISOString().split('T')[0];
-        const label = date.toLocaleDateString('en-US', { weekday: 'short' });
-        const fullLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const date = new Date(istNow.getTime() - i * 24 * 60 * 60 * 1000);
+        const dateStr = toISTDateString(date);
+        const label = date.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'Asia/Kolkata' });
+        const fullLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' });
         dateMap[dateStr] = { recharge: 0, spent: 0, smsCount: 0, date: label, fullDate: fullLabel };
       }
 
@@ -160,9 +169,9 @@ export const statsRouter = router({
         },
       });
 
-      // Aggregate recharge by date
+      // Aggregate recharge by IST date
       for (const txn of rechargeTransactions) {
-        const dateStr = txn.createdAt.toISOString().split('T')[0];
+        const dateStr = toISTDateString(txn.createdAt);
         if (dateMap[dateStr]) {
           dateMap[dateStr].recharge += Number(txn.amount);
         }
@@ -180,9 +189,9 @@ export const statsRouter = router({
         },
       });
 
-      // Aggregate spent (SMS received) by date
+      // Aggregate spent (SMS received) by IST date
       for (const sms of smsReceived) {
-        const dateStr = sms.createdAt.toISOString().split('T')[0];
+        const dateStr = toISTDateString(sms.createdAt);
         if (dateMap[dateStr]) {
           dateMap[dateStr].spent += Number(sms.price || 0);
           dateMap[dateStr].smsCount += 1;
@@ -209,5 +218,59 @@ export const statsRouter = router({
         chartData,
         totals,
       };
+    }),
+
+  /**
+   * Get top selling services
+   * Returns services ranked by number of completed purchases (SMS received)
+   */
+  getTopSellingServices: protectedProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().min(5).max(50).default(10),
+        })
+        .optional()
+    )
+    .query(async ({ input, ctx }) => {
+      const { prisma } = ctx;
+      const limit = input?.limit || 10;
+
+      const topServices = await prisma.service.findMany({
+        where: {
+          isActive: true,
+        },
+        select: {
+          id: true,
+          code: true,
+          name: true,
+          iconUrl: true,
+          basePrice: true,
+          _count: {
+            select: {
+              purchases: {
+                where: {
+                  status: 'COMPLETED',
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          purchases: {
+            _count: 'desc',
+          },
+        },
+        take: limit,
+      });
+
+      return topServices.map((service) => ({
+        id: service.id,
+        code: service.code,
+        name: service.name,
+        iconUrl: service.iconUrl,
+        basePrice: Number(service.basePrice),
+        soldCount: service._count.purchases,
+      }));
     }),
 });

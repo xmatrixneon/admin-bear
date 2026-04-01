@@ -67,6 +67,8 @@ export type SettingsMinAggregateOutputType = {
   announcementEnabled: boolean | null
   announcementMessage: string | null
   announcementType: string | null
+  appVersion: string | null
+  builtWithText: string | null
 }
 
 export type SettingsMaxAggregateOutputType = {
@@ -90,6 +92,8 @@ export type SettingsMaxAggregateOutputType = {
   announcementEnabled: boolean | null
   announcementMessage: string | null
   announcementType: string | null
+  appVersion: string | null
+  builtWithText: string | null
 }
 
 export type SettingsCountAggregateOutputType = {
@@ -113,6 +117,8 @@ export type SettingsCountAggregateOutputType = {
   announcementEnabled: number
   announcementMessage: number
   announcementType: number
+  appVersion: number
+  builtWithText: number
   _all: number
 }
 
@@ -158,6 +164,8 @@ export type SettingsMinAggregateInputType = {
   announcementEnabled?: true
   announcementMessage?: true
   announcementType?: true
+  appVersion?: true
+  builtWithText?: true
 }
 
 export type SettingsMaxAggregateInputType = {
@@ -181,6 +189,8 @@ export type SettingsMaxAggregateInputType = {
   announcementEnabled?: true
   announcementMessage?: true
   announcementType?: true
+  appVersion?: true
+  builtWithText?: true
 }
 
 export type SettingsCountAggregateInputType = {
@@ -204,6 +214,8 @@ export type SettingsCountAggregateInputType = {
   announcementEnabled?: true
   announcementMessage?: true
   announcementType?: true
+  appVersion?: true
+  builtWithText?: true
   _all?: true
 }
 
@@ -314,6 +326,8 @@ export type SettingsGroupByOutputType = {
   announcementEnabled: boolean
   announcementMessage: string | null
   announcementType: string | null
+  appVersion: string | null
+  builtWithText: string | null
   _count: SettingsCountAggregateOutputType | null
   _avg: SettingsAvgAggregateOutputType | null
   _sum: SettingsSumAggregateOutputType | null
@@ -360,6 +374,8 @@ export type SettingsWhereInput = {
   announcementEnabled?: Prisma.BoolFilter<"Settings"> | boolean
   announcementMessage?: Prisma.StringNullableFilter<"Settings"> | string | null
   announcementType?: Prisma.StringNullableFilter<"Settings"> | string | null
+  appVersion?: Prisma.StringNullableFilter<"Settings"> | string | null
+  builtWithText?: Prisma.StringNullableFilter<"Settings"> | string | null
 }
 
 export type SettingsOrderByWithRelationInput = {
@@ -383,6 +399,8 @@ export type SettingsOrderByWithRelationInput = {
   announcementEnabled?: Prisma.SortOrder
   announcementMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   announcementType?: Prisma.SortOrderInput | Prisma.SortOrder
+  appVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  builtWithText?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type SettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -409,6 +427,8 @@ export type SettingsWhereUniqueInput = Prisma.AtLeast<{
   announcementEnabled?: Prisma.BoolFilter<"Settings"> | boolean
   announcementMessage?: Prisma.StringNullableFilter<"Settings"> | string | null
   announcementType?: Prisma.StringNullableFilter<"Settings"> | string | null
+  appVersion?: Prisma.StringNullableFilter<"Settings"> | string | null
+  builtWithText?: Prisma.StringNullableFilter<"Settings"> | string | null
 }, "id">
 
 export type SettingsOrderByWithAggregationInput = {
@@ -432,6 +452,8 @@ export type SettingsOrderByWithAggregationInput = {
   announcementEnabled?: Prisma.SortOrder
   announcementMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   announcementType?: Prisma.SortOrderInput | Prisma.SortOrder
+  appVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  builtWithText?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SettingsCountOrderByAggregateInput
   _avg?: Prisma.SettingsAvgOrderByAggregateInput
   _max?: Prisma.SettingsMaxOrderByAggregateInput
@@ -463,6 +485,8 @@ export type SettingsScalarWhereWithAggregatesInput = {
   announcementEnabled?: Prisma.BoolWithAggregatesFilter<"Settings"> | boolean
   announcementMessage?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   announcementType?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  appVersion?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  builtWithText?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
 }
 
 export type SettingsCreateInput = {
@@ -486,6 +510,8 @@ export type SettingsCreateInput = {
   announcementEnabled?: boolean
   announcementMessage?: string | null
   announcementType?: string | null
+  appVersion?: string | null
+  builtWithText?: string | null
 }
 
 export type SettingsUncheckedCreateInput = {
@@ -509,6 +535,8 @@ export type SettingsUncheckedCreateInput = {
   announcementEnabled?: boolean
   announcementMessage?: string | null
   announcementType?: string | null
+  appVersion?: string | null
+  builtWithText?: string | null
 }
 
 export type SettingsUpdateInput = {
@@ -532,6 +560,8 @@ export type SettingsUpdateInput = {
   announcementEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   announcementMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SettingsUncheckedUpdateInput = {
@@ -555,6 +585,8 @@ export type SettingsUncheckedUpdateInput = {
   announcementEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   announcementMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SettingsCreateManyInput = {
@@ -578,6 +610,8 @@ export type SettingsCreateManyInput = {
   announcementEnabled?: boolean
   announcementMessage?: string | null
   announcementType?: string | null
+  appVersion?: string | null
+  builtWithText?: string | null
 }
 
 export type SettingsUpdateManyMutationInput = {
@@ -601,6 +635,8 @@ export type SettingsUpdateManyMutationInput = {
   announcementEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   announcementMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SettingsUncheckedUpdateManyInput = {
@@ -624,6 +660,8 @@ export type SettingsUncheckedUpdateManyInput = {
   announcementEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   announcementMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type SettingsCountOrderByAggregateInput = {
@@ -647,6 +685,8 @@ export type SettingsCountOrderByAggregateInput = {
   announcementEnabled?: Prisma.SortOrder
   announcementMessage?: Prisma.SortOrder
   announcementType?: Prisma.SortOrder
+  appVersion?: Prisma.SortOrder
+  builtWithText?: Prisma.SortOrder
 }
 
 export type SettingsAvgOrderByAggregateInput = {
@@ -680,6 +720,8 @@ export type SettingsMaxOrderByAggregateInput = {
   announcementEnabled?: Prisma.SortOrder
   announcementMessage?: Prisma.SortOrder
   announcementType?: Prisma.SortOrder
+  appVersion?: Prisma.SortOrder
+  builtWithText?: Prisma.SortOrder
 }
 
 export type SettingsMinOrderByAggregateInput = {
@@ -703,6 +745,8 @@ export type SettingsMinOrderByAggregateInput = {
   announcementEnabled?: Prisma.SortOrder
   announcementMessage?: Prisma.SortOrder
   announcementType?: Prisma.SortOrder
+  appVersion?: Prisma.SortOrder
+  builtWithText?: Prisma.SortOrder
 }
 
 export type SettingsSumOrderByAggregateInput = {
@@ -746,6 +790,8 @@ export type SettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   announcementEnabled?: boolean
   announcementMessage?: boolean
   announcementType?: boolean
+  appVersion?: boolean
+  builtWithText?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -769,6 +815,8 @@ export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   announcementEnabled?: boolean
   announcementMessage?: boolean
   announcementType?: boolean
+  appVersion?: boolean
+  builtWithText?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -792,6 +840,8 @@ export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   announcementEnabled?: boolean
   announcementMessage?: boolean
   announcementType?: boolean
+  appVersion?: boolean
+  builtWithText?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectScalar = {
@@ -815,9 +865,11 @@ export type SettingsSelectScalar = {
   announcementEnabled?: boolean
   announcementMessage?: boolean
   announcementType?: boolean
+  appVersion?: boolean
+  builtWithText?: boolean
 }
 
-export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maintenanceMode" | "telegramHelpUrl" | "telegramSupportUsername" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType", ExtArgs["result"]["settings"]>
+export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maintenanceMode" | "telegramHelpUrl" | "telegramSupportUsername" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText", ExtArgs["result"]["settings"]>
 
 export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Settings"
@@ -843,6 +895,8 @@ export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     announcementEnabled: boolean
     announcementMessage: string | null
     announcementType: string | null
+    appVersion: string | null
+    builtWithText: string | null
   }, ExtArgs["result"]["settings"]>
   composites: {}
 }
@@ -1286,6 +1340,8 @@ export interface SettingsFieldRefs {
   readonly announcementEnabled: Prisma.FieldRef<"Settings", 'Boolean'>
   readonly announcementMessage: Prisma.FieldRef<"Settings", 'String'>
   readonly announcementType: Prisma.FieldRef<"Settings", 'String'>
+  readonly appVersion: Prisma.FieldRef<"Settings", 'String'>
+  readonly builtWithText: Prisma.FieldRef<"Settings", 'String'>
 }
     
 

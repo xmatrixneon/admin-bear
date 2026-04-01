@@ -2023,7 +2023,9 @@ export const SettingsScalarFieldEnum = {
   apiDocsBaseUrl: 'apiDocsBaseUrl',
   announcementEnabled: 'announcementEnabled',
   announcementMessage: 'announcementMessage',
-  announcementType: 'announcementType'
+  announcementType: 'announcementType',
+  appVersion: 'appVersion',
+  builtWithText: 'builtWithText'
 } as const
 
 export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]

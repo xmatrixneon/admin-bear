@@ -46,9 +46,12 @@ type SettingsData = {
   announcementEnabled: boolean;
   announcementMessage: string;
   announcementType: string;
+  // App branding
+  appVersion: string;
+  builtWithText: string;
 };
 
-type SectionKey = "general" | "limits" | "timing" | "payment" | "support" | "announcement";
+type SectionKey = "general" | "limits" | "timing" | "payment" | "support" | "announcement" | "branding";
 
 // ─── Animation ────────────────────────────────────────────────────────────────
 
@@ -137,6 +140,16 @@ const SECTIONS: {
       { key: "announcementEnabled", label: "Enable Announcement", type: "switch", hint: "Show announcement banner on home page" },
       { key: "announcementMessage", label: "Message", type: "textarea", placeholder: "Enter your announcement message here...", hint: "Supports plain text and emojis" },
       { key: "announcementType", label: "Type", type: "select", options: ["info", "warning", "success", "error"], hint: "info (blue) | warning (amber) | success (green) | error (red)" },
+    ],
+  },
+  {
+    key: "branding",
+    title: "App Branding",
+    icon: <Settings2 size={16} />,
+    description: "Version and branding text shown on profile page",
+    fields: [
+      { key: "appVersion", label: "App Version", placeholder: "v1.0.0", hint: "Version displayed on profile page" },
+      { key: "builtWithText", label: "Built With Text", placeholder: "Built with ❤️", hint: "Branding text shown next to version" },
     ],
   },
 ];
@@ -339,6 +352,9 @@ export default function SettingsPage() {
     announcementEnabled: rawSettings.announcementEnabled || false,
     announcementMessage: rawSettings.announcementMessage || '',
     announcementType: rawSettings.announcementType || 'info',
+    // App branding
+    appVersion: rawSettings.appVersion || 'v1.0.0',
+    builtWithText: rawSettings.builtWithText || 'Built with 🇷🇺',
   } : null;
 
   // tRPC mutation for updating settings

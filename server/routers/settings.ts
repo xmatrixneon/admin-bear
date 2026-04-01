@@ -25,6 +25,9 @@ const DEFAULT_SETTINGS = {
   announcementEnabled: false,
   announcementMessage: '',
   announcementType: 'info',
+  // App branding
+  appVersion: 'v1.0.0',
+  builtWithText: 'Built with 🇷🇺',
 };
 
 /**
@@ -52,6 +55,9 @@ const settingsUpdateSchema = z
     announcementEnabled: z.boolean().optional(),
     announcementMessage: z.string().optional(),
     announcementType: z.enum(['info', 'warning', 'success', 'error']).optional(),
+    // App branding
+    appVersion: z.string().optional(),
+    builtWithText: z.string().optional(),
   })
   .strict();
 
