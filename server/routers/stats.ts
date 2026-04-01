@@ -101,9 +101,9 @@ export const statsRouter = router({
       promoCount: promoStats._count || 0,
       totalReferral: Number(referralStats._sum.amount || 0),
       referralCount: referralStats._count || 0,
-      // Total spent by users
-      totalSpent: Number(purchaseStats._sum.amount || 0),
-      totalPurchaseCount: purchaseStats._count || 0,
+      // Total spent by users (only completed orders with SMS - NOT cancelled!)
+      totalSpent: Number(completedNumbers._sum.price || 0),
+      totalCompletedCount: completedNumbers._count || 0,
     };
   }),
 

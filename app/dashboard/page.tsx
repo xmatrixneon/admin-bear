@@ -106,15 +106,15 @@ export default function DashboardPage() {
         <MiniStatCard
           icon={Zap}
           value={formatCurrency(generalStats?.totalSpent || 0)}
-          label="Spent"
+          label="User Spent"
           color="text-orange-500"
           bg="bg-orange-500/10"
           loading={generalStatsLoading}
         />
         <MiniStatCard
           icon={CheckCircle}
-          value={generalStats?.totalPurchaseCount || 0}
-          label="Orders"
+          value={generalStats?.totalCompletedCount || 0}
+          label="Completed"
           color="text-cyan-500"
           bg="bg-cyan-500/10"
           loading={generalStatsLoading}
