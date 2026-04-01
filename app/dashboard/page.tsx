@@ -15,13 +15,13 @@ import {
   CheckCircle,
   XCircle,
   DollarSign,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
-import { formatCurrency } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import {
   AreaChart,
   Area,
@@ -47,6 +47,9 @@ export default function DashboardPage() {
 
   const isLoading = generalStatsLoading || chartDataLoading || topServicesLoading;
 
+  // Calculate available balance (deposits not yet spent)
+  const availableBalance = (generalStats?.totalDeposits || 0) - (generalStats?.totalRevenue || 0);
+
   return (
     <div className="space-y-4 sm:space-y-6 max-w-6xl">
       {/* Page Header */}
@@ -61,8 +64,8 @@ export default function DashboardPage() {
         }
       />
 
-      {/* Minimal Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
         <MiniStatCard
           icon={Users}
           value={generalStats?.totalUsers || 0}
@@ -96,19 +99,23 @@ export default function DashboardPage() {
           loading={generalStatsLoading}
         />
         <MiniStatCard
-          icon={Activity}
-          value={formatCurrency(generalStats?.totalRevenue || 0)}
-          label="Revenue"
-          color="text-green-500"
-          bg="bg-green-500/10"
+          icon={Zap}
+          value={formatCurrency(generalStats?.totalDeposits || 0)}
+          label="Deposits"
+          color="text-blue-500"
+          bg="bg-blue-500/10"
           loading={generalStatsLoading}
         />
+      </div>
+
+      {/* Money Flow Row */}
+      <motion.div {...fadeUp(0.02)} className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <MiniStatCard
-          icon={Zap}
-          value={formatCurrency(generalStats?.totalSpent || 0)}
-          label="User Spent"
-          color="text-orange-500"
-          bg="bg-orange-500/10"
+          icon={Crown}
+          value={formatCurrency(generalStats?.totalPromo || 0)}
+          label="Promo"
+          color="text-purple-500"
+          bg="bg-purple-500/10"
           loading={generalStatsLoading}
         />
         <MiniStatCard
@@ -119,46 +126,6 @@ export default function DashboardPage() {
           bg="bg-cyan-500/10"
           loading={generalStatsLoading}
         />
-      </div>
-
-      {/* Money In Detail Row */}
-      <motion.div {...fadeUp(0.02)} className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-        <MiniStatCard
-          icon={Zap}
-          value={formatCurrency(generalStats?.totalDeposits || 0)}
-          label="UPI Total"
-          color="text-blue-500"
-          bg="bg-blue-500/10"
-          loading={generalStatsLoading}
-        />
-        <MiniStatCard
-          icon={Crown}
-          value={formatCurrency(generalStats?.totalPromo || 0)}
-          label="Promo Given"
-          color="text-purple-500"
-          bg="bg-purple-500/10"
-          loading={generalStatsLoading}
-        />
-        <MiniStatCard
-          icon={CheckCircle}
-          value={formatCurrency(generalStats?.totalReferral || 0)}
-          label="Referral Given"
-          color="text-cyan-500"
-          bg="bg-cyan-500/10"
-          loading={generalStatsLoading}
-        />
-        <MiniStatCard
-          icon={DollarSign}
-          value={generalStats?.depositCount || 0}
-          label="UPI Txns"
-          color="text-orange-500"
-          bg="bg-orange-500/10"
-          loading={generalStatsLoading}
-        />
-      </motion.div>
-
-      {/* Active Numbers Detail Row */}
-      <motion.div {...fadeUp(0.025)} className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <MiniStatCard
           icon={Clock}
           value={generalStats?.activeNumbersPending || 0}
@@ -168,27 +135,11 @@ export default function DashboardPage() {
           loading={generalStatsLoading}
         />
         <MiniStatCard
-          icon={CheckCircle}
-          value={generalStats?.activeNumbersCompleted || 0}
-          label="Completed"
-          color="text-green-500"
-          bg="bg-green-500/10"
-          loading={generalStatsLoading}
-        />
-        <MiniStatCard
-          icon={XCircle}
-          value={generalStats?.activeNumbersCancelled || 0}
-          label="Cancelled"
-          color="text-red-500"
-          bg="bg-red-500/10"
-          loading={generalStatsLoading}
-        />
-        <MiniStatCard
           icon={Wallet}
-          value={formatCurrency(generalStats?.pendingRevenueHeld || 0)}
-          label="Held ₹"
-          color="text-orange-500"
-          bg="bg-orange-500/10"
+          value={formatCurrency(availableBalance)}
+          label="Available"
+          color="text-blue-500"
+          bg="bg-blue-500/10"
           loading={generalStatsLoading}
         />
       </motion.div>
@@ -208,8 +159,8 @@ export default function DashboardPage() {
                   <span className="text-muted-foreground">Recharge</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-red-500" />
-                  <span className="text-muted-foreground">Spent</span>
+                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span className="text-muted-foreground">Spent (Revenue)</span>
                 </div>
               </div>
             </div>
@@ -223,9 +174,9 @@ export default function DashboardPage() {
                       <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
                       <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
                     </linearGradient>
-                    <linearGradient id="colorSpent" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" />
@@ -233,7 +184,7 @@ export default function DashboardPage() {
                   <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} className="text-muted-foreground" width={40} />
                   <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "11px" }} formatter={(value: number) => [formatCurrency(value)]} />
                   <Area type="monotone" dataKey="recharge" stroke="#22c55e" strokeWidth={2} fillOpacity={1} fill="url(#colorRecharge)" />
-                  <Area type="monotone" dataKey="spent" stroke="#ef4444" strokeWidth={2} fillOpacity={1} fill="url(#colorSpent)" />
+                  <Area type="monotone" dataKey="spent" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorRevenue)" />
                 </AreaChart>
               </ResponsiveContainer>
             )}
