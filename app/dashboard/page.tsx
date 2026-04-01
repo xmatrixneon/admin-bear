@@ -4,12 +4,17 @@ import { motion } from "framer-motion";
 import {
   Users,
   Wallet,
+  Activity,
   Server,
   RefreshCw,
   Loader2,
   MessageSquare,
   Crown,
   Zap,
+  Clock,
+  CheckCircle,
+  XCircle,
+  DollarSign,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -75,11 +80,11 @@ export default function DashboardPage() {
           loading={generalStatsLoading}
         />
         <MiniStatCard
-          icon={Zap}
-          value={generalStats?.totalServices || 0}
-          label="Services"
-          color="text-amber-500"
-          bg="bg-amber-500/10"
+          icon={Activity}
+          value={generalStats?.activeNumbersTotal || 0}
+          label="Active #"
+          color="text-cyan-500"
+          bg="bg-cyan-500/10"
           loading={generalStatsLoading}
         />
         <MiniStatCard
@@ -107,6 +112,42 @@ export default function DashboardPage() {
           loading={generalStatsLoading}
         />
       </div>
+
+      {/* Active Numbers Detail Row */}
+      <motion.div {...fadeUp(0.02)} className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+        <MiniStatCard
+          icon={Clock}
+          value={generalStats?.activeNumbersPending || 0}
+          label="Pending"
+          color="text-amber-500"
+          bg="bg-amber-500/10"
+          loading={generalStatsLoading}
+        />
+        <MiniStatCard
+          icon={CheckCircle}
+          value={generalStats?.activeNumbersCompleted || 0}
+          label="Completed"
+          color="text-green-500"
+          bg="bg-green-500/10"
+          loading={generalStatsLoading}
+        />
+        <MiniStatCard
+          icon={XCircle}
+          value={generalStats?.activeNumbersCancelled || 0}
+          label="Cancelled"
+          color="text-red-500"
+          bg="bg-red-500/10"
+          loading={generalStatsLoading}
+        />
+        <MiniStatCard
+          icon={DollarSign}
+          value={formatCurrency(generalStats?.pendingRevenueHeld || 0)}
+          label="Held ₹"
+          color="text-orange-500"
+          bg="bg-orange-500/10"
+          loading={generalStatsLoading}
+        />
+      </motion.div>
 
       {/* Chart - Recharge vs Spent (Full Width) */}
       <motion.div {...fadeUp(0.05)}>

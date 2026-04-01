@@ -8,7 +8,7 @@ import { router, protectedProcedure } from '../trpc';
 export const statsRouter = router({
   /**
    * Get comprehensive dashboard statistics
-   * Returns user counts, service counts, revenue metrics, etc.
+   * Returns user counts, service counts, revenue metrics, active numbers, etc.
    */
   getDashboardStats: protectedProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
@@ -17,7 +17,7 @@ export const statsRouter = router({
       totalUsers,
       totalServices,
       totalServers,
-      activeNumbers,
+      activeNumbersPending,
       totalWalletBalance,
       activePromocodes,
     ] = await Promise.all([
@@ -31,12 +31,25 @@ export const statsRouter = router({
       prisma.promocode.count({ where: { isActive: true } }),
     ]);
 
-    // Total Revenue and OTP Sold: Only count SMS received (COMPLETED ActiveNumber)
-    const completedNumbers = await prisma.activeNumber.aggregate({
-      where: { status: 'COMPLETED' },
-      _sum: { price: true },
-      _count: true,
-    });
+    // Active Numbers breakdown
+    const [
+      completedNumbers,
+      cancelledNumbers,
+      totalActiveNumbers,
+      pendingRevenueHeld,
+    ] = await Promise.all([
+      prisma.activeNumber.aggregate({
+        where: { status: 'COMPLETED' },
+        _sum: { price: true },
+        _count: true,
+      }),
+      prisma.activeNumber.count({ where: { status: 'CANCELLED' } }),
+      prisma.activeNumber.count(),
+      prisma.activeNumber.aggregate({
+        where: { status: 'PENDING', balanceDeducted: true },
+        _sum: { price: true },
+      }),
+    ]);
 
     // Total Recharge: Only count DEPOSIT and PROMO transactions
     const rechargeStats = await prisma.transaction.aggregate({
@@ -52,12 +65,19 @@ export const statsRouter = router({
       totalUsers,
       totalServices,
       totalServers,
-      activeNumbers,
       totalWalletBalance: Number(totalWalletBalance._sum.balance || 0),
       activePromocodes,
+      // Active Numbers breakdown
+      activeNumbersPending: activeNumbersPending,
+      activeNumbersCompleted: completedNumbers._count,
+      activeNumbersCancelled: cancelledNumbers,
+      activeNumbersTotal: totalActiveNumbers,
+      pendingRevenueHeld: Number(pendingRevenueHeld._sum.price || 0),
+      // Revenue metrics
       totalRevenue: Number(completedNumbers._sum.price || 0),
       otpRevenue: Number(completedNumbers._sum.price || 0),
       otpSold: completedNumbers._count,
+      // Recharge metrics
       totalRecharge: Number(rechargeStats._sum.amount || 0),
       totalRechargeTransactions: rechargeStats._count,
     };
