@@ -80,14 +80,6 @@ export default function DashboardPage() {
           loading={generalStatsLoading}
         />
         <MiniStatCard
-          icon={Activity}
-          value={generalStats?.activeNumbersTotal || 0}
-          label="Active #"
-          color="text-cyan-500"
-          bg="bg-cyan-500/10"
-          loading={generalStatsLoading}
-        />
-        <MiniStatCard
           icon={MessageSquare}
           value={generalStats?.otpSold || 0}
           label="OTP Sold"
