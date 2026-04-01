@@ -95,14 +95,6 @@ export default function DashboardPage() {
           bg="bg-emerald-500/10"
           loading={generalStatsLoading}
         />
-        <MiniStatCard
-          icon={Zap}
-          value={formatCurrency(generalStats?.totalDeposits || 0)}
-          label="UPI Deposits"
-          color="text-blue-500"
-          bg="bg-blue-500/10"
-          loading={generalStatsLoading}
-        />
       </div>
 
       {/* Money In Detail Row */}
