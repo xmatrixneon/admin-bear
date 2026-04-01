@@ -20,16 +20,21 @@ const serviceInputSchema = z.object({
  */
 export const servicesRouter = router({
   /**
-   * List all services with server details
+   * List all services grouped by code with server details
+   * Each service code appears once, showing all servers it's available on
    */
   list: protectedProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
     const services = await prisma.service.findMany({
+      where: { isActive: true },
       include: {
         server: {
-          include: {
-            api: true,
+          select: {
+            id: true,
+            name: true,
+            countryCode: true,
+            countryIso: true,
           },
         },
         _count: {
@@ -39,7 +44,61 @@ export const servicesRouter = router({
       orderBy: { name: 'asc' },
     });
 
-    return services;
+    // Group services by code
+    const groupedServices = new Map<string, {
+      code: string;
+      name: string;
+      iconUrl: string | null;
+      servers: Array<{
+        id: string;
+        name: string;
+        countryCode: string;
+        countryIso: string;
+      }>;
+      prices: number[];
+      totalPurchases: number;
+      anyInactive: boolean;
+    }>();
+
+    for (const service of services) {
+      const existing = groupedServices.get(service.code);
+      if (existing) {
+        existing.servers.push({
+          id: service.server.id,
+          name: service.server.name,
+          countryCode: service.server.countryCode,
+          countryIso: service.server.countryIso,
+        });
+        existing.prices.push(Number(service.basePrice));
+        existing.totalPurchases += service._count.purchases;
+      } else {
+        groupedServices.set(service.code, {
+          code: service.code,
+          name: service.name,
+          iconUrl: service.iconUrl,
+          servers: [{
+            id: service.server.id,
+            name: service.server.name,
+            countryCode: service.server.countryCode,
+            countryIso: service.server.countryIso,
+          }],
+          prices: [Number(service.basePrice)],
+          totalPurchases: service._count.purchases,
+          anyInactive: !service.isActive,
+        });
+      }
+    }
+
+    // Convert to array and add computed fields
+    return Array.from(groupedServices.values()).map(service => ({
+      ...service,
+      minPrice: Math.min(...service.prices),
+      maxPrice: Math.max(...service.prices),
+      priceRange: service.prices.length > 1
+        ? `${service.prices[0].toFixed(2)} - ${service.prices[service.prices.length - 1].toFixed(2)}`
+        : service.prices[0].toFixed(2),
+      isAllSamePrice: service.prices.length === 1 || new Set(service.prices).size === 1,
+    }));
   }),
 
   /**

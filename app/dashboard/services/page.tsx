@@ -171,7 +171,7 @@ export default function ServicesPage() {
     return (
       service.name.toLowerCase().includes(query) ||
       service.code.toLowerCase().includes(query) ||
-      service.server?.name?.toLowerCase().includes(query)
+      service.servers?.some((s: any) => s.name.toLowerCase().includes(query))
     );
   });
 
@@ -301,7 +301,7 @@ export default function ServicesPage() {
         ) : (
           filteredServices?.map((service: any, index: number) => (
             <motion.div
-              key={service.id}
+              key={service.code}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.02 }}
@@ -328,51 +328,33 @@ export default function ServicesPage() {
                         </code>
                       </div>
                     </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreVertical size={14} />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => openEditDialog(service)}>
-                          <Edit size={14} className="mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => {
-                            setSelectedService(service);
-                            setDeleteDialogOpen(true);
-                          }}
-                        >
-                          <Trash2 size={14} className="mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                  <div className="mt-3 space-y-2 text-sm">
                     <div>
-                      <p className="text-xs text-muted-foreground">Server</p>
-                      <p className="truncate">{service.server?.name || "Unknown"}</p>
+                      <p className="text-xs text-muted-foreground">Servers ({service.servers?.length || 0})</p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {service.servers?.map((s: any) => (
+                          <Badge key={s.id} variant="outline" className="text-xs">
+                            {s.name}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Price</p>
-                      <p className="text-green-600 dark:text-green-400 font-medium">
-                        {formatCurrency(service.basePrice)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Status</p>
-                      <Badge variant={service.isActive ? "default" : "secondary"} className="mt-0.5">
-                        {service.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Purchases</p>
-                      <p className="font-medium">{service._count?.purchases || 0}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Price</p>
+                        <p className="text-green-600 dark:text-green-400 font-medium">
+                          {service.isAllSamePrice
+                            ? formatCurrency(service.minPrice)
+                            : `${formatCurrency(service.minPrice)} - ${formatCurrency(service.maxPrice)}`
+                          }
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Purchases</p>
+                        <p className="font-medium">{service.totalPurchases || 0}</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -392,9 +374,8 @@ export default function ServicesPage() {
                   <TableHead className="w-[100px]">Icon</TableHead>
                   <TableHead>Code</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead>Server</TableHead>
+                  <TableHead>Servers</TableHead>
                   <TableHead>Price</TableHead>
-                  <TableHead>Status</TableHead>
                   <TableHead>Usage</TableHead>
                   <TableHead className="w-[60px] text-right">Actions</TableHead>
                 </TableRow>
@@ -408,14 +389,13 @@ export default function ServicesPage() {
                       <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-16" /></TableCell>
-                      <TableCell><Skeleton className="h-6 w-16" /></TableCell>
                       <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                       <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
                     </TableRow>
                   ))
                 ) : filteredServices?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-12">
+                    <TableCell colSpan={7} className="text-center py-12">
                       <div className="flex flex-col items-center gap-3">
                         <Search size={48} className="text-muted-foreground/40" />
                         <p className="text-muted-foreground">
@@ -433,7 +413,7 @@ export default function ServicesPage() {
                 ) : (
                   filteredServices?.map((service, index) => (
                     <motion.tr
-                      key={service.id}
+                      key={service.code}
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 + index * 0.02 }}
@@ -461,29 +441,33 @@ export default function ServicesPage() {
                         <span className="font-medium">{service.name}</span>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm">{service.server?.name || "Unknown"}</span>
-                          {service.server?.countryIso && (
-                            <Badge variant="outline" className="text-xs">
-                              {service.server.countryIso}
+                        <div className="flex flex-wrap gap-1">
+                          {service.servers?.map((s: any) => (
+                            <Badge key={s.id} variant="outline" className="text-xs">
+                              {s.name}
                             </Badge>
-                          )}
+                          ))}
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
                           <DollarSign size={14} />
-                          <span className="font-semibold">{formatCurrency(service.basePrice)}</span>
+                          <span className="font-semibold">
+                            {service.isAllSamePrice
+                              ? formatCurrency(service.minPrice)
+                              : formatCurrency(service.minPrice)
+                            }
+                          </span>
+                          {!service.isAllSamePrice && (
+                            <span className="text-xs text-muted-foreground">
+                              - {formatCurrency(service.maxPrice)}
+                            </span>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={service.isActive ? "default" : "secondary"}>
-                          {service.isActive ? "Active" : "Inactive"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
                         <div className="text-sm text-muted-foreground">
-                          {service._count?.purchases || 0} purchases
+                          {service.totalPurchases || 0} purchases
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
