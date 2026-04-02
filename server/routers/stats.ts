@@ -51,8 +51,8 @@ export const statsRouter = router({
       }),
     ]);
 
-    // Total Recharge: Separate UPI (DEPOSIT) and PROMO transactions
-    const [depositStats, promoStats, referralStats, purchaseStats] = await Promise.all([
+    // Total Recharge: UPI (DEPOSIT) + PROMO, Spent: SMS + ADJUSTMENT
+    const [depositStats, promoStats, adjustmentStats] = await Promise.all([
       prisma.transaction.aggregate({
         where: { status: 'COMPLETED', type: 'DEPOSIT' },
         _sum: { amount: true },
@@ -64,12 +64,7 @@ export const statsRouter = router({
         _count: true,
       }),
       prisma.transaction.aggregate({
-        where: { status: 'COMPLETED', type: 'REFERRAL' },
-        _sum: { amount: true },
-        _count: true,
-      }),
-      prisma.transaction.aggregate({
-        where: { status: 'COMPLETED', type: 'PURCHASE' },
+        where: { status: 'COMPLETED', type: 'ADJUSTMENT' },
         _sum: { amount: true },
         _count: true,
       }),
@@ -91,18 +86,17 @@ export const statsRouter = router({
       totalRevenue: Number(completedNumbers._sum.price || 0),
       otpRevenue: Number(completedNumbers._sum.price || 0),
       otpSold: completedNumbers._count,
-      // Recharge metrics - broken down by type
-      totalRecharge: Number(depositStats._sum.amount || 0) + Number(promoStats._sum.amount || 0) + Number(referralStats._sum.amount || 0),
-      totalRechargeTransactions: (depositStats._count || 0) + (promoStats._count || 0) + (referralStats._count || 0),
+      // Recharge = UPI (DEPOSIT) + PROMO
+      totalRecharge: Number(depositStats._sum.amount || 0) + Number(promoStats._sum.amount || 0),
       // Separate breakdown
       totalDeposits: Number(depositStats._sum.amount || 0),
       depositCount: depositStats._count || 0,
       totalPromo: Number(promoStats._sum.amount || 0),
       promoCount: promoStats._count || 0,
-      totalReferral: Number(referralStats._sum.amount || 0),
-      referralCount: referralStats._count || 0,
-      // Total spent by users (only completed orders with SMS - NOT cancelled!)
-      totalSpent: Number(completedNumbers._sum.price || 0),
+      totalAdjustment: Number(adjustmentStats._sum.amount || 0),
+      adjustmentCount: adjustmentStats._count || 0,
+      // Spent = SMS (COMPLETED) + ADJUSTMENT (absolute value)
+      totalSpent: Number(completedNumbers._sum.price || 0) + Math.abs(Number(adjustmentStats._sum.amount || 0)),
       totalCompletedCount: completedNumbers._count || 0,
     };
   }),
