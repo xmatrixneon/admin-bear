@@ -46,8 +46,8 @@ export default function DashboardPage() {
 
   const isLoading = generalStatsLoading || chartDataLoading || topServicesLoading;
 
-  // Calculate available balance (deposits not yet spent)
-  const availableBalance = (generalStats?.totalDeposits || 0) - (generalStats?.totalRevenue || 0);
+  // Calculate available balance (recharge minus spent minus pending held)
+  const availableBalance = (generalStats?.totalRecharge || 0) - (generalStats?.totalSpent || 0) - (generalStats?.pendingRevenueHeld || 0);
 
   return (
     <div className="space-y-4 sm:space-y-6 max-w-6xl">
