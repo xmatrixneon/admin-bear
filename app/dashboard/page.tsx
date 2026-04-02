@@ -11,7 +11,6 @@ import {
   MessageSquare,
   Crown,
   Zap,
-  Clock,
   XCircle,
   DollarSign,
   TrendingUp,
@@ -46,9 +45,6 @@ export default function DashboardPage() {
 
   const isLoading = generalStatsLoading || chartDataLoading || topServicesLoading;
 
-  // Calculate available balance (recharge minus spent minus pending held)
-  const availableBalance = (generalStats?.totalRecharge || 0) - (generalStats?.totalSpent || 0) - (generalStats?.pendingRevenueHeld || 0);
-
   return (
     <div className="space-y-4 sm:space-y-6 max-w-6xl">
       {/* Page Header */}
@@ -64,7 +60,7 @@ export default function DashboardPage() {
       />
 
       {/* Stats Grid */}
-      <motion.div {...fadeUp(0.02)} className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
+      <motion.div {...fadeUp(0.02)} className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
         <MiniStatCard
           icon={Users}
           value={generalStats?.totalUsers || 0}
@@ -106,27 +102,19 @@ export default function DashboardPage() {
           loading={generalStatsLoading}
         />
         <MiniStatCard
-          icon={Crown}
-          value={formatCurrency(generalStats?.totalPromo || 0)}
-          label="Promo"
-          color="text-purple-500"
-          bg="bg-purple-500/10"
-          loading={generalStatsLoading}
-        />
-        <MiniStatCard
-          icon={Clock}
-          value={generalStats?.activeNumbersPending || 0}
-          label="Pending"
-          color="text-amber-500"
-          bg="bg-amber-500/10"
+          icon={DollarSign}
+          value={formatCurrency(generalStats?.totalSpent || 0)}
+          label="Spent"
+          color="text-red-500"
+          bg="bg-red-500/10"
           loading={generalStatsLoading}
         />
         <MiniStatCard
           icon={Wallet}
-          value={formatCurrency(availableBalance)}
-          label="Available"
-          color="text-blue-500"
-          bg="bg-blue-500/10"
+          value={formatCurrency(generalStats?.pendingRevenueHeld || 0)}
+          label="Held"
+          color="text-orange-500"
+          bg="bg-orange-500/10"
           loading={generalStatsLoading}
         />
       </motion.div>
