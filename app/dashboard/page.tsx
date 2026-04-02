@@ -11,6 +11,7 @@ import {
   MessageSquare,
   Crown,
   Zap,
+  Clock,
   XCircle,
   DollarSign,
   TrendingUp,
@@ -60,7 +61,7 @@ export default function DashboardPage() {
       />
 
       {/* Stats Grid */}
-      <motion.div {...fadeUp(0.02)} className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3">
+      <motion.div {...fadeUp(0.02)} className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
         <MiniStatCard
           icon={Users}
           value={generalStats?.totalUsers || 0}
@@ -115,6 +116,14 @@ export default function DashboardPage() {
           label="Held"
           color="text-orange-500"
           bg="bg-orange-500/10"
+          loading={generalStatsLoading}
+        />
+        <MiniStatCard
+          icon={Clock}
+          value={generalStats?.activeNumbersPending || 0}
+          label="Orders"
+          color="text-cyan-500"
+          bg="bg-cyan-500/10"
           loading={generalStatsLoading}
         />
       </motion.div>
