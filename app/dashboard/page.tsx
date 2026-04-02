@@ -182,7 +182,10 @@ export default function DashboardPage() {
                     }}
                     itemStyle={{ padding: "2px 0" }}
                     labelStyle={{ marginBottom: "4px", fontWeight: 500 }}
-                    formatter={(value: number, name: string) => [formatCurrency(value), name === "recharge" ? "Recharge" : "Spent"]}
+                    formatter={(value: number, name: string, props: any) => {
+                      const displayName = props?.dataKey === "recharge" ? "Recharge" : "Spent";
+                      return [formatCurrency(value), displayName];
+                    }}
                     cursor={{ stroke: "hsl(var(--primary))", strokeWidth: 1, strokeDasharray: "4 4" }}
                   />
                   <Legend
