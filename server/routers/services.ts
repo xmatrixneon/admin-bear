@@ -15,6 +15,31 @@ const serviceInputSchema = z.object({
 });
 
 /**
+ * Type for grouped service list response
+ */
+type GroupedService = {
+  code: string;
+  name: string;
+  iconUrl: string | null;
+  servers: Array<{
+    id: string;
+    name: string;
+    countryCode: string;
+    countryIso: string;
+    serviceId: string;
+    servicePrice: number;
+    serviceIsActive: boolean;
+  }>;
+  prices: number[];
+  totalPurchases: number;
+  anyInactive: boolean;
+  minPrice: number;
+  maxPrice: number;
+  priceRange: string;
+  isAllSamePrice: boolean;
+};
+
+/**
  * Services Router
  * Full CRUD operations for service management
  */
@@ -23,7 +48,7 @@ export const servicesRouter = router({
    * List all services grouped by code with server details
    * Each service code appears once, showing all servers it's available on
    */
-  list: protectedProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.query(async ({ ctx }): Promise<GroupedService[]> => {
     const { prisma } = ctx;
 
     const services = await prisma.service.findMany({
@@ -54,6 +79,9 @@ export const servicesRouter = router({
         name: string;
         countryCode: string;
         countryIso: string;
+        serviceId: string;
+        servicePrice: number;
+        serviceIsActive: boolean;
       }>;
       prices: number[];
       totalPurchases: number;
@@ -68,6 +96,10 @@ export const servicesRouter = router({
           name: service.server.name,
           countryCode: service.server.countryCode,
           countryIso: service.server.countryIso,
+          // Include the service ID for editing individual services
+          serviceId: service.id,
+          servicePrice: Number(service.basePrice),
+          serviceIsActive: service.isActive,
         });
         existing.prices.push(Number(service.basePrice));
         existing.totalPurchases += service._count.purchases;
@@ -81,6 +113,10 @@ export const servicesRouter = router({
             name: service.server.name,
             countryCode: service.server.countryCode,
             countryIso: service.server.countryIso,
+            // Include the service ID for editing individual services
+            serviceId: service.id,
+            servicePrice: Number(service.basePrice),
+            serviceIsActive: service.isActive,
           }],
           prices: [Number(service.basePrice)],
           totalPurchases: service._count.purchases,

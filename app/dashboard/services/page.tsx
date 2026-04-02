@@ -9,7 +9,6 @@ import {
   Trash2,
   RefreshCw,
   Loader2,
-  MoreVertical,
   DollarSign,
   CheckCircle,
   XCircle,
@@ -44,12 +43,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -80,6 +74,7 @@ export default function ServicesPage() {
     serverId: "",
     basePrice: "",
     iconUrl: "",
+    isActive: true,
   });
 
   // tRPC queries
@@ -92,7 +87,7 @@ export default function ServicesPage() {
   const deleteMutation = trpc.services.delete.useMutation();
 
   const resetForm = () => {
-    setFormData({ code: "", name: "", serverId: "", basePrice: "", iconUrl: "" });
+    setFormData({ code: "", name: "", serverId: "", basePrice: "", iconUrl: "", isActive: true });
   };
 
   const handleCreate = async () => {
@@ -124,6 +119,7 @@ export default function ServicesPage() {
           serverId: formData.serverId,
           basePrice: parseFloat(formData.basePrice),
           iconUrl: formData.iconUrl || undefined,
+          isActive: formData.isActive,
         },
       });
       toast.success("Service updated successfully");
@@ -148,16 +144,35 @@ export default function ServicesPage() {
     }
   };
 
-  const openEditDialog = (service: any) => {
-    setSelectedService(service);
+  const openEditDialog = (serviceCode: string, serverService: any, serviceName: string, iconUrl: string | null) => {
+    // serverService contains the service details for a specific server
+    setSelectedService({
+      id: serverService.serviceId,
+      code: serviceCode,
+      name: serviceName,
+      serverId: serverService.id,
+      basePrice: serverService.servicePrice,
+      isActive: serverService.serviceIsActive,
+      iconUrl: iconUrl || "",
+    });
     setFormData({
-      code: service.code,
-      name: service.name,
-      serverId: service.serverId,
-      basePrice: service.basePrice.toString(),
-      iconUrl: service.iconUrl || "",
+      code: serviceCode,
+      name: serviceName,
+      serverId: serverService.id,
+      basePrice: serverService.servicePrice.toString(),
+      iconUrl: iconUrl || "",
+      isActive: serverService.serviceIsActive ?? true,
     });
     setEditDialogOpen(true);
+  };
+
+  const openDeleteDialog = (serviceCode: string, serverService: any, serviceName: string) => {
+    setSelectedService({
+      id: serverService.serviceId,
+      code: serviceCode,
+      name: serviceName,
+    });
+    setDeleteDialogOpen(true);
   };
 
   // Stats calculations
@@ -335,9 +350,19 @@ export default function ServicesPage() {
                       <p className="text-xs text-muted-foreground">Servers ({service.servers?.length || 0})</p>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {service.servers?.map((s: any) => (
-                          <Badge key={s.id} variant="outline" className="text-xs">
-                            {s.name}
-                          </Badge>
+                          <div key={s.id} className="flex items-center gap-1">
+                            <Badge variant="outline" className="text-xs">
+                              {s.name}
+                            </Badge>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-5 w-5"
+                              onClick={() => openEditDialog(service.code, s, service.name, service.iconUrl)}
+                            >
+                              <Edit size={10} />
+                            </Button>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -377,7 +402,6 @@ export default function ServicesPage() {
                   <TableHead>Servers</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead>Usage</TableHead>
-                  <TableHead className="w-[60px] text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -443,9 +467,22 @@ export default function ServicesPage() {
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           {service.servers?.map((s: any) => (
-                            <Badge key={s.id} variant="outline" className="text-xs">
-                              {s.name}
-                            </Badge>
+                            <div key={s.id} className="flex items-center gap-1">
+                              <Badge variant="outline" className="text-xs">
+                                {s.name}
+                              </Badge>
+                              {!s.serviceIsActive && (
+                                <Badge variant="destructive" className="text-xs">Inactive</Badge>
+                              )}
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-5 w-5"
+                                onClick={() => openEditDialog(service.code, s, service.name, service.iconUrl)}
+                              >
+                                <Edit size={10} />
+                              </Button>
+                            </div>
                           ))}
                         </div>
                       </TableCell>
@@ -469,31 +506,6 @@ export default function ServicesPage() {
                         <div className="text-sm text-muted-foreground">
                           {service.totalPurchases || 0} purchases
                         </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreVertical size={14} />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => openEditDialog(service)}>
-                              <Edit size={14} className="mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-destructive focus:text-destructive"
-                              onClick={() => {
-                                setSelectedService(service);
-                                setDeleteDialogOpen(true);
-                              }}
-                            >
-                              <Trash2 size={14} className="mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
                       </TableCell>
                     </motion.tr>
                   ))
@@ -641,6 +653,13 @@ export default function ServicesPage() {
                 placeholder="https://example.com/icon.png"
                 value={formData.iconUrl}
                 onChange={(e) => setFormData({ ...formData, iconUrl: e.target.value })}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label>Active</Label>
+              <Switch
+                checked={formData.isActive}
+                onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
               />
             </div>
           </div>
