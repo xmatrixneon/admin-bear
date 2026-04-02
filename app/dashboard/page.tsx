@@ -95,8 +95,8 @@ export default function DashboardPage() {
         />
         <MiniStatCard
           icon={Zap}
-          value={formatCurrency(generalStats?.totalDeposits || 0)}
-          label="Deposits"
+          value={formatCurrency(generalStats?.totalRecharge || 0)}
+          label="Recharge"
           color="text-blue-500"
           bg="bg-blue-500/10"
           loading={generalStatsLoading}
