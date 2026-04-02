@@ -12,7 +12,6 @@ import {
   Crown,
   Zap,
   Clock,
-  CheckCircle,
   XCircle,
   DollarSign,
   TrendingUp,
@@ -23,8 +22,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { cn, formatCurrency } from "@/lib/utils";
 import {
-  AreaChart,
-  Area,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -64,8 +63,8 @@ export default function DashboardPage() {
         }
       />
 
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+      {/* Stats Grid */}
+      <motion.div {...fadeUp(0.02)} className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
         <MiniStatCard
           icon={Users}
           value={generalStats?.totalUsers || 0}
@@ -106,24 +105,12 @@ export default function DashboardPage() {
           bg="bg-blue-500/10"
           loading={generalStatsLoading}
         />
-      </div>
-
-      {/* Money Flow Row */}
-      <motion.div {...fadeUp(0.02)} className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         <MiniStatCard
           icon={Crown}
           value={formatCurrency(generalStats?.totalPromo || 0)}
           label="Promo"
           color="text-purple-500"
           bg="bg-purple-500/10"
-          loading={generalStatsLoading}
-        />
-        <MiniStatCard
-          icon={CheckCircle}
-          value={generalStats?.totalCompletedCount || 0}
-          label="Completed"
-          color="text-cyan-500"
-          bg="bg-cyan-500/10"
           loading={generalStatsLoading}
         />
         <MiniStatCard
@@ -144,13 +131,13 @@ export default function DashboardPage() {
         />
       </motion.div>
 
-      {/* Chart - Recharge vs Spent (Full Width) */}
+      {/* Chart - Transaction (Full Width) */}
       <motion.div {...fadeUp(0.05)}>
         <Card className="border-border/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-sm font-semibold">Recharge vs Spent</h3>
+                <h3 className="text-sm font-semibold">Transaction</h3>
                 <p className="text-xs text-muted-foreground">Last 7 days (IST)</p>
               </div>
               <div className="flex items-center gap-4 text-xs">
@@ -159,8 +146,8 @@ export default function DashboardPage() {
                   <span className="text-muted-foreground">Recharge</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-blue-500" />
-                  <span className="text-muted-foreground">Spent (Revenue)</span>
+                  <div className="w-2 h-2 rounded-full bg-red-500" />
+                  <span className="text-muted-foreground">Spent</span>
                 </div>
               </div>
             </div>
@@ -168,24 +155,14 @@ export default function DashboardPage() {
               <Skeleton className="h-[200px] w-full" />
             ) : (
               <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={chartData?.chartData || []}>
-                  <defs>
-                    <linearGradient id="colorRecharge" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
+                <LineChart data={chartData?.chartData || []}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" />
                   <XAxis dataKey="date" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} className="text-muted-foreground" />
                   <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} className="text-muted-foreground" width={40} />
                   <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "11px" }} formatter={(value: number) => [formatCurrency(value)]} />
-                  <Area type="monotone" dataKey="recharge" stroke="#22c55e" strokeWidth={2} fillOpacity={1} fill="url(#colorRecharge)" />
-                  <Area type="monotone" dataKey="spent" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorRevenue)" />
-                </AreaChart>
+                  <Line type="monotone" dataKey="recharge" stroke="#22c55e" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="spent" stroke="#ef4444" strokeWidth={2} dot={false} />
+                </LineChart>
               </ResponsiveContainer>
             )}
           </CardContent>
