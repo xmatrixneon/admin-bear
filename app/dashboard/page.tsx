@@ -29,6 +29,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
 import { PageHeader } from "@/components/admin/page-header";
 
@@ -152,13 +153,62 @@ export default function DashboardPage() {
               <Skeleton className="h-[200px] w-full" />
             ) : (
               <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={chartData?.chartData || []}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" />
-                  <XAxis dataKey="date" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} className="text-muted-foreground" />
-                  <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} className="text-muted-foreground" width={40} />
-                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "11px" }} formatter={(value: number) => [formatCurrency(value)]} />
-                  <Line type="monotone" dataKey="recharge" stroke="#22c55e" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="spent" stroke="#ef4444" strokeWidth={2} dot={false} />
+                <LineChart data={chartData?.chartData || []} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border/20" vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                    className="text-muted-foreground"
+                    dy={10}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 11 }}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}k`}
+                    className="text-muted-foreground"
+                    width={45}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: "8px",
+                      fontSize: "12px",
+                      padding: "8px 12px",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+                    }}
+                    itemStyle={{ padding: "2px 0" }}
+                    labelStyle={{ marginBottom: "4px", fontWeight: 500 }}
+                    formatter={(value: number, name: string) => [formatCurrency(value), name === "recharge" ? "Recharge" : "Spent"]}
+                    cursor={{ stroke: "hsl(var(--primary))", strokeWidth: 1, strokeDasharray: "4 4" }}
+                  />
+                  <Legend
+                    verticalAlign="top"
+                    height={30}
+                    iconType="circle"
+                    wrapperStyle={{ fontSize: "11px" }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="recharge"
+                    stroke="#22c55e"
+                    strokeWidth={2.5}
+                    dot={false}
+                    activeDot={{ r: 5, stroke: "#22c55e", strokeWidth: 2, fill: "hsl(var(--card))" }}
+                    name="Recharge"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="spent"
+                    stroke="#ef4444"
+                    strokeWidth={2.5}
+                    dot={false}
+                    activeDot={{ r: 5, stroke: "#ef4444", strokeWidth: 2, fill: "hsl(var(--card))" }}
+                    name="Spent"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             )}
