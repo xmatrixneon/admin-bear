@@ -13,6 +13,7 @@ import {
   CheckCircle,
   XCircle,
   Globe,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -104,6 +105,7 @@ export default function ServersPage() {
       });
       toast.success("Server updated successfully");
       setServerDialogOpen(false);
+      setSelectedItem(null);
       setServerForm({ name: "", countryCode: "", countryIso: "", countryName: "", flagUrl: "", apiId: "", isActive: true });
       refetch();
     } catch (err: any) {
@@ -175,6 +177,27 @@ export default function ServersPage() {
         apiKey: api.apiKey,
       });
       setApiDialogOpen(true);
+    }
+  };
+
+  const handleUpdateApi = async (apiData?: any) => {
+    const targetApi = apiData || selectedItem;
+    if (!targetApi || !targetApi.id) return;
+    try {
+      await updateApiCredentialMutation.mutateAsync({
+        id: targetApi.id,
+        ...(apiForm.name && { name: apiForm.name }),
+        ...(apiForm.apiUrl && { apiUrl: apiForm.apiUrl }),
+        ...(apiForm.apiKey && { apiKey: apiForm.apiKey }),
+        ...(apiData?.isActive !== undefined && { isActive: apiData.isActive }),
+      });
+      toast.success("API credential updated successfully");
+      setApiDialogOpen(false);
+      setApiForm({ name: "", apiUrl: "", apiKey: "" });
+      setSelectedItem(null);
+      apiRefetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update API credential");
     }
   };
 
@@ -347,7 +370,7 @@ export default function ServersPage() {
                                   setDeleteDialogOpen(true);
                                 }}
                               >
-                                <Edit size={14} className="mr-2" />
+                                <Trash2 size={14} className="mr-2" />
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -441,7 +464,6 @@ export default function ServersPage() {
                           <TableCell>
                             <Switch
                               checked={server.isActive}
-                              disabled={true}
                               onCheckedChange={(checked) => handleUpdateServer({ ...server, isActive: checked })}
                             />
                           </TableCell>
@@ -468,7 +490,7 @@ export default function ServersPage() {
                                     setDeleteDialogOpen(true);
                                   }}
                                 >
-                                  <Edit size={14} className="mr-2" />
+                                  <Trash2 size={14} className="mr-2" />
                                   Delete
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -553,12 +575,12 @@ export default function ServersPage() {
                               <DropdownMenuItem
                                 className="text-destructive focus:text-destructive"
                                 onClick={() => {
+                                  setSelectedItem(api);
                                   setDeleteType("api");
-                                  handleDeleteApi(api);
                                   setDeleteDialogOpen(true);
                                 }}
                               >
-                                <Edit size={14} className="mr-2" />
+                                <Trash2 size={14} className="mr-2" />
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -672,8 +694,7 @@ export default function ServersPage() {
                           <TableCell>
                             <Switch
                               checked={api.isActive}
-                              disabled={true}
-                              onCheckedChange={(checked) => handleEditApi({ ...api, isActive: checked })}
+                              onCheckedChange={(checked) => handleUpdateApi({ ...api, isActive: checked })}
                             />
                           </TableCell>
                           <TableCell>
@@ -694,12 +715,12 @@ export default function ServersPage() {
                                 <DropdownMenuItem
                                   className="text-destructive focus:text-destructive"
                                   onClick={() => {
+                                    setSelectedItem(api);
                                     setDeleteType("api");
-                                    handleDeleteApi(api);
                                     setDeleteDialogOpen(true);
                                   }}
                                 >
-                                  <Edit size={14} className="mr-2" />
+                                  <Trash2 size={14} className="mr-2" />
                                   Delete
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -717,7 +738,13 @@ export default function ServersPage() {
       </motion.div>
 
       {/* Server Dialog */}
-      <Dialog open={serverDialogOpen} onOpenChange={setServerDialogOpen}>
+      <Dialog open={serverDialogOpen} onOpenChange={(open) => {
+        setServerDialogOpen(open);
+        if (!open) {
+          setSelectedItem(null);
+          setServerForm({ name: "", countryCode: "", countryIso: "", countryName: "", flagUrl: "", apiId: "", isActive: true });
+        }
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{selectedItem ? "Edit Server" : "Add New Server"}</DialogTitle>
@@ -792,6 +819,7 @@ export default function ServersPage() {
               variant="outline"
               onClick={() => {
                 setServerDialogOpen(false);
+                setSelectedItem(null);
                 setServerForm({ name: "", countryCode: "", countryIso: "", countryName: "", flagUrl: "", apiId: "", isActive: true });
               }}
             >
@@ -812,10 +840,16 @@ export default function ServersPage() {
       </Dialog>
 
       {/* API Credential Dialog */}
-      <Dialog open={apiDialogOpen} onOpenChange={setApiDialogOpen}>
+      <Dialog open={apiDialogOpen} onOpenChange={(open) => {
+        setApiDialogOpen(open);
+        if (!open) {
+          setSelectedItem(null);
+          setApiForm({ name: "", apiUrl: "", apiKey: "" });
+        }
+      }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add API Credential</DialogTitle>
+            <DialogTitle>{selectedItem ? "Edit API Credential" : "Add API Credential"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -842,22 +876,35 @@ export default function ServersPage() {
                 onChange={(e) => setApiForm({ ...apiForm, apiKey: e.target.value })}
               />
             </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="apiIsActive"
+                checked={selectedItem ? (selectedItem as any).isActive : true}
+                onCheckedChange={(checked) => setSelectedItem({ ...selectedItem, isActive: checked } as any)}
+              />
+              <Label htmlFor="apiIsActive">Active</Label>
+            </div>
           </div>
           <DialogFooter>
             <Button
               variant="outline"
               onClick={() => {
                 setApiDialogOpen(false);
+                setSelectedItem(null);
                 setApiForm({ name: "", apiUrl: "", apiKey: "" });
               }}
             >
               Cancel
             </Button>
             <Button
-              onClick={handleCreateApi}
-              disabled={createApiCredentialMutation.isPending}
+              onClick={selectedItem ? handleUpdateApi : handleCreateApi}
+              disabled={createApiCredentialMutation.isPending || updateApiCredentialMutation.isPending}
             >
-              {createApiCredentialMutation.isPending ? "Creating..." : "Create"} Credential
+              {(createApiCredentialMutation.isPending || updateApiCredentialMutation.isPending)
+                ? "Saving..."
+                : selectedItem
+                ? "Update"
+                : "Create"} Credential
             </Button>
           </DialogFooter>
         </DialogContent>
