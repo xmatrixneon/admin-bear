@@ -281,6 +281,7 @@ export default function PromocodesPage() {
                             onClick={() =>
                               handleToggleStatus(promo.id, promo.isActive)
                             }
+                            disabled={updateMutation.isPending}
                           >
                             <PowerOff size={14} className="mr-2" />
                             Deactivate
@@ -290,6 +291,7 @@ export default function PromocodesPage() {
                             onClick={() =>
                               handleToggleStatus(promo.id, promo.isActive)
                             }
+                            disabled={updateMutation.isPending}
                           >
                             <Power size={14} className="mr-2" />
                             Activate
@@ -477,6 +479,7 @@ export default function PromocodesPage() {
                                 onClick={() =>
                                   handleToggleStatus(promo.id, promo.isActive)
                                 }
+                                disabled={updateMutation.isPending}
                               >
                                 <PowerOff size={14} className="mr-2" />
                                 Deactivate
@@ -486,6 +489,7 @@ export default function PromocodesPage() {
                                 onClick={() =>
                                   handleToggleStatus(promo.id, promo.isActive)
                                 }
+                                disabled={updateMutation.isPending}
                               >
                                 <Power size={14} className="mr-2" />
                                 Activate
@@ -591,8 +595,9 @@ export default function PromocodesPage() {
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive hover:bg-destructive/90"
+              disabled={deleteMutation.isPending}
             >
-              Delete Promocode
+              {deleteMutation.isPending ? "Deleting..." : "Delete Promocode"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

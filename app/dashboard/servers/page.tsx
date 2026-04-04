@@ -935,8 +935,9 @@ export default function ServersPage() {
             <Button
               onClick={handleDelete}
               variant="destructive"
+              disabled={deleteServerMutation.isPending || deleteApiCredentialMutation.isPending}
             >
-              Delete
+              {deleteServerMutation.isPending || deleteApiCredentialMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>

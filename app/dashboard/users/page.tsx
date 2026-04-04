@@ -534,7 +534,7 @@ export default function UsersListPage() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => handleToggleAdmin(user.id, user.isAdmin)}
-                          disabled={!!user.deletedAt}
+                          disabled={!!user.deletedAt || setAdminMutation.isPending}
                         >
                           {user.isAdmin ? (
                             <>
@@ -861,7 +861,7 @@ export default function UsersListPage() {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               onClick={() => handleToggleAdmin(user.id, user.isAdmin)}
-                              disabled={!!user.deletedAt}
+                              disabled={!!user.deletedAt || setAdminMutation.isPending}
                             >
                               {user.isAdmin ? (
                                 <>
@@ -1010,9 +1010,9 @@ export default function UsersListPage() {
             </Button>
             <Button
               onClick={handleBalanceAdjust}
-              disabled={!balanceAmount || !balanceReason}
+              disabled={!balanceAmount || !balanceReason || adjustBalanceMutation.isPending}
             >
-              Adjust Balance
+              {adjustBalanceMutation.isPending ? "Adjusting..." : "Adjust Balance"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1060,9 +1060,9 @@ export default function UsersListPage() {
             <Button
               variant={statusAction === "block" ? "destructive" : "default"}
               onClick={handleStatusAction}
-              disabled={!statusReason}
+              disabled={!statusReason || setStatusMutation.isPending}
             >
-              {statusAction === "block" ? "Block User" : "Unlock User"}
+              {setStatusMutation.isPending ? "Processing..." : statusAction === "block" ? "Block User" : "Unlock User"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1189,8 +1189,9 @@ export default function UsersListPage() {
             <AlertDialogAction
               onClick={handleDeleteConfirm}
               className="bg-destructive hover:bg-destructive/90"
+              disabled={deleteUserMutation.isPending}
             >
-              Delete User
+              {deleteUserMutation.isPending ? "Deleting..." : "Delete User"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

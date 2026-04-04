@@ -1068,8 +1068,9 @@ export default function CustomPricesPage() {
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive hover:bg-destructive/90"
+              disabled={deleteMutation.isPending}
             >
-              Delete Discount
+              {deleteMutation.isPending ? "Deleting..." : "Delete Discount"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -1144,8 +1145,9 @@ export default function CustomPricesPage() {
             <AlertDialogAction
               onClick={handleGlobalDelete}
               className="bg-destructive hover:bg-destructive/90"
+              disabled={deleteGlobalMutation.isPending}
             >
-              Remove Discount
+              {deleteGlobalMutation.isPending ? "Removing..." : "Remove Discount"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

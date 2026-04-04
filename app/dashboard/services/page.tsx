@@ -698,8 +698,9 @@ export default function ServicesPage() {
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive hover:bg-destructive/90"
+              disabled={deleteMutation.isPending}
             >
-              Delete Service
+              {deleteMutation.isPending ? "Deleting..." : "Delete Service"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
