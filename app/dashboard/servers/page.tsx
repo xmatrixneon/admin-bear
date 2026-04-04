@@ -153,6 +153,7 @@ export default function ServersPage() {
     name: "",
     apiUrl: "",
     apiKey: "",
+    isActive: true,
   });
 
   const handleCreateApi = async () => {
@@ -160,7 +161,7 @@ export default function ServersPage() {
       await createApiCredentialMutation.mutateAsync(apiForm);
       toast.success("API credential created successfully");
       setApiDialogOpen(false);
-      setApiForm({ name: "", apiUrl: "", apiKey: "" });
+      setApiForm({ name: "", apiUrl: "", apiKey: "", isActive: true });
       refetch();
       apiRefetch();
     } catch (err: any) {
@@ -175,6 +176,7 @@ export default function ServersPage() {
         name: api.name,
         apiUrl: api.apiUrl,
         apiKey: api.apiKey,
+        isActive: api.isActive,
       });
       setApiDialogOpen(true);
     }
@@ -189,11 +191,11 @@ export default function ServersPage() {
         ...(apiForm.name && { name: apiForm.name }),
         ...(apiForm.apiUrl && { apiUrl: apiForm.apiUrl }),
         ...(apiForm.apiKey && { apiKey: apiForm.apiKey }),
-        ...(apiData?.isActive !== undefined && { isActive: apiData.isActive }),
+        ...(apiForm.isActive !== undefined && { isActive: apiForm.isActive }),
       });
       toast.success("API credential updated successfully");
       setApiDialogOpen(false);
-      setApiForm({ name: "", apiUrl: "", apiKey: "" });
+      setApiForm({ name: "", apiUrl: "", apiKey: "", isActive: true });
       setSelectedItem(null);
       apiRefetch();
     } catch (err: any) {
@@ -844,7 +846,7 @@ export default function ServersPage() {
         setApiDialogOpen(open);
         if (!open) {
           setSelectedItem(null);
-          setApiForm({ name: "", apiUrl: "", apiKey: "" });
+          setApiForm({ name: "", apiUrl: "", apiKey: "", isActive: true });
         }
       }}>
         <DialogContent>
@@ -879,8 +881,8 @@ export default function ServersPage() {
             <div className="flex items-center space-x-2">
               <Switch
                 id="apiIsActive"
-                checked={selectedItem ? (selectedItem as any).isActive : true}
-                onCheckedChange={(checked) => setSelectedItem({ ...selectedItem, isActive: checked } as any)}
+                checked={apiForm.isActive}
+                onCheckedChange={(checked) => setApiForm({ ...apiForm, isActive: checked })}
               />
               <Label htmlFor="apiIsActive">Active</Label>
             </div>
@@ -891,7 +893,7 @@ export default function ServersPage() {
               onClick={() => {
                 setApiDialogOpen(false);
                 setSelectedItem(null);
-                setApiForm({ name: "", apiUrl: "", apiKey: "" });
+                setApiForm({ name: "", apiUrl: "", apiKey: "", isActive: true });
               }}
             >
               Cancel
