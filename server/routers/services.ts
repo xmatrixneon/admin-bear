@@ -52,7 +52,6 @@ export const servicesRouter = router({
     const { prisma } = ctx;
 
     const services = await prisma.service.findMany({
-      where: { isActive: true },
       include: {
         server: {
           select: {
