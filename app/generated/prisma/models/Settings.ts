@@ -34,6 +34,7 @@ export type SettingsAvgAggregateOutputType = {
   numberExpiryMinutes: number | null
   minCancelMinutes: number | null
   maxDiscountPercent: number | null
+  maxPromoAmount: runtime.Decimal | null
 }
 
 export type SettingsSumAggregateOutputType = {
@@ -44,6 +45,7 @@ export type SettingsSumAggregateOutputType = {
   numberExpiryMinutes: number | null
   minCancelMinutes: number | null
   maxDiscountPercent: number | null
+  maxPromoAmount: runtime.Decimal | null
 }
 
 export type SettingsMinAggregateOutputType = {
@@ -60,6 +62,7 @@ export type SettingsMinAggregateOutputType = {
   currency: string | null
   minCancelMinutes: number | null
   maxDiscountPercent: number | null
+  maxPromoAmount: runtime.Decimal | null
   maintenanceMode: boolean | null
   telegramHelpUrl: string | null
   telegramSupportUsername: string | null
@@ -85,6 +88,7 @@ export type SettingsMaxAggregateOutputType = {
   currency: string | null
   minCancelMinutes: number | null
   maxDiscountPercent: number | null
+  maxPromoAmount: runtime.Decimal | null
   maintenanceMode: boolean | null
   telegramHelpUrl: string | null
   telegramSupportUsername: string | null
@@ -110,6 +114,7 @@ export type SettingsCountAggregateOutputType = {
   currency: number
   minCancelMinutes: number
   maxDiscountPercent: number
+  maxPromoAmount: number
   maintenanceMode: number
   telegramHelpUrl: number
   telegramSupportUsername: number
@@ -131,6 +136,7 @@ export type SettingsAvgAggregateInputType = {
   numberExpiryMinutes?: true
   minCancelMinutes?: true
   maxDiscountPercent?: true
+  maxPromoAmount?: true
 }
 
 export type SettingsSumAggregateInputType = {
@@ -141,6 +147,7 @@ export type SettingsSumAggregateInputType = {
   numberExpiryMinutes?: true
   minCancelMinutes?: true
   maxDiscountPercent?: true
+  maxPromoAmount?: true
 }
 
 export type SettingsMinAggregateInputType = {
@@ -157,6 +164,7 @@ export type SettingsMinAggregateInputType = {
   currency?: true
   minCancelMinutes?: true
   maxDiscountPercent?: true
+  maxPromoAmount?: true
   maintenanceMode?: true
   telegramHelpUrl?: true
   telegramSupportUsername?: true
@@ -182,6 +190,7 @@ export type SettingsMaxAggregateInputType = {
   currency?: true
   minCancelMinutes?: true
   maxDiscountPercent?: true
+  maxPromoAmount?: true
   maintenanceMode?: true
   telegramHelpUrl?: true
   telegramSupportUsername?: true
@@ -207,6 +216,7 @@ export type SettingsCountAggregateInputType = {
   currency?: true
   minCancelMinutes?: true
   maxDiscountPercent?: true
+  maxPromoAmount?: true
   maintenanceMode?: true
   telegramHelpUrl?: true
   telegramSupportUsername?: true
@@ -319,6 +329,7 @@ export type SettingsGroupByOutputType = {
   currency: string
   minCancelMinutes: number
   maxDiscountPercent: number
+  maxPromoAmount: runtime.Decimal
   maintenanceMode: boolean
   telegramHelpUrl: string | null
   telegramSupportUsername: string | null
@@ -367,6 +378,7 @@ export type SettingsWhereInput = {
   currency?: Prisma.StringFilter<"Settings"> | string
   minCancelMinutes?: Prisma.IntFilter<"Settings"> | number
   maxDiscountPercent?: Prisma.IntFilter<"Settings"> | number
+  maxPromoAmount?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFilter<"Settings"> | boolean
   telegramHelpUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
   telegramSupportUsername?: Prisma.StringNullableFilter<"Settings"> | string | null
@@ -392,6 +404,7 @@ export type SettingsOrderByWithRelationInput = {
   currency?: Prisma.SortOrder
   minCancelMinutes?: Prisma.SortOrder
   maxDiscountPercent?: Prisma.SortOrder
+  maxPromoAmount?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
   telegramHelpUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -420,6 +433,7 @@ export type SettingsWhereUniqueInput = Prisma.AtLeast<{
   currency?: Prisma.StringFilter<"Settings"> | string
   minCancelMinutes?: Prisma.IntFilter<"Settings"> | number
   maxDiscountPercent?: Prisma.IntFilter<"Settings"> | number
+  maxPromoAmount?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFilter<"Settings"> | boolean
   telegramHelpUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
   telegramSupportUsername?: Prisma.StringNullableFilter<"Settings"> | string | null
@@ -445,6 +459,7 @@ export type SettingsOrderByWithAggregationInput = {
   currency?: Prisma.SortOrder
   minCancelMinutes?: Prisma.SortOrder
   maxDiscountPercent?: Prisma.SortOrder
+  maxPromoAmount?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
   telegramHelpUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -478,6 +493,7 @@ export type SettingsScalarWhereWithAggregatesInput = {
   currency?: Prisma.StringWithAggregatesFilter<"Settings"> | string
   minCancelMinutes?: Prisma.IntWithAggregatesFilter<"Settings"> | number
   maxDiscountPercent?: Prisma.IntWithAggregatesFilter<"Settings"> | number
+  maxPromoAmount?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolWithAggregatesFilter<"Settings"> | boolean
   telegramHelpUrl?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   telegramSupportUsername?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
@@ -503,6 +519,7 @@ export type SettingsCreateInput = {
   currency?: string
   minCancelMinutes?: number
   maxDiscountPercent?: number
+  maxPromoAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: boolean
   telegramHelpUrl?: string | null
   telegramSupportUsername?: string | null
@@ -528,6 +545,7 @@ export type SettingsUncheckedCreateInput = {
   currency?: string
   minCancelMinutes?: number
   maxDiscountPercent?: number
+  maxPromoAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: boolean
   telegramHelpUrl?: string | null
   telegramSupportUsername?: string | null
@@ -553,6 +571,7 @@ export type SettingsUpdateInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   minCancelMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   maxDiscountPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  maxPromoAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -578,6 +597,7 @@ export type SettingsUncheckedUpdateInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   minCancelMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   maxDiscountPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  maxPromoAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -603,6 +623,7 @@ export type SettingsCreateManyInput = {
   currency?: string
   minCancelMinutes?: number
   maxDiscountPercent?: number
+  maxPromoAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: boolean
   telegramHelpUrl?: string | null
   telegramSupportUsername?: string | null
@@ -628,6 +649,7 @@ export type SettingsUpdateManyMutationInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   minCancelMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   maxDiscountPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  maxPromoAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -653,6 +675,7 @@ export type SettingsUncheckedUpdateManyInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   minCancelMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   maxDiscountPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  maxPromoAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -678,6 +701,7 @@ export type SettingsCountOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   minCancelMinutes?: Prisma.SortOrder
   maxDiscountPercent?: Prisma.SortOrder
+  maxPromoAmount?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
   telegramHelpUrl?: Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrder
@@ -697,6 +721,7 @@ export type SettingsAvgOrderByAggregateInput = {
   numberExpiryMinutes?: Prisma.SortOrder
   minCancelMinutes?: Prisma.SortOrder
   maxDiscountPercent?: Prisma.SortOrder
+  maxPromoAmount?: Prisma.SortOrder
 }
 
 export type SettingsMaxOrderByAggregateInput = {
@@ -713,6 +738,7 @@ export type SettingsMaxOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   minCancelMinutes?: Prisma.SortOrder
   maxDiscountPercent?: Prisma.SortOrder
+  maxPromoAmount?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
   telegramHelpUrl?: Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrder
@@ -738,6 +764,7 @@ export type SettingsMinOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   minCancelMinutes?: Prisma.SortOrder
   maxDiscountPercent?: Prisma.SortOrder
+  maxPromoAmount?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
   telegramHelpUrl?: Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrder
@@ -757,6 +784,7 @@ export type SettingsSumOrderByAggregateInput = {
   numberExpiryMinutes?: Prisma.SortOrder
   minCancelMinutes?: Prisma.SortOrder
   maxDiscountPercent?: Prisma.SortOrder
+  maxPromoAmount?: Prisma.SortOrder
 }
 
 export type FloatFieldUpdateOperationsInput = {
@@ -783,6 +811,7 @@ export type SettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   currency?: boolean
   minCancelMinutes?: boolean
   maxDiscountPercent?: boolean
+  maxPromoAmount?: boolean
   maintenanceMode?: boolean
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
@@ -808,6 +837,7 @@ export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   currency?: boolean
   minCancelMinutes?: boolean
   maxDiscountPercent?: boolean
+  maxPromoAmount?: boolean
   maintenanceMode?: boolean
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
@@ -833,6 +863,7 @@ export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   currency?: boolean
   minCancelMinutes?: boolean
   maxDiscountPercent?: boolean
+  maxPromoAmount?: boolean
   maintenanceMode?: boolean
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
@@ -858,6 +889,7 @@ export type SettingsSelectScalar = {
   currency?: boolean
   minCancelMinutes?: boolean
   maxDiscountPercent?: boolean
+  maxPromoAmount?: boolean
   maintenanceMode?: boolean
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
@@ -869,7 +901,7 @@ export type SettingsSelectScalar = {
   builtWithText?: boolean
 }
 
-export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maintenanceMode" | "telegramHelpUrl" | "telegramSupportUsername" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText", ExtArgs["result"]["settings"]>
+export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maxPromoAmount" | "maintenanceMode" | "telegramHelpUrl" | "telegramSupportUsername" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText", ExtArgs["result"]["settings"]>
 
 export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Settings"
@@ -888,6 +920,7 @@ export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     currency: string
     minCancelMinutes: number
     maxDiscountPercent: number
+    maxPromoAmount: runtime.Decimal
     maintenanceMode: boolean
     telegramHelpUrl: string | null
     telegramSupportUsername: string | null
@@ -1333,6 +1366,7 @@ export interface SettingsFieldRefs {
   readonly currency: Prisma.FieldRef<"Settings", 'String'>
   readonly minCancelMinutes: Prisma.FieldRef<"Settings", 'Int'>
   readonly maxDiscountPercent: Prisma.FieldRef<"Settings", 'Int'>
+  readonly maxPromoAmount: Prisma.FieldRef<"Settings", 'Decimal'>
   readonly maintenanceMode: Prisma.FieldRef<"Settings", 'Boolean'>
   readonly telegramHelpUrl: Prisma.FieldRef<"Settings", 'String'>
   readonly telegramSupportUsername: Prisma.FieldRef<"Settings", 'String'>

@@ -2017,6 +2017,7 @@ export const SettingsScalarFieldEnum = {
   currency: 'currency',
   minCancelMinutes: 'minCancelMinutes',
   maxDiscountPercent: 'maxDiscountPercent',
+  maxPromoAmount: 'maxPromoAmount',
   maintenanceMode: 'maintenanceMode',
   telegramHelpUrl: 'telegramHelpUrl',
   telegramSupportUsername: 'telegramSupportUsername',

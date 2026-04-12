@@ -308,6 +308,7 @@ model Settings {
   currency                String  @default("₹")
   minCancelMinutes        Int     @default(2)
   maxDiscountPercent      Int     @default(20)
+  maxPromoAmount          Decimal @default(5000) @db.Decimal(10, 2)
   maintenanceMode         Boolean @default(false)
   telegramHelpUrl         String?
   telegramSupportUsername String?

@@ -35,6 +35,8 @@ type SettingsData = {
   minRedeem: number | string;
   numberExpiryMinutes: number | string;
   minCancelMinutes: number | string;
+  maxDiscountPercent: number | string;
+  maxPromoAmount: number | string;
   maintenanceMode: boolean;
   upiId: string;
   bharatpeMerchantId: string;
@@ -97,6 +99,7 @@ const SECTIONS: {
       { key: "maxRechargeAmount", label: "Max Recharge (₹)", type: "number", placeholder: "5000" },
       { key: "minRedeem", label: "Min Redeem (₹)", type: "number", placeholder: "0" },
       { key: "referralPercent", label: "Referral %", type: "number", placeholder: "0", hint: "Percentage credited on referral recharge" },
+      { key: "maxPromoAmount", label: "Max Promo Amount (₹)", type: "number", placeholder: "5000", hint: "Maximum amount for a single promo code" },
     ],
   },
   {
@@ -341,6 +344,8 @@ export default function SettingsPage() {
     minRedeem: Number(rawSettings.minRedeem),
     numberExpiryMinutes: rawSettings.numberExpiryMinutes || 0,
     minCancelMinutes: rawSettings.minCancelMinutes || 0,
+    maxDiscountPercent: Number(rawSettings.maxDiscountPercent || 20),
+    maxPromoAmount: Number(rawSettings.maxPromoAmount || 5000),
     maintenanceMode: rawSettings.maintenanceMode || false,
     upiId: rawSettings.upiId || '',
     bharatpeMerchantId: rawSettings.bharatpeMerchantId || '',
@@ -378,6 +383,8 @@ export default function SettingsPage() {
       'minRedeem',
       'numberExpiryMinutes',
       'minCancelMinutes',
+      'maxDiscountPercent',
+      'maxPromoAmount',
     ] as const;
 
     const converted = { ...partial } as Record<string, unknown>;
