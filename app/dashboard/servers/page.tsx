@@ -66,33 +66,91 @@ export default function ServersPage() {
   const { data: apiCredentialsData, isLoading: apiLoading, refetch: apiRefetch, isFetching: apiFetching } = trpc.servers.listApiCredentials.useQuery();
 
   // tRPC mutations
-  const createServerMutation = trpc.servers.create.useMutation();
-  const updateServerMutation = trpc.servers.update.useMutation();
-  const deleteServerMutation = trpc.servers.delete.useMutation();
-  const createApiCredentialMutation = trpc.servers.createApiCredential.useMutation();
-  const updateApiCredentialMutation = trpc.servers.updateApiCredential.useMutation();
-  const deleteApiCredentialMutation = trpc.servers.deleteApiCredential.useMutation();
+  const createServerMutation = trpc.servers.create.useMutation({
+    onSuccess: () => {
+      refetch();
+      apiRefetch();
+    },
+  });
+  const updateServerMutation = trpc.servers.update.useMutation({
+    onSuccess: () => {
+      refetch();
+      apiRefetch();
+    },
+  });
+  const deleteServerMutation = trpc.servers.delete.useMutation({
+    onSuccess: () => {
+      refetch();
+      apiRefetch();
+    },
+  });
+  const createApiCredentialMutation = trpc.servers.createApiCredential.useMutation({
+    onSuccess: () => {
+      refetch();
+      apiRefetch();
+    },
+  });
+  const updateApiCredentialMutation = trpc.servers.updateApiCredential.useMutation({
+    onSuccess: () => {
+      refetch();
+      apiRefetch();
+    },
+  });
+  const deleteApiCredentialMutation = trpc.servers.deleteApiCredential.useMutation({
+    onSuccess: () => {
+      refetch();
+      apiRefetch();
+    },
+  });
 
   // Handlers
   const handleCreateServer = async () => {
+    if (createServerMutation.isPending) return;
+
+    // Validation
+    if (!serverForm.name?.trim() || !serverForm.countryCode?.trim() || !serverForm.apiId?.trim()) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     try {
       await createServerMutation.mutateAsync(serverForm);
       toast.success("Server created successfully");
       setServerDialogOpen(false);
-      setServerForm({ name: "", countryCode: "", countryIso: "", countryName: "", flagUrl: "", apiId: "", isActive: true });
-      refetch();
-      apiRefetch();
+      setServerForm({ name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
     } catch (err: any) {
       toast.error(err.message || "Failed to create server");
     }
   };
 
-  const handleUpdateServer = useCallback(async (serverData?: any) => {
-    const targetServer = serverData || selectedItem;
-    if (!targetServer) return;
+  // Handle Switch toggle - only updates isActive field
+  const handleToggleServerActive = useCallback(async (server: any, isActive: boolean) => {
+    if (updateServerMutation.isPending) return;
     try {
       await updateServerMutation.mutateAsync({
-        id: targetServer.id,
+        id: server.id,
+        data: { isActive },
+      });
+      toast.success("Server status updated");
+      refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update server status");
+    }
+  }, [updateServerMutation, refetch]);
+
+  // Handle dialog form submission - updates all fields from form
+  const handleUpdateServer = async () => {
+    if (!selectedItem || updateServerMutation.isPending) return;
+
+    // Validation
+    if (!serverForm.name?.trim() || !serverForm.countryCode?.trim() || !serverForm.apiId?.trim()) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    try {
+      const updateData = {
+        id: selectedItem.id,
         data: {
           name: serverForm.name,
           countryCode: serverForm.countryCode,
@@ -100,21 +158,21 @@ export default function ServersPage() {
           countryName: serverForm.countryName,
           flagUrl: serverForm.flagUrl || undefined,
           apiId: serverForm.apiId,
-          isActive: serverData?.isActive ?? serverForm.isActive,
+          isActive: serverForm.isActive,
         },
-      });
+      };
+      await updateServerMutation.mutateAsync(updateData);
       toast.success("Server updated successfully");
       setServerDialogOpen(false);
       setSelectedItem(null);
-      setServerForm({ name: "", countryCode: "", countryIso: "", countryName: "", flagUrl: "", apiId: "", isActive: true });
-      refetch();
+      setServerForm({ name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
     } catch (err: any) {
       toast.error(err.message || "Failed to update server");
     }
-  }, [selectedItem, serverForm, updateServerMutation, refetch]);
+  };
 
   const handleDelete = async () => {
-    if (!selectedItem) return;
+    if (!selectedItem || deleteServerMutation.isPending || deleteApiCredentialMutation.isPending) return;
     try {
       if (deleteType === "server") {
         await deleteServerMutation.mutateAsync({ id: selectedItem.id });
@@ -124,8 +182,6 @@ export default function ServersPage() {
       toast.success(`${deleteType === "server" ? "Server" : "API credential"} deleted successfully`);
       setDeleteDialogOpen(false);
       setSelectedItem(null);
-      refetch();
-      apiRefetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to delete");
     }
@@ -157,13 +213,19 @@ export default function ServersPage() {
   });
 
   const handleCreateApi = async () => {
+    if (createApiCredentialMutation.isPending) return;
+
+    // Validation
+    if (!apiForm.name?.trim() || !apiForm.apiUrl?.trim() || !apiForm.apiKey?.trim()) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     try {
       await createApiCredentialMutation.mutateAsync(apiForm);
       toast.success("API credential created successfully");
       setApiDialogOpen(false);
       setApiForm({ name: "", apiUrl: "", apiKey: "", isActive: true });
-      refetch();
-      apiRefetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to create API credential");
     }
@@ -182,35 +244,56 @@ export default function ServersPage() {
     }
   };
 
-  const handleUpdateApi = async (apiData?: any) => {
-    const targetApi = apiData || selectedItem;
-    if (!targetApi || !targetApi.id) return;
+  // Handle Switch toggle - only updates isActive field
+  const handleToggleApiActive = useCallback(async (api: any, isActive: boolean) => {
+    if (updateApiCredentialMutation.isPending) return;
     try {
       await updateApiCredentialMutation.mutateAsync({
-        id: targetApi.id,
-        ...(apiForm.name && { name: apiForm.name }),
-        ...(apiForm.apiUrl && { apiUrl: apiForm.apiUrl }),
-        ...(apiForm.apiKey && { apiKey: apiForm.apiKey }),
-        ...(apiForm.isActive !== undefined && { isActive: apiForm.isActive }),
+        id: api.id,
+        isActive,
       });
+      toast.success("API credential status updated");
+      apiRefetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update API credential status");
+    }
+  }, [updateApiCredentialMutation, apiRefetch]);
+
+  // Handle dialog form submission - updates all fields from form
+  const handleUpdateApi = async () => {
+    if (!selectedItem || updateApiCredentialMutation.isPending) return;
+
+    // Validation - all fields required for form submission
+    if (!apiForm.name?.trim() || !apiForm.apiUrl?.trim() || !apiForm.apiKey?.trim()) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    try {
+      const updateData = {
+        id: selectedItem.id,
+        name: apiForm.name,
+        apiUrl: apiForm.apiUrl,
+        apiKey: apiForm.apiKey,
+        isActive: apiForm.isActive,
+      };
+      await updateApiCredentialMutation.mutateAsync(updateData);
       toast.success("API credential updated successfully");
       setApiDialogOpen(false);
       setApiForm({ name: "", apiUrl: "", apiKey: "", isActive: true });
       setSelectedItem(null);
-      apiRefetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to update API credential");
     }
   };
 
   const handleDeleteApi = async (api?: any) => {
-    if (!api) return;
+    if (!api || deleteApiCredentialMutation.isPending) return;
     try {
       await deleteApiCredentialMutation.mutateAsync({ id: api.id });
       toast.success("API credential deleted successfully");
       setApiDialogOpen(false);
       setSelectedItem(null);
-      apiRefetch();
     } catch (err: any) {
       toast.error(err.message || "Failed to delete API credential");
     }
@@ -466,7 +549,8 @@ export default function ServersPage() {
                           <TableCell>
                             <Switch
                               checked={server.isActive}
-                              onCheckedChange={(checked) => handleUpdateServer({ ...server, isActive: checked })}
+                              onCheckedChange={(checked) => handleToggleServerActive(server, checked)}
+                              disabled={updateServerMutation.isPending}
                             />
                           </TableCell>
                           <TableCell>
@@ -696,7 +780,8 @@ export default function ServersPage() {
                           <TableCell>
                             <Switch
                               checked={api.isActive}
-                              onCheckedChange={(checked) => handleUpdateApi({ ...api, isActive: checked })}
+                              onCheckedChange={(checked) => handleToggleApiActive(api, checked)}
+                              disabled={updateApiCredentialMutation.isPending}
                             />
                           </TableCell>
                           <TableCell>
@@ -744,7 +829,7 @@ export default function ServersPage() {
         setServerDialogOpen(open);
         if (!open) {
           setSelectedItem(null);
-          setServerForm({ name: "", countryCode: "", countryIso: "", countryName: "", flagUrl: "", apiId: "", isActive: true });
+          setServerForm({ name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
         }
       }}>
         <DialogContent>
@@ -822,12 +907,13 @@ export default function ServersPage() {
               onClick={() => {
                 setServerDialogOpen(false);
                 setSelectedItem(null);
-                setServerForm({ name: "", countryCode: "", countryIso: "", countryName: "", flagUrl: "", apiId: "", isActive: true });
+                setServerForm({ name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
               }}
             >
               Cancel
             </Button>
             <Button
+              type="button"
               onClick={selectedItem ? handleUpdateServer : handleCreateServer}
               disabled={createServerMutation.isPending || updateServerMutation.isPending}
             >
@@ -899,6 +985,7 @@ export default function ServersPage() {
               Cancel
             </Button>
             <Button
+              type="button"
               onClick={selectedItem ? handleUpdateApi : handleCreateApi}
               disabled={createApiCredentialMutation.isPending || updateApiCredentialMutation.isPending}
             >
