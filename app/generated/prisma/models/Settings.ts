@@ -35,6 +35,7 @@ export type SettingsAvgAggregateOutputType = {
   minCancelMinutes: number | null
   maxDiscountPercent: number | null
   maxPromoAmount: runtime.Decimal | null
+  apiRateLimit: number | null
 }
 
 export type SettingsSumAggregateOutputType = {
@@ -46,6 +47,7 @@ export type SettingsSumAggregateOutputType = {
   minCancelMinutes: number | null
   maxDiscountPercent: number | null
   maxPromoAmount: runtime.Decimal | null
+  apiRateLimit: number | null
 }
 
 export type SettingsMinAggregateOutputType = {
@@ -64,6 +66,7 @@ export type SettingsMinAggregateOutputType = {
   maxDiscountPercent: number | null
   maxPromoAmount: runtime.Decimal | null
   maintenanceMode: boolean | null
+  apiRateLimit: number | null
   telegramHelpUrl: string | null
   telegramSupportUsername: string | null
   apiDocsBaseUrl: string | null
@@ -90,6 +93,7 @@ export type SettingsMaxAggregateOutputType = {
   maxDiscountPercent: number | null
   maxPromoAmount: runtime.Decimal | null
   maintenanceMode: boolean | null
+  apiRateLimit: number | null
   telegramHelpUrl: string | null
   telegramSupportUsername: string | null
   apiDocsBaseUrl: string | null
@@ -116,6 +120,7 @@ export type SettingsCountAggregateOutputType = {
   maxDiscountPercent: number
   maxPromoAmount: number
   maintenanceMode: number
+  apiRateLimit: number
   telegramHelpUrl: number
   telegramSupportUsername: number
   apiDocsBaseUrl: number
@@ -137,6 +142,7 @@ export type SettingsAvgAggregateInputType = {
   minCancelMinutes?: true
   maxDiscountPercent?: true
   maxPromoAmount?: true
+  apiRateLimit?: true
 }
 
 export type SettingsSumAggregateInputType = {
@@ -148,6 +154,7 @@ export type SettingsSumAggregateInputType = {
   minCancelMinutes?: true
   maxDiscountPercent?: true
   maxPromoAmount?: true
+  apiRateLimit?: true
 }
 
 export type SettingsMinAggregateInputType = {
@@ -166,6 +173,7 @@ export type SettingsMinAggregateInputType = {
   maxDiscountPercent?: true
   maxPromoAmount?: true
   maintenanceMode?: true
+  apiRateLimit?: true
   telegramHelpUrl?: true
   telegramSupportUsername?: true
   apiDocsBaseUrl?: true
@@ -192,6 +200,7 @@ export type SettingsMaxAggregateInputType = {
   maxDiscountPercent?: true
   maxPromoAmount?: true
   maintenanceMode?: true
+  apiRateLimit?: true
   telegramHelpUrl?: true
   telegramSupportUsername?: true
   apiDocsBaseUrl?: true
@@ -218,6 +227,7 @@ export type SettingsCountAggregateInputType = {
   maxDiscountPercent?: true
   maxPromoAmount?: true
   maintenanceMode?: true
+  apiRateLimit?: true
   telegramHelpUrl?: true
   telegramSupportUsername?: true
   apiDocsBaseUrl?: true
@@ -331,6 +341,7 @@ export type SettingsGroupByOutputType = {
   maxDiscountPercent: number
   maxPromoAmount: runtime.Decimal
   maintenanceMode: boolean
+  apiRateLimit: number
   telegramHelpUrl: string | null
   telegramSupportUsername: string | null
   apiDocsBaseUrl: string | null
@@ -380,6 +391,7 @@ export type SettingsWhereInput = {
   maxDiscountPercent?: Prisma.IntFilter<"Settings"> | number
   maxPromoAmount?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFilter<"Settings"> | boolean
+  apiRateLimit?: Prisma.IntFilter<"Settings"> | number
   telegramHelpUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
   telegramSupportUsername?: Prisma.StringNullableFilter<"Settings"> | string | null
   apiDocsBaseUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
@@ -406,6 +418,7 @@ export type SettingsOrderByWithRelationInput = {
   maxDiscountPercent?: Prisma.SortOrder
   maxPromoAmount?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
+  apiRateLimit?: Prisma.SortOrder
   telegramHelpUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrderInput | Prisma.SortOrder
   apiDocsBaseUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -435,6 +448,7 @@ export type SettingsWhereUniqueInput = Prisma.AtLeast<{
   maxDiscountPercent?: Prisma.IntFilter<"Settings"> | number
   maxPromoAmount?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFilter<"Settings"> | boolean
+  apiRateLimit?: Prisma.IntFilter<"Settings"> | number
   telegramHelpUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
   telegramSupportUsername?: Prisma.StringNullableFilter<"Settings"> | string | null
   apiDocsBaseUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
@@ -461,6 +475,7 @@ export type SettingsOrderByWithAggregationInput = {
   maxDiscountPercent?: Prisma.SortOrder
   maxPromoAmount?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
+  apiRateLimit?: Prisma.SortOrder
   telegramHelpUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrderInput | Prisma.SortOrder
   apiDocsBaseUrl?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -495,6 +510,7 @@ export type SettingsScalarWhereWithAggregatesInput = {
   maxDiscountPercent?: Prisma.IntWithAggregatesFilter<"Settings"> | number
   maxPromoAmount?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolWithAggregatesFilter<"Settings"> | boolean
+  apiRateLimit?: Prisma.IntWithAggregatesFilter<"Settings"> | number
   telegramHelpUrl?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   telegramSupportUsername?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   apiDocsBaseUrl?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
@@ -521,6 +537,7 @@ export type SettingsCreateInput = {
   maxDiscountPercent?: number
   maxPromoAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: boolean
+  apiRateLimit?: number
   telegramHelpUrl?: string | null
   telegramSupportUsername?: string | null
   apiDocsBaseUrl?: string | null
@@ -547,6 +564,7 @@ export type SettingsUncheckedCreateInput = {
   maxDiscountPercent?: number
   maxPromoAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: boolean
+  apiRateLimit?: number
   telegramHelpUrl?: string | null
   telegramSupportUsername?: string | null
   apiDocsBaseUrl?: string | null
@@ -573,6 +591,7 @@ export type SettingsUpdateInput = {
   maxDiscountPercent?: Prisma.IntFieldUpdateOperationsInput | number
   maxPromoAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  apiRateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiDocsBaseUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -599,6 +618,7 @@ export type SettingsUncheckedUpdateInput = {
   maxDiscountPercent?: Prisma.IntFieldUpdateOperationsInput | number
   maxPromoAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  apiRateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiDocsBaseUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -625,6 +645,7 @@ export type SettingsCreateManyInput = {
   maxDiscountPercent?: number
   maxPromoAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: boolean
+  apiRateLimit?: number
   telegramHelpUrl?: string | null
   telegramSupportUsername?: string | null
   apiDocsBaseUrl?: string | null
@@ -651,6 +672,7 @@ export type SettingsUpdateManyMutationInput = {
   maxDiscountPercent?: Prisma.IntFieldUpdateOperationsInput | number
   maxPromoAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  apiRateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiDocsBaseUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -677,6 +699,7 @@ export type SettingsUncheckedUpdateManyInput = {
   maxDiscountPercent?: Prisma.IntFieldUpdateOperationsInput | number
   maxPromoAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   maintenanceMode?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  apiRateLimit?: Prisma.IntFieldUpdateOperationsInput | number
   telegramHelpUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   telegramSupportUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiDocsBaseUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -703,6 +726,7 @@ export type SettingsCountOrderByAggregateInput = {
   maxDiscountPercent?: Prisma.SortOrder
   maxPromoAmount?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
+  apiRateLimit?: Prisma.SortOrder
   telegramHelpUrl?: Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrder
   apiDocsBaseUrl?: Prisma.SortOrder
@@ -722,6 +746,7 @@ export type SettingsAvgOrderByAggregateInput = {
   minCancelMinutes?: Prisma.SortOrder
   maxDiscountPercent?: Prisma.SortOrder
   maxPromoAmount?: Prisma.SortOrder
+  apiRateLimit?: Prisma.SortOrder
 }
 
 export type SettingsMaxOrderByAggregateInput = {
@@ -740,6 +765,7 @@ export type SettingsMaxOrderByAggregateInput = {
   maxDiscountPercent?: Prisma.SortOrder
   maxPromoAmount?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
+  apiRateLimit?: Prisma.SortOrder
   telegramHelpUrl?: Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrder
   apiDocsBaseUrl?: Prisma.SortOrder
@@ -766,6 +792,7 @@ export type SettingsMinOrderByAggregateInput = {
   maxDiscountPercent?: Prisma.SortOrder
   maxPromoAmount?: Prisma.SortOrder
   maintenanceMode?: Prisma.SortOrder
+  apiRateLimit?: Prisma.SortOrder
   telegramHelpUrl?: Prisma.SortOrder
   telegramSupportUsername?: Prisma.SortOrder
   apiDocsBaseUrl?: Prisma.SortOrder
@@ -785,6 +812,7 @@ export type SettingsSumOrderByAggregateInput = {
   minCancelMinutes?: Prisma.SortOrder
   maxDiscountPercent?: Prisma.SortOrder
   maxPromoAmount?: Prisma.SortOrder
+  apiRateLimit?: Prisma.SortOrder
 }
 
 export type FloatFieldUpdateOperationsInput = {
@@ -813,6 +841,7 @@ export type SettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   maxDiscountPercent?: boolean
   maxPromoAmount?: boolean
   maintenanceMode?: boolean
+  apiRateLimit?: boolean
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
   apiDocsBaseUrl?: boolean
@@ -839,6 +868,7 @@ export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   maxDiscountPercent?: boolean
   maxPromoAmount?: boolean
   maintenanceMode?: boolean
+  apiRateLimit?: boolean
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
   apiDocsBaseUrl?: boolean
@@ -865,6 +895,7 @@ export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   maxDiscountPercent?: boolean
   maxPromoAmount?: boolean
   maintenanceMode?: boolean
+  apiRateLimit?: boolean
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
   apiDocsBaseUrl?: boolean
@@ -891,6 +922,7 @@ export type SettingsSelectScalar = {
   maxDiscountPercent?: boolean
   maxPromoAmount?: boolean
   maintenanceMode?: boolean
+  apiRateLimit?: boolean
   telegramHelpUrl?: boolean
   telegramSupportUsername?: boolean
   apiDocsBaseUrl?: boolean
@@ -901,7 +933,7 @@ export type SettingsSelectScalar = {
   builtWithText?: boolean
 }
 
-export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maxPromoAmount" | "maintenanceMode" | "telegramHelpUrl" | "telegramSupportUsername" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText", ExtArgs["result"]["settings"]>
+export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maxPromoAmount" | "maintenanceMode" | "apiRateLimit" | "telegramHelpUrl" | "telegramSupportUsername" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText", ExtArgs["result"]["settings"]>
 
 export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Settings"
@@ -922,6 +954,7 @@ export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     maxDiscountPercent: number
     maxPromoAmount: runtime.Decimal
     maintenanceMode: boolean
+    apiRateLimit: number
     telegramHelpUrl: string | null
     telegramSupportUsername: string | null
     apiDocsBaseUrl: string | null
@@ -1368,6 +1401,7 @@ export interface SettingsFieldRefs {
   readonly maxDiscountPercent: Prisma.FieldRef<"Settings", 'Int'>
   readonly maxPromoAmount: Prisma.FieldRef<"Settings", 'Decimal'>
   readonly maintenanceMode: Prisma.FieldRef<"Settings", 'Boolean'>
+  readonly apiRateLimit: Prisma.FieldRef<"Settings", 'Int'>
   readonly telegramHelpUrl: Prisma.FieldRef<"Settings", 'String'>
   readonly telegramSupportUsername: Prisma.FieldRef<"Settings", 'String'>
   readonly apiDocsBaseUrl: Prisma.FieldRef<"Settings", 'String'>

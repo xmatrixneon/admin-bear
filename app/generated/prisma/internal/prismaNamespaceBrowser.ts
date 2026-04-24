@@ -314,6 +314,7 @@ export const SettingsScalarFieldEnum = {
   maxDiscountPercent: 'maxDiscountPercent',
   maxPromoAmount: 'maxPromoAmount',
   maintenanceMode: 'maintenanceMode',
+  apiRateLimit: 'apiRateLimit',
   telegramHelpUrl: 'telegramHelpUrl',
   telegramSupportUsername: 'telegramSupportUsername',
   apiDocsBaseUrl: 'apiDocsBaseUrl',

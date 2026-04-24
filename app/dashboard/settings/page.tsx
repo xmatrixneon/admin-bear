@@ -12,6 +12,7 @@ import {
   MessageCircle,
   CheckCircle2,
   Megaphone,
+  Gauge,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +45,8 @@ type SettingsData = {
   bharatpeQrImage: string;
   telegramSupportUsername: string;
   apiDocsBaseUrl: string;
+  // API rate limiting
+  apiRateLimit: number;
   // Announcement banner
   announcementEnabled: boolean;
   announcementMessage: string;
@@ -53,7 +56,7 @@ type SettingsData = {
   builtWithText: string;
 };
 
-type SectionKey = "general" | "limits" | "timing" | "payment" | "support" | "announcement" | "branding";
+type SectionKey = "general" | "limits" | "timing" | "payment" | "api" | "support" | "announcement" | "branding";
 
 // ─── Animation ────────────────────────────────────────────────────────────────
 
@@ -122,6 +125,15 @@ const SECTIONS: {
       { key: "bharatpeMerchantId", label: "Merchant ID", placeholder: "57113736" },
       { key: "bharatpeToken", label: "BharatPe Token", type: "password", placeholder: "••••••••••••" },
       { key: "bharatpeQrImage", label: "QR Image URL", type: "url", placeholder: "https://i.ibb.co/..." },
+    ],
+  },
+  {
+    key: "api",
+    title: "API Rate Limit",
+    icon: <Gauge size={16} />,
+    description: "External API rate limiting per user",
+    fields: [
+      { key: "apiRateLimit", label: "Requests Per Second", type: "number", placeholder: "100", hint: "Max API requests per second per user (default: 100)" },
     ],
   },
   {
@@ -353,6 +365,8 @@ export default function SettingsPage() {
     bharatpeQrImage: rawSettings.bharatpeQrImage || '',
     telegramSupportUsername: rawSettings.telegramSupportUsername || '',
     apiDocsBaseUrl: rawSettings.apiDocsBaseUrl || '',
+    // API rate limiting
+    apiRateLimit: Number(rawSettings.apiRateLimit || 100),
     // Announcement banner
     announcementEnabled: rawSettings.announcementEnabled || false,
     announcementMessage: rawSettings.announcementMessage || '',
@@ -385,6 +399,7 @@ export default function SettingsPage() {
       'minCancelMinutes',
       'maxDiscountPercent',
       'maxPromoAmount',
+      'apiRateLimit',
     ] as const;
 
     const converted = { ...partial } as Record<string, unknown>;

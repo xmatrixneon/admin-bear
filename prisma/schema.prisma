@@ -310,6 +310,10 @@ model Settings {
   maxDiscountPercent      Int     @default(20)
   maxPromoAmount          Decimal @default(5000) @db.Decimal(10, 2)
   maintenanceMode         Boolean @default(false)
+
+  // API rate limiting
+  apiRateLimit            Int     @default(100)
+
   telegramHelpUrl         String?
   telegramSupportUsername String?
   apiDocsBaseUrl          String?
