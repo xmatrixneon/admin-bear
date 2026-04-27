@@ -316,6 +316,7 @@ model Settings {
 
   telegramHelpUrl         String?
   telegramSupportUsername String?
+  telegramChannelUrl      String?
   apiDocsBaseUrl          String?
   // Announcement banner
   announcementEnabled  Boolean @default(false)

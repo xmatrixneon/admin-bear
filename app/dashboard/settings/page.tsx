@@ -44,6 +44,7 @@ type SettingsData = {
   bharatpeToken: string;
   bharatpeQrImage: string;
   telegramSupportUsername: string;
+  telegramChannelUrl: string;
   apiDocsBaseUrl: string;
   // API rate limiting
   apiRateLimit: number;
@@ -56,7 +57,7 @@ type SettingsData = {
   builtWithText: string;
 };
 
-type SectionKey = "general" | "limits" | "timing" | "payment" | "api" | "support" | "announcement" | "branding";
+type SectionKey = "general" | "limits" | "timing" | "payment" | "api" | "support" | "announcement" | "branding" | "channel";
 
 // ─── Animation ────────────────────────────────────────────────────────────────
 
@@ -144,6 +145,15 @@ const SECTIONS: {
     fields: [
       { key: "telegramSupportUsername", label: "Telegram Username", placeholder: "meowsmsxbot", hint: "Without the @ sign" },
       { key: "apiDocsBaseUrl", label: "API Docs Base URL", type: "url", placeholder: "https://yourdomain.com" },
+    ],
+  },
+  {
+    key: "channel",
+    title: "Join Channel",
+    icon: <MessageCircle size={16} />,
+    description: "Telegram channel join link",
+    fields: [
+      { key: "telegramChannelUrl", label: "Channel URL", type: "url", placeholder: "https://t.me/+xxxxxx", hint: "Join channel link shown in bot /start" },
     ],
   },
   {
@@ -364,6 +374,7 @@ export default function SettingsPage() {
     bharatpeToken: rawSettings.bharatpeToken || '',
     bharatpeQrImage: rawSettings.bharatpeQrImage || '',
     telegramSupportUsername: rawSettings.telegramSupportUsername || '',
+    telegramChannelUrl: rawSettings.telegramChannelUrl || '',
     apiDocsBaseUrl: rawSettings.apiDocsBaseUrl || '',
     // API rate limiting
     apiRateLimit: Number(rawSettings.apiRateLimit || 100),

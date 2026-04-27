@@ -317,6 +317,7 @@ export const SettingsScalarFieldEnum = {
   apiRateLimit: 'apiRateLimit',
   telegramHelpUrl: 'telegramHelpUrl',
   telegramSupportUsername: 'telegramSupportUsername',
+  telegramChannelUrl: 'telegramChannelUrl',
   apiDocsBaseUrl: 'apiDocsBaseUrl',
   announcementEnabled: 'announcementEnabled',
   announcementMessage: 'announcementMessage',

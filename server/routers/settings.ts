@@ -20,6 +20,7 @@ const DEFAULT_SETTINGS = {
   bharatpeToken: '',
   bharatpeQrImage: '',
   telegramSupportUsername: '',
+  telegramChannelUrl: '',
   apiDocsBaseUrl: '',
   telegramHelpUrl: '',
   // API rate limiting
@@ -54,6 +55,7 @@ const settingsUpdateSchema = z
     maintenanceMode: z.boolean().optional(),
     telegramHelpUrl: z.string().url().optional(),
     telegramSupportUsername: z.string().optional(),
+    telegramChannelUrl: z.string().url().optional(),
     apiDocsBaseUrl: z.string().url().optional(),
     // API rate limiting
     apiRateLimit: z.number().int().min(1).max(1000).optional(),
