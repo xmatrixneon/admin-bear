@@ -32,6 +32,7 @@ export type OtpServerMinAggregateOutputType = {
   countryName: string | null
   flagUrl: string | null
   apiId: string | null
+  upstreamServerId: string | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -45,6 +46,7 @@ export type OtpServerMaxAggregateOutputType = {
   countryName: string | null
   flagUrl: string | null
   apiId: string | null
+  upstreamServerId: string | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -58,6 +60,7 @@ export type OtpServerCountAggregateOutputType = {
   countryName: number
   flagUrl: number
   apiId: number
+  upstreamServerId: number
   isActive: number
   createdAt: number
   updatedAt: number
@@ -73,6 +76,7 @@ export type OtpServerMinAggregateInputType = {
   countryName?: true
   flagUrl?: true
   apiId?: true
+  upstreamServerId?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -86,6 +90,7 @@ export type OtpServerMaxAggregateInputType = {
   countryName?: true
   flagUrl?: true
   apiId?: true
+  upstreamServerId?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -99,6 +104,7 @@ export type OtpServerCountAggregateInputType = {
   countryName?: true
   flagUrl?: true
   apiId?: true
+  upstreamServerId?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -185,6 +191,7 @@ export type OtpServerGroupByOutputType = {
   countryName: string
   flagUrl: string | null
   apiId: string
+  upstreamServerId: string | null
   isActive: boolean
   createdAt: Date
   updatedAt: Date
@@ -219,6 +226,7 @@ export type OtpServerWhereInput = {
   countryName?: Prisma.StringFilter<"OtpServer"> | string
   flagUrl?: Prisma.StringNullableFilter<"OtpServer"> | string | null
   apiId?: Prisma.StringFilter<"OtpServer"> | string
+  upstreamServerId?: Prisma.StringNullableFilter<"OtpServer"> | string | null
   isActive?: Prisma.BoolFilter<"OtpServer"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OtpServer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OtpServer"> | Date | string
@@ -235,6 +243,7 @@ export type OtpServerOrderByWithRelationInput = {
   countryName?: Prisma.SortOrder
   flagUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   apiId?: Prisma.SortOrder
+  upstreamServerId?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -254,6 +263,7 @@ export type OtpServerWhereUniqueInput = Prisma.AtLeast<{
   countryName?: Prisma.StringFilter<"OtpServer"> | string
   flagUrl?: Prisma.StringNullableFilter<"OtpServer"> | string | null
   apiId?: Prisma.StringFilter<"OtpServer"> | string
+  upstreamServerId?: Prisma.StringNullableFilter<"OtpServer"> | string | null
   isActive?: Prisma.BoolFilter<"OtpServer"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OtpServer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OtpServer"> | Date | string
@@ -270,6 +280,7 @@ export type OtpServerOrderByWithAggregationInput = {
   countryName?: Prisma.SortOrder
   flagUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   apiId?: Prisma.SortOrder
+  upstreamServerId?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -289,6 +300,7 @@ export type OtpServerScalarWhereWithAggregatesInput = {
   countryName?: Prisma.StringWithAggregatesFilter<"OtpServer"> | string
   flagUrl?: Prisma.StringNullableWithAggregatesFilter<"OtpServer"> | string | null
   apiId?: Prisma.StringWithAggregatesFilter<"OtpServer"> | string
+  upstreamServerId?: Prisma.StringNullableWithAggregatesFilter<"OtpServer"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"OtpServer"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OtpServer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OtpServer"> | Date | string
@@ -301,6 +313,7 @@ export type OtpServerCreateInput = {
   countryIso?: string
   countryName?: string
   flagUrl?: string | null
+  upstreamServerId?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -317,6 +330,7 @@ export type OtpServerUncheckedCreateInput = {
   countryName?: string
   flagUrl?: string | null
   apiId: string
+  upstreamServerId?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -331,6 +345,7 @@ export type OtpServerUpdateInput = {
   countryIso?: Prisma.StringFieldUpdateOperationsInput | string
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -347,6 +362,7 @@ export type OtpServerUncheckedUpdateInput = {
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiId?: Prisma.StringFieldUpdateOperationsInput | string
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -362,6 +378,7 @@ export type OtpServerCreateManyInput = {
   countryName?: string
   flagUrl?: string | null
   apiId: string
+  upstreamServerId?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -374,6 +391,7 @@ export type OtpServerUpdateManyMutationInput = {
   countryIso?: Prisma.StringFieldUpdateOperationsInput | string
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -387,6 +405,7 @@ export type OtpServerUncheckedUpdateManyInput = {
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiId?: Prisma.StringFieldUpdateOperationsInput | string
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -410,6 +429,7 @@ export type OtpServerCountOrderByAggregateInput = {
   countryName?: Prisma.SortOrder
   flagUrl?: Prisma.SortOrder
   apiId?: Prisma.SortOrder
+  upstreamServerId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -423,6 +443,7 @@ export type OtpServerMaxOrderByAggregateInput = {
   countryName?: Prisma.SortOrder
   flagUrl?: Prisma.SortOrder
   apiId?: Prisma.SortOrder
+  upstreamServerId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -436,6 +457,7 @@ export type OtpServerMinOrderByAggregateInput = {
   countryName?: Prisma.SortOrder
   flagUrl?: Prisma.SortOrder
   apiId?: Prisma.SortOrder
+  upstreamServerId?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -523,6 +545,7 @@ export type OtpServerCreateWithoutApiInput = {
   countryIso?: string
   countryName?: string
   flagUrl?: string | null
+  upstreamServerId?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -537,6 +560,7 @@ export type OtpServerUncheckedCreateWithoutApiInput = {
   countryIso?: string
   countryName?: string
   flagUrl?: string | null
+  upstreamServerId?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -581,6 +605,7 @@ export type OtpServerScalarWhereInput = {
   countryName?: Prisma.StringFilter<"OtpServer"> | string
   flagUrl?: Prisma.StringNullableFilter<"OtpServer"> | string | null
   apiId?: Prisma.StringFilter<"OtpServer"> | string
+  upstreamServerId?: Prisma.StringNullableFilter<"OtpServer"> | string | null
   isActive?: Prisma.BoolFilter<"OtpServer"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OtpServer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OtpServer"> | Date | string
@@ -593,6 +618,7 @@ export type OtpServerCreateWithoutServicesInput = {
   countryIso?: string
   countryName?: string
   flagUrl?: string | null
+  upstreamServerId?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -608,6 +634,7 @@ export type OtpServerUncheckedCreateWithoutServicesInput = {
   countryName?: string
   flagUrl?: string | null
   apiId: string
+  upstreamServerId?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -637,6 +664,7 @@ export type OtpServerUpdateWithoutServicesInput = {
   countryIso?: Prisma.StringFieldUpdateOperationsInput | string
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -652,6 +680,7 @@ export type OtpServerUncheckedUpdateWithoutServicesInput = {
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiId?: Prisma.StringFieldUpdateOperationsInput | string
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -665,6 +694,7 @@ export type OtpServerCreateWithoutNumbersInput = {
   countryIso?: string
   countryName?: string
   flagUrl?: string | null
+  upstreamServerId?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -680,6 +710,7 @@ export type OtpServerUncheckedCreateWithoutNumbersInput = {
   countryName?: string
   flagUrl?: string | null
   apiId: string
+  upstreamServerId?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -709,6 +740,7 @@ export type OtpServerUpdateWithoutNumbersInput = {
   countryIso?: Prisma.StringFieldUpdateOperationsInput | string
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -724,6 +756,7 @@ export type OtpServerUncheckedUpdateWithoutNumbersInput = {
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apiId?: Prisma.StringFieldUpdateOperationsInput | string
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -737,6 +770,7 @@ export type OtpServerCreateManyApiInput = {
   countryIso?: string
   countryName?: string
   flagUrl?: string | null
+  upstreamServerId?: string | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -749,6 +783,7 @@ export type OtpServerUpdateWithoutApiInput = {
   countryIso?: Prisma.StringFieldUpdateOperationsInput | string
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -763,6 +798,7 @@ export type OtpServerUncheckedUpdateWithoutApiInput = {
   countryIso?: Prisma.StringFieldUpdateOperationsInput | string
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -777,6 +813,7 @@ export type OtpServerUncheckedUpdateManyWithoutApiInput = {
   countryIso?: Prisma.StringFieldUpdateOperationsInput | string
   countryName?: Prisma.StringFieldUpdateOperationsInput | string
   flagUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upstreamServerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -830,6 +867,7 @@ export type OtpServerSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   countryName?: boolean
   flagUrl?: boolean
   apiId?: boolean
+  upstreamServerId?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -847,6 +885,7 @@ export type OtpServerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   countryName?: boolean
   flagUrl?: boolean
   apiId?: boolean
+  upstreamServerId?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -861,6 +900,7 @@ export type OtpServerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   countryName?: boolean
   flagUrl?: boolean
   apiId?: boolean
+  upstreamServerId?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -875,12 +915,13 @@ export type OtpServerSelectScalar = {
   countryName?: boolean
   flagUrl?: boolean
   apiId?: boolean
+  upstreamServerId?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OtpServerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "countryCode" | "countryIso" | "countryName" | "flagUrl" | "apiId" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["otpServer"]>
+export type OtpServerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "countryCode" | "countryIso" | "countryName" | "flagUrl" | "apiId" | "upstreamServerId" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["otpServer"]>
 export type OtpServerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   services?: boolean | Prisma.OtpServer$servicesArgs<ExtArgs>
   numbers?: boolean | Prisma.OtpServer$numbersArgs<ExtArgs>
@@ -909,6 +950,7 @@ export type $OtpServerPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     countryName: string
     flagUrl: string | null
     apiId: string
+    upstreamServerId: string | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1345,6 +1387,7 @@ export interface OtpServerFieldRefs {
   readonly countryName: Prisma.FieldRef<"OtpServer", 'String'>
   readonly flagUrl: Prisma.FieldRef<"OtpServer", 'String'>
   readonly apiId: Prisma.FieldRef<"OtpServer", 'String'>
+  readonly upstreamServerId: Prisma.FieldRef<"OtpServer", 'String'>
   readonly isActive: Prisma.FieldRef<"OtpServer", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"OtpServer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"OtpServer", 'DateTime'>

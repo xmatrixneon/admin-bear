@@ -39,7 +39,7 @@ const fadeUp = (delay = 0) => ({
 
 // Type for selected item (Server or ApiCredential)
 type SelectedItem =
-  | { id: string; name: string; countryCode: string; countryIso: string; countryName: string; flagUrl: string | null; apiId: string; isActive: boolean }
+  | { id: string; name: string; countryCode: string; countryIso: string; countryName: string; flagUrl: string | null; apiId: string; upstreamServerId: string | null; isActive: boolean }
   | { id: string; name: string; apiUrl: string; apiKey: string; isActive: boolean };
 
 export default function ServersPage() {
@@ -55,6 +55,7 @@ export default function ServersPage() {
     countryName: "",
     flagUrl: "",
     apiId: "",
+    upstreamServerId: "",
     isActive: true,
   });
 
@@ -118,7 +119,7 @@ export default function ServersPage() {
       await createServerMutation.mutateAsync(serverForm);
       toast.success("Server created successfully");
       setServerDialogOpen(false);
-      setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
+      setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", upstreamServerId: "", isActive: true });
     } catch (err: any) {
       toast.error(err.message || "Failed to create server");
     }
@@ -159,6 +160,7 @@ export default function ServersPage() {
           countryName: serverForm.countryName,
           flagUrl: serverForm.flagUrl || undefined,
           apiId: serverForm.apiId,
+          upstreamServerId: serverForm.upstreamServerId || undefined,
           isActive: serverForm.isActive,
         },
       };
@@ -166,7 +168,7 @@ export default function ServersPage() {
       toast.success("Server updated successfully");
       setServerDialogOpen(false);
       setSelectedItem(null);
-      setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
+      setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", upstreamServerId: "", isActive: true });
     } catch (err: any) {
       toast.error(err.message || "Failed to update server");
     }
@@ -199,6 +201,7 @@ export default function ServersPage() {
         countryName: server.countryName,
         flagUrl: server.flagUrl || "",
         apiId: server.api?.id || "",
+        upstreamServerId: server.upstreamServerId || "",
         isActive: server.isActive,
       });
       setServerDialogOpen(true);
@@ -492,6 +495,7 @@ export default function ServersPage() {
                       <TableHead>Name</TableHead>
                       <TableHead>Country</TableHead>
                       <TableHead>API Credential</TableHead>
+                      <TableHead>Upstream ID</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Services</TableHead>
                       <TableHead className="w-[60px] text-right">Actions</TableHead>
@@ -504,6 +508,7 @@ export default function ServersPage() {
                           <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                           <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                           <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                          <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                           <TableCell><Skeleton className="h-6 w-16" /></TableCell>
                           <TableCell><Skeleton className="h-4 w-16" /></TableCell>
                           <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
@@ -511,7 +516,7 @@ export default function ServersPage() {
                       ))
                     ) : serversData?.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-12">
+                        <TableCell colSpan={7} className="text-center py-12">
                           <div className="flex flex-col items-center gap-3">
                             <Server size={48} className="text-muted-foreground/40" />
                             <p className="text-muted-foreground">No servers found</p>
@@ -547,6 +552,11 @@ export default function ServersPage() {
                               <KeyRound size={14} className="text-muted-foreground" />
                               <span className="text-sm">{server.api?.name || "-"}</span>
                             </div>
+                          </TableCell>
+                          <TableCell>
+                            <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
+                              {server.upstreamServerId || "-"}
+                            </code>
                           </TableCell>
                           <TableCell>
                             <Switch
@@ -831,7 +841,7 @@ export default function ServersPage() {
         setServerDialogOpen(open);
         if (!open) {
           setSelectedItem(null);
-          setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
+          setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", upstreamServerId: "", isActive: true });
         }
       }}>
         <DialogContent>
@@ -902,6 +912,19 @@ export default function ServersPage() {
               </select>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="upstreamServerId">Upstream Server ID (optional)</Label>
+              <Input
+                id="upstreamServerId"
+                placeholder="e.g., 1, 2, india2"
+                value={serverForm.upstreamServerId}
+                onChange={(e) => setServerForm({ ...serverForm, upstreamServerId: e.target.value })}
+                className="font-mono"
+              />
+              <p className="text-xs text-muted-foreground">
+                Server ID to pass to upstream provider (e.g., "1" for cattysms server 1, "2" for server 2)
+              </p>
+            </div>
+            <div className="space-y-2">
               <Label>Flag URL (optional)</Label>
               <Input
                 placeholder="https://example.com/flag.png"
@@ -924,7 +947,7 @@ export default function ServersPage() {
               onClick={() => {
                 setServerDialogOpen(false);
                 setSelectedItem(null);
-                setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
+                setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", upstreamServerId: "", isActive: true });
               }}
             >
               Cancel

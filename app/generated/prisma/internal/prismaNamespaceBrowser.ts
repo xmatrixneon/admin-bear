@@ -219,6 +219,7 @@ export const OtpServerScalarFieldEnum = {
   countryName: 'countryName',
   flagUrl: 'flagUrl',
   apiId: 'apiId',
+  upstreamServerId: 'upstreamServerId',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
