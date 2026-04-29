@@ -13,6 +13,7 @@ const serverInputSchema = z.object({
   countryName: z.string().default('India'),
   flagUrl: z.string().url().optional().or(z.literal('')),
   apiId: z.string().min(1, 'API ID is required'),
+  upstreamServerId: z.string().optional(),
   isActive: z.boolean().default(true),
 });
 
@@ -155,6 +156,7 @@ export const serversRouter = router({
           countryName: input.countryName,
           flagUrl: input.flagUrl || null,
           apiId: input.apiId,
+          upstreamServerId: input.upstreamServerId || null,
           isActive: input.isActive,
         },
       });

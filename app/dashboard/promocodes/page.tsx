@@ -137,8 +137,7 @@ export default function PromocodesPage() {
     toast.success("Code copied to clipboard");
   };
 
-  const activeCount = promocodes?.filter((p) => p.isActive).length || 0;
-  const inactiveCount = promocodes?.filter((p) => !p.isActive).length || 0;
+  const activeCount = promocodes?.length || 0;
   const totalUses =
     promocodes?.reduce((sum, p) => sum + (p.usedCount || 0), 0) || 0;
 
@@ -174,7 +173,7 @@ export default function PromocodesPage() {
       {/* Stats */}
       <motion.div
         {...fadeUp(0.05)}
-        className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+        className="grid grid-cols-2 lg:grid-cols-3 gap-3"
       >
         <StatsCard
           title="Total Codes"
@@ -190,14 +189,6 @@ export default function PromocodesPage() {
           icon={CheckCircle}
           color="text-green-500"
           bgColor="bg-green-500/5"
-          loading={isLoading}
-        />
-        <StatsCard
-          title="Inactive"
-          value={inactiveCount}
-          icon={XCircle}
-          color="text-red-500"
-          bgColor="bg-red-500/5"
           loading={isLoading}
         />
         <StatsCard

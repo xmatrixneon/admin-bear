@@ -44,12 +44,13 @@ function generateCode(): string {
 export const promocodesRouter = router({
 
   /**
-   * List all promocodes with usage history counts
+   * List active promocodes only with usage history counts
    */
   list: protectedProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
     return prisma.promocode.findMany({
+      where: { isActive: true },
       include: {
         _count: { select: { history: true } },
       },
