@@ -48,6 +48,7 @@ export default function ServersPage() {
   // Server form state
   const [serverDialogOpen, setServerDialogOpen] = useState(false);
   const [serverForm, setServerForm] = useState({
+    id: "",
     name: "",
     countryCode: "",
     countryIso: "IN",
@@ -117,7 +118,7 @@ export default function ServersPage() {
       await createServerMutation.mutateAsync(serverForm);
       toast.success("Server created successfully");
       setServerDialogOpen(false);
-      setServerForm({ name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
+      setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
     } catch (err: any) {
       toast.error(err.message || "Failed to create server");
     }
@@ -165,7 +166,7 @@ export default function ServersPage() {
       toast.success("Server updated successfully");
       setServerDialogOpen(false);
       setSelectedItem(null);
-      setServerForm({ name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
+      setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
     } catch (err: any) {
       toast.error(err.message || "Failed to update server");
     }
@@ -191,6 +192,7 @@ export default function ServersPage() {
     if (server) {
       setSelectedItem(server);
       setServerForm({
+        id: server.id,
         name: server.name,
         countryCode: server.countryCode,
         countryIso: server.countryIso,
@@ -829,7 +831,7 @@ export default function ServersPage() {
         setServerDialogOpen(open);
         if (!open) {
           setSelectedItem(null);
-          setServerForm({ name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
+          setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
         }
       }}>
         <DialogContent>
@@ -837,6 +839,21 @@ export default function ServersPage() {
             <DialogTitle>{selectedItem ? "Edit Server" : "Add New Server"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            {!selectedItem && (
+              <div className="space-y-2">
+                <Label htmlFor="serverId">Server ID (optional)</Label>
+                <Input
+                  id="serverId"
+                  placeholder="e.g., 3, 4, india3"
+                  value={serverForm.id}
+                  onChange={(e) => setServerForm({ ...serverForm, id: e.target.value })}
+                  className="font-mono"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Leave empty to auto-generate. Use simple IDs like "3", "4", etc. for numeric servers.
+                </p>
+              </div>
+            )}
             <div className="space-y-2">
               <Label>Name</Label>
               <Input
@@ -907,7 +924,7 @@ export default function ServersPage() {
               onClick={() => {
                 setServerDialogOpen(false);
                 setSelectedItem(null);
-                setServerForm({ name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
+                setServerForm({ id: "", name: "", countryCode: "", countryIso: "IN", countryName: "", flagUrl: "", apiId: "", isActive: true });
               }}
             >
               Cancel

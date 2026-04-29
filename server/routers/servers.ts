@@ -6,6 +6,7 @@ import { router, protectedProcedure } from '../trpc';
  * Server input schema
  */
 const serverInputSchema = z.object({
+  id: z.string().min(1, 'Server ID is required').optional(),
   name: z.string().min(1, 'Name is required'),
   countryCode: z.string().min(1, 'Country code is required'),
   countryIso: z.string().default('IN'),
@@ -131,8 +132,23 @@ export const serversRouter = router({
         });
       }
 
+      // If custom ID is provided, check if it's unique
+      if (input.id) {
+        const existing = await prisma.otpServer.findUnique({
+          where: { id: input.id },
+        });
+
+        if (existing) {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            message: `Server ID "${input.id}" already exists. Please use a different ID.`,
+          });
+        }
+      }
+
       const server = await prisma.otpServer.create({
         data: {
+          ...(input.id && { id: input.id }),
           name: input.name,
           countryCode: input.countryCode,
           countryIso: input.countryIso,
