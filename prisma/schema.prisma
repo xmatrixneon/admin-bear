@@ -303,6 +303,8 @@ model Settings {
   maxRechargeAmount       Decimal @default(5000) @db.Decimal(10, 2)
   upiId                   String?
   referralPercent         Float   @default(0)
+  referredUserPercent     Float   @default(1)
+  minReferralDeposit      Decimal @default(100) @db.Decimal(10, 2)
   minRedeem               Decimal @default(0) @db.Decimal(10, 2)
   numberExpiryMinutes     Int     @default(20)
   // FIX (Bug 7): store ₹ symbol directly — consistent with UI expectation

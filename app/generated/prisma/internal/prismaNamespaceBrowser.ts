@@ -308,6 +308,8 @@ export const SettingsScalarFieldEnum = {
   maxRechargeAmount: 'maxRechargeAmount',
   upiId: 'upiId',
   referralPercent: 'referralPercent',
+  referredUserPercent: 'referredUserPercent',
+  minReferralDeposit: 'minReferralDeposit',
   minRedeem: 'minRedeem',
   numberExpiryMinutes: 'numberExpiryMinutes',
   currency: 'currency',

@@ -30,6 +30,8 @@ export type SettingsAvgAggregateOutputType = {
   minRechargeAmount: runtime.Decimal | null
   maxRechargeAmount: runtime.Decimal | null
   referralPercent: number | null
+  referredUserPercent: number | null
+  minReferralDeposit: runtime.Decimal | null
   minRedeem: runtime.Decimal | null
   numberExpiryMinutes: number | null
   minCancelMinutes: number | null
@@ -42,6 +44,8 @@ export type SettingsSumAggregateOutputType = {
   minRechargeAmount: runtime.Decimal | null
   maxRechargeAmount: runtime.Decimal | null
   referralPercent: number | null
+  referredUserPercent: number | null
+  minReferralDeposit: runtime.Decimal | null
   minRedeem: runtime.Decimal | null
   numberExpiryMinutes: number | null
   minCancelMinutes: number | null
@@ -59,6 +63,8 @@ export type SettingsMinAggregateOutputType = {
   maxRechargeAmount: runtime.Decimal | null
   upiId: string | null
   referralPercent: number | null
+  referredUserPercent: number | null
+  minReferralDeposit: runtime.Decimal | null
   minRedeem: runtime.Decimal | null
   numberExpiryMinutes: number | null
   currency: string | null
@@ -87,6 +93,8 @@ export type SettingsMaxAggregateOutputType = {
   maxRechargeAmount: runtime.Decimal | null
   upiId: string | null
   referralPercent: number | null
+  referredUserPercent: number | null
+  minReferralDeposit: runtime.Decimal | null
   minRedeem: runtime.Decimal | null
   numberExpiryMinutes: number | null
   currency: string | null
@@ -115,6 +123,8 @@ export type SettingsCountAggregateOutputType = {
   maxRechargeAmount: number
   upiId: number
   referralPercent: number
+  referredUserPercent: number
+  minReferralDeposit: number
   minRedeem: number
   numberExpiryMinutes: number
   currency: number
@@ -140,6 +150,8 @@ export type SettingsAvgAggregateInputType = {
   minRechargeAmount?: true
   maxRechargeAmount?: true
   referralPercent?: true
+  referredUserPercent?: true
+  minReferralDeposit?: true
   minRedeem?: true
   numberExpiryMinutes?: true
   minCancelMinutes?: true
@@ -152,6 +164,8 @@ export type SettingsSumAggregateInputType = {
   minRechargeAmount?: true
   maxRechargeAmount?: true
   referralPercent?: true
+  referredUserPercent?: true
+  minReferralDeposit?: true
   minRedeem?: true
   numberExpiryMinutes?: true
   minCancelMinutes?: true
@@ -169,6 +183,8 @@ export type SettingsMinAggregateInputType = {
   maxRechargeAmount?: true
   upiId?: true
   referralPercent?: true
+  referredUserPercent?: true
+  minReferralDeposit?: true
   minRedeem?: true
   numberExpiryMinutes?: true
   currency?: true
@@ -197,6 +213,8 @@ export type SettingsMaxAggregateInputType = {
   maxRechargeAmount?: true
   upiId?: true
   referralPercent?: true
+  referredUserPercent?: true
+  minReferralDeposit?: true
   minRedeem?: true
   numberExpiryMinutes?: true
   currency?: true
@@ -225,6 +243,8 @@ export type SettingsCountAggregateInputType = {
   maxRechargeAmount?: true
   upiId?: true
   referralPercent?: true
+  referredUserPercent?: true
+  minReferralDeposit?: true
   minRedeem?: true
   numberExpiryMinutes?: true
   currency?: true
@@ -340,6 +360,8 @@ export type SettingsGroupByOutputType = {
   maxRechargeAmount: runtime.Decimal
   upiId: string | null
   referralPercent: number
+  referredUserPercent: number
+  minReferralDeposit: runtime.Decimal
   minRedeem: runtime.Decimal
   numberExpiryMinutes: number
   currency: string
@@ -391,6 +413,8 @@ export type SettingsWhereInput = {
   maxRechargeAmount?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   upiId?: Prisma.StringNullableFilter<"Settings"> | string | null
   referralPercent?: Prisma.FloatFilter<"Settings"> | number
+  referredUserPercent?: Prisma.FloatFilter<"Settings"> | number
+  minReferralDeposit?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   minRedeem?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   numberExpiryMinutes?: Prisma.IntFilter<"Settings"> | number
   currency?: Prisma.StringFilter<"Settings"> | string
@@ -419,6 +443,8 @@ export type SettingsOrderByWithRelationInput = {
   maxRechargeAmount?: Prisma.SortOrder
   upiId?: Prisma.SortOrderInput | Prisma.SortOrder
   referralPercent?: Prisma.SortOrder
+  referredUserPercent?: Prisma.SortOrder
+  minReferralDeposit?: Prisma.SortOrder
   minRedeem?: Prisma.SortOrder
   numberExpiryMinutes?: Prisma.SortOrder
   currency?: Prisma.SortOrder
@@ -450,6 +476,8 @@ export type SettingsWhereUniqueInput = Prisma.AtLeast<{
   maxRechargeAmount?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   upiId?: Prisma.StringNullableFilter<"Settings"> | string | null
   referralPercent?: Prisma.FloatFilter<"Settings"> | number
+  referredUserPercent?: Prisma.FloatFilter<"Settings"> | number
+  minReferralDeposit?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   minRedeem?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   numberExpiryMinutes?: Prisma.IntFilter<"Settings"> | number
   currency?: Prisma.StringFilter<"Settings"> | string
@@ -478,6 +506,8 @@ export type SettingsOrderByWithAggregationInput = {
   maxRechargeAmount?: Prisma.SortOrder
   upiId?: Prisma.SortOrderInput | Prisma.SortOrder
   referralPercent?: Prisma.SortOrder
+  referredUserPercent?: Prisma.SortOrder
+  minReferralDeposit?: Prisma.SortOrder
   minRedeem?: Prisma.SortOrder
   numberExpiryMinutes?: Prisma.SortOrder
   currency?: Prisma.SortOrder
@@ -514,6 +544,8 @@ export type SettingsScalarWhereWithAggregatesInput = {
   maxRechargeAmount?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   upiId?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   referralPercent?: Prisma.FloatWithAggregatesFilter<"Settings"> | number
+  referredUserPercent?: Prisma.FloatWithAggregatesFilter<"Settings"> | number
+  minReferralDeposit?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   minRedeem?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   numberExpiryMinutes?: Prisma.IntWithAggregatesFilter<"Settings"> | number
   currency?: Prisma.StringWithAggregatesFilter<"Settings"> | string
@@ -542,6 +574,8 @@ export type SettingsCreateInput = {
   maxRechargeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   upiId?: string | null
   referralPercent?: number
+  referredUserPercent?: number
+  minReferralDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string
   minRedeem?: runtime.Decimal | runtime.DecimalJsLike | number | string
   numberExpiryMinutes?: number
   currency?: string
@@ -570,6 +604,8 @@ export type SettingsUncheckedCreateInput = {
   maxRechargeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   upiId?: string | null
   referralPercent?: number
+  referredUserPercent?: number
+  minReferralDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string
   minRedeem?: runtime.Decimal | runtime.DecimalJsLike | number | string
   numberExpiryMinutes?: number
   currency?: string
@@ -598,6 +634,8 @@ export type SettingsUpdateInput = {
   maxRechargeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referralPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  referredUserPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  minReferralDeposit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   minRedeem?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   numberExpiryMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -626,6 +664,8 @@ export type SettingsUncheckedUpdateInput = {
   maxRechargeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referralPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  referredUserPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  minReferralDeposit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   minRedeem?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   numberExpiryMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -654,6 +694,8 @@ export type SettingsCreateManyInput = {
   maxRechargeAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   upiId?: string | null
   referralPercent?: number
+  referredUserPercent?: number
+  minReferralDeposit?: runtime.Decimal | runtime.DecimalJsLike | number | string
   minRedeem?: runtime.Decimal | runtime.DecimalJsLike | number | string
   numberExpiryMinutes?: number
   currency?: string
@@ -682,6 +724,8 @@ export type SettingsUpdateManyMutationInput = {
   maxRechargeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referralPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  referredUserPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  minReferralDeposit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   minRedeem?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   numberExpiryMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -710,6 +754,8 @@ export type SettingsUncheckedUpdateManyInput = {
   maxRechargeAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   referralPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  referredUserPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  minReferralDeposit?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   minRedeem?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   numberExpiryMinutes?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
@@ -738,6 +784,8 @@ export type SettingsCountOrderByAggregateInput = {
   maxRechargeAmount?: Prisma.SortOrder
   upiId?: Prisma.SortOrder
   referralPercent?: Prisma.SortOrder
+  referredUserPercent?: Prisma.SortOrder
+  minReferralDeposit?: Prisma.SortOrder
   minRedeem?: Prisma.SortOrder
   numberExpiryMinutes?: Prisma.SortOrder
   currency?: Prisma.SortOrder
@@ -761,6 +809,8 @@ export type SettingsAvgOrderByAggregateInput = {
   minRechargeAmount?: Prisma.SortOrder
   maxRechargeAmount?: Prisma.SortOrder
   referralPercent?: Prisma.SortOrder
+  referredUserPercent?: Prisma.SortOrder
+  minReferralDeposit?: Prisma.SortOrder
   minRedeem?: Prisma.SortOrder
   numberExpiryMinutes?: Prisma.SortOrder
   minCancelMinutes?: Prisma.SortOrder
@@ -778,6 +828,8 @@ export type SettingsMaxOrderByAggregateInput = {
   maxRechargeAmount?: Prisma.SortOrder
   upiId?: Prisma.SortOrder
   referralPercent?: Prisma.SortOrder
+  referredUserPercent?: Prisma.SortOrder
+  minReferralDeposit?: Prisma.SortOrder
   minRedeem?: Prisma.SortOrder
   numberExpiryMinutes?: Prisma.SortOrder
   currency?: Prisma.SortOrder
@@ -806,6 +858,8 @@ export type SettingsMinOrderByAggregateInput = {
   maxRechargeAmount?: Prisma.SortOrder
   upiId?: Prisma.SortOrder
   referralPercent?: Prisma.SortOrder
+  referredUserPercent?: Prisma.SortOrder
+  minReferralDeposit?: Prisma.SortOrder
   minRedeem?: Prisma.SortOrder
   numberExpiryMinutes?: Prisma.SortOrder
   currency?: Prisma.SortOrder
@@ -829,6 +883,8 @@ export type SettingsSumOrderByAggregateInput = {
   minRechargeAmount?: Prisma.SortOrder
   maxRechargeAmount?: Prisma.SortOrder
   referralPercent?: Prisma.SortOrder
+  referredUserPercent?: Prisma.SortOrder
+  minReferralDeposit?: Prisma.SortOrder
   minRedeem?: Prisma.SortOrder
   numberExpiryMinutes?: Prisma.SortOrder
   minCancelMinutes?: Prisma.SortOrder
@@ -856,6 +912,8 @@ export type SettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   maxRechargeAmount?: boolean
   upiId?: boolean
   referralPercent?: boolean
+  referredUserPercent?: boolean
+  minReferralDeposit?: boolean
   minRedeem?: boolean
   numberExpiryMinutes?: boolean
   currency?: boolean
@@ -884,6 +942,8 @@ export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   maxRechargeAmount?: boolean
   upiId?: boolean
   referralPercent?: boolean
+  referredUserPercent?: boolean
+  minReferralDeposit?: boolean
   minRedeem?: boolean
   numberExpiryMinutes?: boolean
   currency?: boolean
@@ -912,6 +972,8 @@ export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   maxRechargeAmount?: boolean
   upiId?: boolean
   referralPercent?: boolean
+  referredUserPercent?: boolean
+  minReferralDeposit?: boolean
   minRedeem?: boolean
   numberExpiryMinutes?: boolean
   currency?: boolean
@@ -940,6 +1002,8 @@ export type SettingsSelectScalar = {
   maxRechargeAmount?: boolean
   upiId?: boolean
   referralPercent?: boolean
+  referredUserPercent?: boolean
+  minReferralDeposit?: boolean
   minRedeem?: boolean
   numberExpiryMinutes?: boolean
   currency?: boolean
@@ -959,7 +1023,7 @@ export type SettingsSelectScalar = {
   builtWithText?: boolean
 }
 
-export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maxPromoAmount" | "maintenanceMode" | "apiRateLimit" | "telegramHelpUrl" | "telegramSupportUsername" | "telegramChannelUrl" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText", ExtArgs["result"]["settings"]>
+export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "referredUserPercent" | "minReferralDeposit" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maxPromoAmount" | "maintenanceMode" | "apiRateLimit" | "telegramHelpUrl" | "telegramSupportUsername" | "telegramChannelUrl" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText", ExtArgs["result"]["settings"]>
 
 export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Settings"
@@ -973,6 +1037,8 @@ export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     maxRechargeAmount: runtime.Decimal
     upiId: string | null
     referralPercent: number
+    referredUserPercent: number
+    minReferralDeposit: runtime.Decimal
     minRedeem: runtime.Decimal
     numberExpiryMinutes: number
     currency: string
@@ -1421,6 +1487,8 @@ export interface SettingsFieldRefs {
   readonly maxRechargeAmount: Prisma.FieldRef<"Settings", 'Decimal'>
   readonly upiId: Prisma.FieldRef<"Settings", 'String'>
   readonly referralPercent: Prisma.FieldRef<"Settings", 'Float'>
+  readonly referredUserPercent: Prisma.FieldRef<"Settings", 'Float'>
+  readonly minReferralDeposit: Prisma.FieldRef<"Settings", 'Decimal'>
   readonly minRedeem: Prisma.FieldRef<"Settings", 'Decimal'>
   readonly numberExpiryMinutes: Prisma.FieldRef<"Settings", 'Int'>
   readonly currency: Prisma.FieldRef<"Settings", 'String'>

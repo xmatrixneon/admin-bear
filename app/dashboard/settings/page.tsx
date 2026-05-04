@@ -33,6 +33,8 @@ type SettingsData = {
   minRechargeAmount: number | string;
   maxRechargeAmount: number | string;
   referralPercent: number | string;
+  referredUserPercent: number | string;
+  minReferralDeposit: number | string;
   minRedeem: number | string;
   numberExpiryMinutes: number | string;
   minCancelMinutes: number | string;
@@ -102,7 +104,9 @@ const SECTIONS: {
       { key: "minRechargeAmount", label: "Min Recharge (₹)", type: "number", placeholder: "10" },
       { key: "maxRechargeAmount", label: "Max Recharge (₹)", type: "number", placeholder: "5000" },
       { key: "minRedeem", label: "Min Redeem (₹)", type: "number", placeholder: "0" },
-      { key: "referralPercent", label: "Referral %", type: "number", placeholder: "0", hint: "Percentage credited on referral recharge" },
+      { key: "referralPercent", label: "Referral % (Referrer)", type: "number", placeholder: "2", hint: "Bonus % for referrer when referred user deposits" },
+      { key: "referredUserPercent", label: "Referral % (New User)", type: "number", placeholder: "1", hint: "Welcome bonus % for referred user on first deposit" },
+      { key: "minReferralDeposit", label: "Min Deposit for Referral (₹)", type: "number", placeholder: "100", hint: "Minimum deposit amount to trigger referral bonus" },
       { key: "maxPromoAmount", label: "Max Promo Amount (₹)", type: "number", placeholder: "5000", hint: "Maximum amount for a single promo code" },
     ],
   },
@@ -363,6 +367,8 @@ export default function SettingsPage() {
     minRechargeAmount: Number(rawSettings.minRechargeAmount),
     maxRechargeAmount: Number(rawSettings.maxRechargeAmount),
     referralPercent: Number(rawSettings.referralPercent),
+    referredUserPercent: Number(rawSettings.referredUserPercent ?? 1),
+    minReferralDeposit: Number(rawSettings.minReferralDeposit ?? 100),
     minRedeem: Number(rawSettings.minRedeem),
     numberExpiryMinutes: rawSettings.numberExpiryMinutes || 0,
     minCancelMinutes: rawSettings.minCancelMinutes || 0,
@@ -405,6 +411,8 @@ export default function SettingsPage() {
       'minRechargeAmount',
       'maxRechargeAmount',
       'referralPercent',
+      'referredUserPercent',
+      'minReferralDeposit',
       'minRedeem',
       'numberExpiryMinutes',
       'minCancelMinutes',
