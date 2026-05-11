@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   Megaphone,
   Gauge,
+  Bitcoin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,9 +58,23 @@ type SettingsData = {
   // App branding
   appVersion: string;
   builtWithText: string;
+  // Crypto payments (Heleket)
+  cryptoEnabled: boolean;
+  cryptoSupportedCoins: string[];
+  cryptoMinAmount: number;
+  cryptoMaxAmount: number;
+  cryptoTargetCurrency: string;
+  cryptoAccuracyPercent: number;
+  cryptoAllowMultiple: boolean;
+  heleketApiKey: string;
+  heleketMerchantId: string;
+  heleketAllowedIps: string[];
+  usdToInrRate: number | null;
+  cryptoBonusPercent: number;
+  cryptoReferralBonusEnabled: boolean;
 };
 
-type SectionKey = "general" | "limits" | "timing" | "payment" | "api" | "support" | "announcement" | "branding" | "channel";
+type SectionKey = "general" | "limits" | "timing" | "payment" | "crypto" | "api" | "support" | "announcement" | "branding" | "channel";
 
 // ─── Animation ────────────────────────────────────────────────────────────────
 
@@ -130,6 +145,27 @@ const SECTIONS: {
       { key: "bharatpeMerchantId", label: "Merchant ID", placeholder: "57113736" },
       { key: "bharatpeToken", label: "BharatPe Token", type: "password", placeholder: "••••••••••••" },
       { key: "bharatpeQrImage", label: "QR Image URL", type: "url", placeholder: "https://i.ibb.co/..." },
+    ],
+  },
+  {
+    key: "crypto",
+    title: "Crypto / Heleket",
+    icon: <Bitcoin size={16} />,
+    description: "Heleket crypto payment gateway settings",
+    fields: [
+      { key: "cryptoEnabled", label: "Enable Crypto Payments", type: "switch", hint: "Enable users to deposit via cryptocurrency" },
+      { key: "cryptoMinAmount", label: "Min Deposit (₹)", type: "number", placeholder: "100" },
+      { key: "cryptoMaxAmount", label: "Max Deposit (₹)", type: "number", placeholder: "50000" },
+      { key: "cryptoTargetCurrency", label: "Target Currency", placeholder: "USDT", hint: "Auto-convert all payments to this currency (USDT, USDC, BTC, etc.)" },
+      { key: "cryptoAccuracyPercent", label: "Payment Tolerance (%)", type: "number", placeholder: "1", hint: "Allow payment variation % for network fees (0-5%)" },
+      { key: "cryptoAllowMultiple", label: "Allow Partial Payments", type: "switch", hint: "Allow users to pay remaining amount if first payment is insufficient" },
+      { key: "heleketMerchantId", label: "Heleket Merchant ID", placeholder: "1c1a0744-8e75-4e54-82fe-38db2b3bebdb", hint: "Your Heleket merchant UUID" },
+      { key: "heleketApiKey", label: "Heleket API Key", type: "password", placeholder: "••••••••••••", hint: "Your Heleket API key for signature verification" },
+      { key: "heleketAllowedIps", label: "Allowed IPs", type: "textarea", placeholder: '["31.133.220.8"]', hint: "JSON array of allowed IP addresses for Heleket webhooks (empty = allow all)" },
+      { key: "usdToInrRate", label: "USD to INR Rate", type: "number", placeholder: "94.57", hint: "Fixed exchange rate for USD to INR conversion (empty = use live API rate)" },
+      { key: "cryptoBonusPercent", label: "Bonus Percent", type: "number", placeholder: "5", hint: "Bonus percentage added to crypto deposits (0-100%)" },
+      { key: "cryptoReferralBonusEnabled", label: "Enable Referral Bonus", type: "switch", hint: "Apply referral bonus to crypto deposits" },
+      { key: "cryptoSupportedCoins", label: "Supported Coins", type: "textarea", placeholder: '["BTC", "ETH", "USDT", "USDC"]', hint: "JSON array of supported cryptocurrencies (for UI display)" },
     ],
   },
   {
@@ -391,6 +427,20 @@ export default function SettingsPage() {
     // App branding
     appVersion: rawSettings.appVersion || 'v1.0.0',
     builtWithText: rawSettings.builtWithText || 'Built with 🇷🇺',
+    // Crypto payments (Heleket)
+    cryptoEnabled: rawSettings.cryptoEnabled || false,
+    cryptoSupportedCoins: rawSettings.cryptoSupportedCoins as string[] || ['BTC', 'ETH', 'USDT', 'USDC'],
+    cryptoMinAmount: Number(rawSettings.cryptoMinAmount ?? 100),
+    cryptoMaxAmount: Number(rawSettings.cryptoMaxAmount ?? 50000),
+    cryptoTargetCurrency: rawSettings.cryptoTargetCurrency || 'USDT',
+    cryptoAccuracyPercent: Number(rawSettings.cryptoAccuracyPercent ?? 1),
+    cryptoAllowMultiple: rawSettings.cryptoAllowMultiple || false,
+    heleketApiKey: rawSettings.heleketApiKey || '',
+    heleketMerchantId: rawSettings.heleketMerchantId || '',
+    heleketAllowedIps: rawSettings.heleketAllowedIps as string[] || [],
+    usdToInrRate: rawSettings.usdToInrRate ? Number(rawSettings.usdToInrRate) : null,
+    cryptoBonusPercent: Number(rawSettings.cryptoBonusPercent ?? 0),
+    cryptoReferralBonusEnabled: rawSettings.cryptoReferralBonusEnabled ?? true,
   } : null;
 
   // tRPC mutation for updating settings
@@ -419,12 +469,33 @@ export default function SettingsPage() {
       'maxDiscountPercent',
       'maxPromoAmount',
       'apiRateLimit',
+      'cryptoBonusPercent',
     ] as const;
 
     const converted = { ...partial } as Record<string, unknown>;
     for (const key of numericFields) {
       if (key in converted && typeof converted[key] === 'string') {
         converted[key] = parseFloat(converted[key] as string) || 0;
+      }
+    }
+
+    // Handle usdToInrRate - convert empty string to null
+    if ('usdToInrRate' in converted) {
+      const val = converted.usdToInrRate;
+      if (val === '' || val === null || val === undefined) {
+        converted.usdToInrRate = null;
+      } else if (typeof val === 'string') {
+        converted.usdToInrRate = parseFloat(val) || null;
+      }
+    }
+
+    // Parse heleketAllowedIps from JSON string if needed
+    if ('heleketAllowedIps' in converted && typeof converted.heleketAllowedIps === 'string') {
+      try {
+        converted.heleketAllowedIps = JSON.parse(converted.heleketAllowedIps as string);
+      } catch {
+        // If parse fails, treat as empty array
+        converted.heleketAllowedIps = [];
       }
     }
 

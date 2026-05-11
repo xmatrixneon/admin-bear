@@ -2,6 +2,25 @@ import { z } from 'zod';
 import { router, protectedProcedure } from '../trpc';
 
 /**
+ * Crypto settings schema
+ */
+const cryptoSettingsSchema = z.object({
+  cryptoEnabled: z.boolean().optional(),
+  cryptoSupportedCoins: z.array(z.string()).optional(),
+  cryptoMinAmount: z.number().positive().optional(),
+  cryptoMaxAmount: z.number().positive().optional(),
+  cryptoTargetCurrency: z.string().optional(),
+  cryptoAccuracyPercent: z.number().int().min(0).max(5).optional(),
+  cryptoAllowMultiple: z.boolean().optional(),
+  heleketApiKey: z.string().optional(),
+  heleketMerchantId: z.string().optional(),
+  heleketAllowedIps: z.array(z.string()).optional(),
+  usdToInrRate: z.number().positive().optional(),
+  cryptoBonusPercent: z.number().min(0).max(100).optional(),
+  cryptoReferralBonusEnabled: z.boolean().optional(),
+});
+
+/**
  * Default settings values
  */
 const DEFAULT_SETTINGS = {
@@ -34,6 +53,20 @@ const DEFAULT_SETTINGS = {
   // App branding
   appVersion: 'v1.0.0',
   builtWithText: 'Built with 🇷🇺',
+  // Crypto payments (Heleket)
+  cryptoEnabled: false,
+  cryptoSupportedCoins: ['BTC', 'ETH', 'USDT', 'USDC'],
+  cryptoMinAmount: 100,
+  cryptoMaxAmount: 50000,
+  cryptoTargetCurrency: 'USDT',
+  cryptoAccuracyPercent: 1,
+  cryptoAllowMultiple: false,
+  heleketApiKey: '',
+  heleketMerchantId: '',
+  heleketAllowedIps: [],
+  usdToInrRate: null,
+  cryptoBonusPercent: 0,
+  cryptoReferralBonusEnabled: true,
 };
 
 /**
@@ -70,6 +103,8 @@ const settingsUpdateSchema = z
     // App branding
     appVersion: z.string().optional(),
     builtWithText: z.string().optional(),
+    // Crypto payments (Heleket)
+    ...cryptoSettingsSchema.shape,
   })
   .strict();
 

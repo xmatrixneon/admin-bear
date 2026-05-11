@@ -71,6 +71,7 @@ model User {
   defaultDiscount     Decimal?  @db.Decimal(10, 2)
   defaultDiscountType DiscountType?
   deletedAt           DateTime?
+  deletedBy           String?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   accounts        Account[]
@@ -329,6 +330,23 @@ model Settings {
   // App branding
   appVersion    String? @default("v1.0.0")
   builtWithText String? @default("Built with 🇷🇺")
+
+  // Crypto payment settings (Heleket)
+  heleketApiKey            String?  @db.Text
+  heleketMerchantId        String?  @db.Text
+  heleketAllowedIps        Json?
+  cryptoEnabled            Boolean @default(false)
+  cryptoSupportedCoins     Json?
+  cryptoMinAmount          Decimal @default(100) @db.Decimal(10, 2)
+  cryptoMaxAmount          Decimal @default(50000) @db.Decimal(10, 2)
+  cryptoTargetCurrency     String  @default("USDT")
+  cryptoAccuracyPercent    Int     @default(1)
+  cryptoAllowMultiple      Boolean @default(false)
+  // USD to INR exchange rate for crypto payments (null = use API, 0 = disabled)
+  usdToInrRate             Decimal? @db.Decimal(10, 4)
+  // Crypto bonus settings
+  cryptoBonusPercent       Float   @default(0)
+  cryptoReferralBonusEnabled Boolean @default(true)
 }
 
 model UserApi {

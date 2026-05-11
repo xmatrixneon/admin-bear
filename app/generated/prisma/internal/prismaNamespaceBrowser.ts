@@ -112,6 +112,7 @@ export const UserScalarFieldEnum = {
   defaultDiscount: 'defaultDiscount',
   defaultDiscountType: 'defaultDiscountType',
   deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -326,7 +327,20 @@ export const SettingsScalarFieldEnum = {
   announcementMessage: 'announcementMessage',
   announcementType: 'announcementType',
   appVersion: 'appVersion',
-  builtWithText: 'builtWithText'
+  builtWithText: 'builtWithText',
+  heleketApiKey: 'heleketApiKey',
+  heleketMerchantId: 'heleketMerchantId',
+  heleketAllowedIps: 'heleketAllowedIps',
+  cryptoEnabled: 'cryptoEnabled',
+  cryptoSupportedCoins: 'cryptoSupportedCoins',
+  cryptoMinAmount: 'cryptoMinAmount',
+  cryptoMaxAmount: 'cryptoMaxAmount',
+  cryptoTargetCurrency: 'cryptoTargetCurrency',
+  cryptoAccuracyPercent: 'cryptoAccuracyPercent',
+  cryptoAllowMultiple: 'cryptoAllowMultiple',
+  usdToInrRate: 'usdToInrRate',
+  cryptoBonusPercent: 'cryptoBonusPercent',
+  cryptoReferralBonusEnabled: 'cryptoReferralBonusEnabled'
 } as const
 
 export type SettingsScalarFieldEnum = (typeof SettingsScalarFieldEnum)[keyof typeof SettingsScalarFieldEnum]

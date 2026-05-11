@@ -38,6 +38,11 @@ export type SettingsAvgAggregateOutputType = {
   maxDiscountPercent: number | null
   maxPromoAmount: runtime.Decimal | null
   apiRateLimit: number | null
+  cryptoMinAmount: runtime.Decimal | null
+  cryptoMaxAmount: runtime.Decimal | null
+  cryptoAccuracyPercent: number | null
+  usdToInrRate: runtime.Decimal | null
+  cryptoBonusPercent: number | null
 }
 
 export type SettingsSumAggregateOutputType = {
@@ -52,6 +57,11 @@ export type SettingsSumAggregateOutputType = {
   maxDiscountPercent: number | null
   maxPromoAmount: runtime.Decimal | null
   apiRateLimit: number | null
+  cryptoMinAmount: runtime.Decimal | null
+  cryptoMaxAmount: runtime.Decimal | null
+  cryptoAccuracyPercent: number | null
+  usdToInrRate: runtime.Decimal | null
+  cryptoBonusPercent: number | null
 }
 
 export type SettingsMinAggregateOutputType = {
@@ -82,6 +92,17 @@ export type SettingsMinAggregateOutputType = {
   announcementType: string | null
   appVersion: string | null
   builtWithText: string | null
+  heleketApiKey: string | null
+  heleketMerchantId: string | null
+  cryptoEnabled: boolean | null
+  cryptoMinAmount: runtime.Decimal | null
+  cryptoMaxAmount: runtime.Decimal | null
+  cryptoTargetCurrency: string | null
+  cryptoAccuracyPercent: number | null
+  cryptoAllowMultiple: boolean | null
+  usdToInrRate: runtime.Decimal | null
+  cryptoBonusPercent: number | null
+  cryptoReferralBonusEnabled: boolean | null
 }
 
 export type SettingsMaxAggregateOutputType = {
@@ -112,6 +133,17 @@ export type SettingsMaxAggregateOutputType = {
   announcementType: string | null
   appVersion: string | null
   builtWithText: string | null
+  heleketApiKey: string | null
+  heleketMerchantId: string | null
+  cryptoEnabled: boolean | null
+  cryptoMinAmount: runtime.Decimal | null
+  cryptoMaxAmount: runtime.Decimal | null
+  cryptoTargetCurrency: string | null
+  cryptoAccuracyPercent: number | null
+  cryptoAllowMultiple: boolean | null
+  usdToInrRate: runtime.Decimal | null
+  cryptoBonusPercent: number | null
+  cryptoReferralBonusEnabled: boolean | null
 }
 
 export type SettingsCountAggregateOutputType = {
@@ -142,6 +174,19 @@ export type SettingsCountAggregateOutputType = {
   announcementType: number
   appVersion: number
   builtWithText: number
+  heleketApiKey: number
+  heleketMerchantId: number
+  heleketAllowedIps: number
+  cryptoEnabled: number
+  cryptoSupportedCoins: number
+  cryptoMinAmount: number
+  cryptoMaxAmount: number
+  cryptoTargetCurrency: number
+  cryptoAccuracyPercent: number
+  cryptoAllowMultiple: number
+  usdToInrRate: number
+  cryptoBonusPercent: number
+  cryptoReferralBonusEnabled: number
   _all: number
 }
 
@@ -158,6 +203,11 @@ export type SettingsAvgAggregateInputType = {
   maxDiscountPercent?: true
   maxPromoAmount?: true
   apiRateLimit?: true
+  cryptoMinAmount?: true
+  cryptoMaxAmount?: true
+  cryptoAccuracyPercent?: true
+  usdToInrRate?: true
+  cryptoBonusPercent?: true
 }
 
 export type SettingsSumAggregateInputType = {
@@ -172,6 +222,11 @@ export type SettingsSumAggregateInputType = {
   maxDiscountPercent?: true
   maxPromoAmount?: true
   apiRateLimit?: true
+  cryptoMinAmount?: true
+  cryptoMaxAmount?: true
+  cryptoAccuracyPercent?: true
+  usdToInrRate?: true
+  cryptoBonusPercent?: true
 }
 
 export type SettingsMinAggregateInputType = {
@@ -202,6 +257,17 @@ export type SettingsMinAggregateInputType = {
   announcementType?: true
   appVersion?: true
   builtWithText?: true
+  heleketApiKey?: true
+  heleketMerchantId?: true
+  cryptoEnabled?: true
+  cryptoMinAmount?: true
+  cryptoMaxAmount?: true
+  cryptoTargetCurrency?: true
+  cryptoAccuracyPercent?: true
+  cryptoAllowMultiple?: true
+  usdToInrRate?: true
+  cryptoBonusPercent?: true
+  cryptoReferralBonusEnabled?: true
 }
 
 export type SettingsMaxAggregateInputType = {
@@ -232,6 +298,17 @@ export type SettingsMaxAggregateInputType = {
   announcementType?: true
   appVersion?: true
   builtWithText?: true
+  heleketApiKey?: true
+  heleketMerchantId?: true
+  cryptoEnabled?: true
+  cryptoMinAmount?: true
+  cryptoMaxAmount?: true
+  cryptoTargetCurrency?: true
+  cryptoAccuracyPercent?: true
+  cryptoAllowMultiple?: true
+  usdToInrRate?: true
+  cryptoBonusPercent?: true
+  cryptoReferralBonusEnabled?: true
 }
 
 export type SettingsCountAggregateInputType = {
@@ -262,6 +339,19 @@ export type SettingsCountAggregateInputType = {
   announcementType?: true
   appVersion?: true
   builtWithText?: true
+  heleketApiKey?: true
+  heleketMerchantId?: true
+  heleketAllowedIps?: true
+  cryptoEnabled?: true
+  cryptoSupportedCoins?: true
+  cryptoMinAmount?: true
+  cryptoMaxAmount?: true
+  cryptoTargetCurrency?: true
+  cryptoAccuracyPercent?: true
+  cryptoAllowMultiple?: true
+  usdToInrRate?: true
+  cryptoBonusPercent?: true
+  cryptoReferralBonusEnabled?: true
   _all?: true
 }
 
@@ -379,6 +469,19 @@ export type SettingsGroupByOutputType = {
   announcementType: string | null
   appVersion: string | null
   builtWithText: string | null
+  heleketApiKey: string | null
+  heleketMerchantId: string | null
+  heleketAllowedIps: runtime.JsonValue | null
+  cryptoEnabled: boolean
+  cryptoSupportedCoins: runtime.JsonValue | null
+  cryptoMinAmount: runtime.Decimal
+  cryptoMaxAmount: runtime.Decimal
+  cryptoTargetCurrency: string
+  cryptoAccuracyPercent: number
+  cryptoAllowMultiple: boolean
+  usdToInrRate: runtime.Decimal | null
+  cryptoBonusPercent: number
+  cryptoReferralBonusEnabled: boolean
   _count: SettingsCountAggregateOutputType | null
   _avg: SettingsAvgAggregateOutputType | null
   _sum: SettingsSumAggregateOutputType | null
@@ -432,6 +535,19 @@ export type SettingsWhereInput = {
   announcementType?: Prisma.StringNullableFilter<"Settings"> | string | null
   appVersion?: Prisma.StringNullableFilter<"Settings"> | string | null
   builtWithText?: Prisma.StringNullableFilter<"Settings"> | string | null
+  heleketApiKey?: Prisma.StringNullableFilter<"Settings"> | string | null
+  heleketMerchantId?: Prisma.StringNullableFilter<"Settings"> | string | null
+  heleketAllowedIps?: Prisma.JsonNullableFilter<"Settings">
+  cryptoEnabled?: Prisma.BoolFilter<"Settings"> | boolean
+  cryptoSupportedCoins?: Prisma.JsonNullableFilter<"Settings">
+  cryptoMinAmount?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoMaxAmount?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoTargetCurrency?: Prisma.StringFilter<"Settings"> | string
+  cryptoAccuracyPercent?: Prisma.IntFilter<"Settings"> | number
+  cryptoAllowMultiple?: Prisma.BoolFilter<"Settings"> | boolean
+  usdToInrRate?: Prisma.DecimalNullableFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  cryptoBonusPercent?: Prisma.FloatFilter<"Settings"> | number
+  cryptoReferralBonusEnabled?: Prisma.BoolFilter<"Settings"> | boolean
 }
 
 export type SettingsOrderByWithRelationInput = {
@@ -462,6 +578,19 @@ export type SettingsOrderByWithRelationInput = {
   announcementType?: Prisma.SortOrderInput | Prisma.SortOrder
   appVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   builtWithText?: Prisma.SortOrderInput | Prisma.SortOrder
+  heleketApiKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  heleketMerchantId?: Prisma.SortOrderInput | Prisma.SortOrder
+  heleketAllowedIps?: Prisma.SortOrderInput | Prisma.SortOrder
+  cryptoEnabled?: Prisma.SortOrder
+  cryptoSupportedCoins?: Prisma.SortOrderInput | Prisma.SortOrder
+  cryptoMinAmount?: Prisma.SortOrder
+  cryptoMaxAmount?: Prisma.SortOrder
+  cryptoTargetCurrency?: Prisma.SortOrder
+  cryptoAccuracyPercent?: Prisma.SortOrder
+  cryptoAllowMultiple?: Prisma.SortOrder
+  usdToInrRate?: Prisma.SortOrderInput | Prisma.SortOrder
+  cryptoBonusPercent?: Prisma.SortOrder
+  cryptoReferralBonusEnabled?: Prisma.SortOrder
 }
 
 export type SettingsWhereUniqueInput = Prisma.AtLeast<{
@@ -495,6 +624,19 @@ export type SettingsWhereUniqueInput = Prisma.AtLeast<{
   announcementType?: Prisma.StringNullableFilter<"Settings"> | string | null
   appVersion?: Prisma.StringNullableFilter<"Settings"> | string | null
   builtWithText?: Prisma.StringNullableFilter<"Settings"> | string | null
+  heleketApiKey?: Prisma.StringNullableFilter<"Settings"> | string | null
+  heleketMerchantId?: Prisma.StringNullableFilter<"Settings"> | string | null
+  heleketAllowedIps?: Prisma.JsonNullableFilter<"Settings">
+  cryptoEnabled?: Prisma.BoolFilter<"Settings"> | boolean
+  cryptoSupportedCoins?: Prisma.JsonNullableFilter<"Settings">
+  cryptoMinAmount?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoMaxAmount?: Prisma.DecimalFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoTargetCurrency?: Prisma.StringFilter<"Settings"> | string
+  cryptoAccuracyPercent?: Prisma.IntFilter<"Settings"> | number
+  cryptoAllowMultiple?: Prisma.BoolFilter<"Settings"> | boolean
+  usdToInrRate?: Prisma.DecimalNullableFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  cryptoBonusPercent?: Prisma.FloatFilter<"Settings"> | number
+  cryptoReferralBonusEnabled?: Prisma.BoolFilter<"Settings"> | boolean
 }, "id">
 
 export type SettingsOrderByWithAggregationInput = {
@@ -525,6 +667,19 @@ export type SettingsOrderByWithAggregationInput = {
   announcementType?: Prisma.SortOrderInput | Prisma.SortOrder
   appVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   builtWithText?: Prisma.SortOrderInput | Prisma.SortOrder
+  heleketApiKey?: Prisma.SortOrderInput | Prisma.SortOrder
+  heleketMerchantId?: Prisma.SortOrderInput | Prisma.SortOrder
+  heleketAllowedIps?: Prisma.SortOrderInput | Prisma.SortOrder
+  cryptoEnabled?: Prisma.SortOrder
+  cryptoSupportedCoins?: Prisma.SortOrderInput | Prisma.SortOrder
+  cryptoMinAmount?: Prisma.SortOrder
+  cryptoMaxAmount?: Prisma.SortOrder
+  cryptoTargetCurrency?: Prisma.SortOrder
+  cryptoAccuracyPercent?: Prisma.SortOrder
+  cryptoAllowMultiple?: Prisma.SortOrder
+  usdToInrRate?: Prisma.SortOrderInput | Prisma.SortOrder
+  cryptoBonusPercent?: Prisma.SortOrder
+  cryptoReferralBonusEnabled?: Prisma.SortOrder
   _count?: Prisma.SettingsCountOrderByAggregateInput
   _avg?: Prisma.SettingsAvgOrderByAggregateInput
   _max?: Prisma.SettingsMaxOrderByAggregateInput
@@ -563,6 +718,19 @@ export type SettingsScalarWhereWithAggregatesInput = {
   announcementType?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   appVersion?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   builtWithText?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  heleketApiKey?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  heleketMerchantId?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  heleketAllowedIps?: Prisma.JsonNullableWithAggregatesFilter<"Settings">
+  cryptoEnabled?: Prisma.BoolWithAggregatesFilter<"Settings"> | boolean
+  cryptoSupportedCoins?: Prisma.JsonNullableWithAggregatesFilter<"Settings">
+  cryptoMinAmount?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoMaxAmount?: Prisma.DecimalWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoTargetCurrency?: Prisma.StringWithAggregatesFilter<"Settings"> | string
+  cryptoAccuracyPercent?: Prisma.IntWithAggregatesFilter<"Settings"> | number
+  cryptoAllowMultiple?: Prisma.BoolWithAggregatesFilter<"Settings"> | boolean
+  usdToInrRate?: Prisma.DecimalNullableWithAggregatesFilter<"Settings"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  cryptoBonusPercent?: Prisma.FloatWithAggregatesFilter<"Settings"> | number
+  cryptoReferralBonusEnabled?: Prisma.BoolWithAggregatesFilter<"Settings"> | boolean
 }
 
 export type SettingsCreateInput = {
@@ -593,6 +761,19 @@ export type SettingsCreateInput = {
   announcementType?: string | null
   appVersion?: string | null
   builtWithText?: string | null
+  heleketApiKey?: string | null
+  heleketMerchantId?: string | null
+  heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoEnabled?: boolean
+  cryptoSupportedCoins?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoMinAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoMaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoTargetCurrency?: string
+  cryptoAccuracyPercent?: number
+  cryptoAllowMultiple?: boolean
+  usdToInrRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  cryptoBonusPercent?: number
+  cryptoReferralBonusEnabled?: boolean
 }
 
 export type SettingsUncheckedCreateInput = {
@@ -623,6 +804,19 @@ export type SettingsUncheckedCreateInput = {
   announcementType?: string | null
   appVersion?: string | null
   builtWithText?: string | null
+  heleketApiKey?: string | null
+  heleketMerchantId?: string | null
+  heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoEnabled?: boolean
+  cryptoSupportedCoins?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoMinAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoMaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoTargetCurrency?: string
+  cryptoAccuracyPercent?: number
+  cryptoAllowMultiple?: boolean
+  usdToInrRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  cryptoBonusPercent?: number
+  cryptoReferralBonusEnabled?: boolean
 }
 
 export type SettingsUpdateInput = {
@@ -653,6 +847,19 @@ export type SettingsUpdateInput = {
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketMerchantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cryptoSupportedCoins?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoMinAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoMaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoTargetCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  cryptoAccuracyPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cryptoAllowMultiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usdToInrRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  cryptoBonusPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cryptoReferralBonusEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type SettingsUncheckedUpdateInput = {
@@ -683,6 +890,19 @@ export type SettingsUncheckedUpdateInput = {
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketMerchantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cryptoSupportedCoins?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoMinAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoMaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoTargetCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  cryptoAccuracyPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cryptoAllowMultiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usdToInrRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  cryptoBonusPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cryptoReferralBonusEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type SettingsCreateManyInput = {
@@ -713,6 +933,19 @@ export type SettingsCreateManyInput = {
   announcementType?: string | null
   appVersion?: string | null
   builtWithText?: string | null
+  heleketApiKey?: string | null
+  heleketMerchantId?: string | null
+  heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoEnabled?: boolean
+  cryptoSupportedCoins?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoMinAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoMaxAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoTargetCurrency?: string
+  cryptoAccuracyPercent?: number
+  cryptoAllowMultiple?: boolean
+  usdToInrRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  cryptoBonusPercent?: number
+  cryptoReferralBonusEnabled?: boolean
 }
 
 export type SettingsUpdateManyMutationInput = {
@@ -743,6 +976,19 @@ export type SettingsUpdateManyMutationInput = {
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketMerchantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cryptoSupportedCoins?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoMinAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoMaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoTargetCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  cryptoAccuracyPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cryptoAllowMultiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usdToInrRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  cryptoBonusPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cryptoReferralBonusEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type SettingsUncheckedUpdateManyInput = {
@@ -773,6 +1019,19 @@ export type SettingsUncheckedUpdateManyInput = {
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketMerchantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cryptoSupportedCoins?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  cryptoMinAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoMaxAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  cryptoTargetCurrency?: Prisma.StringFieldUpdateOperationsInput | string
+  cryptoAccuracyPercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cryptoAllowMultiple?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  usdToInrRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  cryptoBonusPercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cryptoReferralBonusEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type SettingsCountOrderByAggregateInput = {
@@ -803,6 +1062,19 @@ export type SettingsCountOrderByAggregateInput = {
   announcementType?: Prisma.SortOrder
   appVersion?: Prisma.SortOrder
   builtWithText?: Prisma.SortOrder
+  heleketApiKey?: Prisma.SortOrder
+  heleketMerchantId?: Prisma.SortOrder
+  heleketAllowedIps?: Prisma.SortOrder
+  cryptoEnabled?: Prisma.SortOrder
+  cryptoSupportedCoins?: Prisma.SortOrder
+  cryptoMinAmount?: Prisma.SortOrder
+  cryptoMaxAmount?: Prisma.SortOrder
+  cryptoTargetCurrency?: Prisma.SortOrder
+  cryptoAccuracyPercent?: Prisma.SortOrder
+  cryptoAllowMultiple?: Prisma.SortOrder
+  usdToInrRate?: Prisma.SortOrder
+  cryptoBonusPercent?: Prisma.SortOrder
+  cryptoReferralBonusEnabled?: Prisma.SortOrder
 }
 
 export type SettingsAvgOrderByAggregateInput = {
@@ -817,6 +1089,11 @@ export type SettingsAvgOrderByAggregateInput = {
   maxDiscountPercent?: Prisma.SortOrder
   maxPromoAmount?: Prisma.SortOrder
   apiRateLimit?: Prisma.SortOrder
+  cryptoMinAmount?: Prisma.SortOrder
+  cryptoMaxAmount?: Prisma.SortOrder
+  cryptoAccuracyPercent?: Prisma.SortOrder
+  usdToInrRate?: Prisma.SortOrder
+  cryptoBonusPercent?: Prisma.SortOrder
 }
 
 export type SettingsMaxOrderByAggregateInput = {
@@ -847,6 +1124,17 @@ export type SettingsMaxOrderByAggregateInput = {
   announcementType?: Prisma.SortOrder
   appVersion?: Prisma.SortOrder
   builtWithText?: Prisma.SortOrder
+  heleketApiKey?: Prisma.SortOrder
+  heleketMerchantId?: Prisma.SortOrder
+  cryptoEnabled?: Prisma.SortOrder
+  cryptoMinAmount?: Prisma.SortOrder
+  cryptoMaxAmount?: Prisma.SortOrder
+  cryptoTargetCurrency?: Prisma.SortOrder
+  cryptoAccuracyPercent?: Prisma.SortOrder
+  cryptoAllowMultiple?: Prisma.SortOrder
+  usdToInrRate?: Prisma.SortOrder
+  cryptoBonusPercent?: Prisma.SortOrder
+  cryptoReferralBonusEnabled?: Prisma.SortOrder
 }
 
 export type SettingsMinOrderByAggregateInput = {
@@ -877,6 +1165,17 @@ export type SettingsMinOrderByAggregateInput = {
   announcementType?: Prisma.SortOrder
   appVersion?: Prisma.SortOrder
   builtWithText?: Prisma.SortOrder
+  heleketApiKey?: Prisma.SortOrder
+  heleketMerchantId?: Prisma.SortOrder
+  cryptoEnabled?: Prisma.SortOrder
+  cryptoMinAmount?: Prisma.SortOrder
+  cryptoMaxAmount?: Prisma.SortOrder
+  cryptoTargetCurrency?: Prisma.SortOrder
+  cryptoAccuracyPercent?: Prisma.SortOrder
+  cryptoAllowMultiple?: Prisma.SortOrder
+  usdToInrRate?: Prisma.SortOrder
+  cryptoBonusPercent?: Prisma.SortOrder
+  cryptoReferralBonusEnabled?: Prisma.SortOrder
 }
 
 export type SettingsSumOrderByAggregateInput = {
@@ -891,6 +1190,11 @@ export type SettingsSumOrderByAggregateInput = {
   maxDiscountPercent?: Prisma.SortOrder
   maxPromoAmount?: Prisma.SortOrder
   apiRateLimit?: Prisma.SortOrder
+  cryptoMinAmount?: Prisma.SortOrder
+  cryptoMaxAmount?: Prisma.SortOrder
+  cryptoAccuracyPercent?: Prisma.SortOrder
+  usdToInrRate?: Prisma.SortOrder
+  cryptoBonusPercent?: Prisma.SortOrder
 }
 
 export type FloatFieldUpdateOperationsInput = {
@@ -931,6 +1235,19 @@ export type SettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   announcementType?: boolean
   appVersion?: boolean
   builtWithText?: boolean
+  heleketApiKey?: boolean
+  heleketMerchantId?: boolean
+  heleketAllowedIps?: boolean
+  cryptoEnabled?: boolean
+  cryptoSupportedCoins?: boolean
+  cryptoMinAmount?: boolean
+  cryptoMaxAmount?: boolean
+  cryptoTargetCurrency?: boolean
+  cryptoAccuracyPercent?: boolean
+  cryptoAllowMultiple?: boolean
+  usdToInrRate?: boolean
+  cryptoBonusPercent?: boolean
+  cryptoReferralBonusEnabled?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -961,6 +1278,19 @@ export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   announcementType?: boolean
   appVersion?: boolean
   builtWithText?: boolean
+  heleketApiKey?: boolean
+  heleketMerchantId?: boolean
+  heleketAllowedIps?: boolean
+  cryptoEnabled?: boolean
+  cryptoSupportedCoins?: boolean
+  cryptoMinAmount?: boolean
+  cryptoMaxAmount?: boolean
+  cryptoTargetCurrency?: boolean
+  cryptoAccuracyPercent?: boolean
+  cryptoAllowMultiple?: boolean
+  usdToInrRate?: boolean
+  cryptoBonusPercent?: boolean
+  cryptoReferralBonusEnabled?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -991,6 +1321,19 @@ export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   announcementType?: boolean
   appVersion?: boolean
   builtWithText?: boolean
+  heleketApiKey?: boolean
+  heleketMerchantId?: boolean
+  heleketAllowedIps?: boolean
+  cryptoEnabled?: boolean
+  cryptoSupportedCoins?: boolean
+  cryptoMinAmount?: boolean
+  cryptoMaxAmount?: boolean
+  cryptoTargetCurrency?: boolean
+  cryptoAccuracyPercent?: boolean
+  cryptoAllowMultiple?: boolean
+  usdToInrRate?: boolean
+  cryptoBonusPercent?: boolean
+  cryptoReferralBonusEnabled?: boolean
 }, ExtArgs["result"]["settings"]>
 
 export type SettingsSelectScalar = {
@@ -1021,9 +1364,22 @@ export type SettingsSelectScalar = {
   announcementType?: boolean
   appVersion?: boolean
   builtWithText?: boolean
+  heleketApiKey?: boolean
+  heleketMerchantId?: boolean
+  heleketAllowedIps?: boolean
+  cryptoEnabled?: boolean
+  cryptoSupportedCoins?: boolean
+  cryptoMinAmount?: boolean
+  cryptoMaxAmount?: boolean
+  cryptoTargetCurrency?: boolean
+  cryptoAccuracyPercent?: boolean
+  cryptoAllowMultiple?: boolean
+  usdToInrRate?: boolean
+  cryptoBonusPercent?: boolean
+  cryptoReferralBonusEnabled?: boolean
 }
 
-export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "referredUserPercent" | "minReferralDeposit" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maxPromoAmount" | "maintenanceMode" | "apiRateLimit" | "telegramHelpUrl" | "telegramSupportUsername" | "telegramChannelUrl" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText", ExtArgs["result"]["settings"]>
+export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "referredUserPercent" | "minReferralDeposit" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maxPromoAmount" | "maintenanceMode" | "apiRateLimit" | "telegramHelpUrl" | "telegramSupportUsername" | "telegramChannelUrl" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText" | "heleketApiKey" | "heleketMerchantId" | "heleketAllowedIps" | "cryptoEnabled" | "cryptoSupportedCoins" | "cryptoMinAmount" | "cryptoMaxAmount" | "cryptoTargetCurrency" | "cryptoAccuracyPercent" | "cryptoAllowMultiple" | "usdToInrRate" | "cryptoBonusPercent" | "cryptoReferralBonusEnabled", ExtArgs["result"]["settings"]>
 
 export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Settings"
@@ -1056,6 +1412,19 @@ export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     announcementType: string | null
     appVersion: string | null
     builtWithText: string | null
+    heleketApiKey: string | null
+    heleketMerchantId: string | null
+    heleketAllowedIps: runtime.JsonValue | null
+    cryptoEnabled: boolean
+    cryptoSupportedCoins: runtime.JsonValue | null
+    cryptoMinAmount: runtime.Decimal
+    cryptoMaxAmount: runtime.Decimal
+    cryptoTargetCurrency: string
+    cryptoAccuracyPercent: number
+    cryptoAllowMultiple: boolean
+    usdToInrRate: runtime.Decimal | null
+    cryptoBonusPercent: number
+    cryptoReferralBonusEnabled: boolean
   }, ExtArgs["result"]["settings"]>
   composites: {}
 }
@@ -1506,6 +1875,19 @@ export interface SettingsFieldRefs {
   readonly announcementType: Prisma.FieldRef<"Settings", 'String'>
   readonly appVersion: Prisma.FieldRef<"Settings", 'String'>
   readonly builtWithText: Prisma.FieldRef<"Settings", 'String'>
+  readonly heleketApiKey: Prisma.FieldRef<"Settings", 'String'>
+  readonly heleketMerchantId: Prisma.FieldRef<"Settings", 'String'>
+  readonly heleketAllowedIps: Prisma.FieldRef<"Settings", 'Json'>
+  readonly cryptoEnabled: Prisma.FieldRef<"Settings", 'Boolean'>
+  readonly cryptoSupportedCoins: Prisma.FieldRef<"Settings", 'Json'>
+  readonly cryptoMinAmount: Prisma.FieldRef<"Settings", 'Decimal'>
+  readonly cryptoMaxAmount: Prisma.FieldRef<"Settings", 'Decimal'>
+  readonly cryptoTargetCurrency: Prisma.FieldRef<"Settings", 'String'>
+  readonly cryptoAccuracyPercent: Prisma.FieldRef<"Settings", 'Int'>
+  readonly cryptoAllowMultiple: Prisma.FieldRef<"Settings", 'Boolean'>
+  readonly usdToInrRate: Prisma.FieldRef<"Settings", 'Decimal'>
+  readonly cryptoBonusPercent: Prisma.FieldRef<"Settings", 'Float'>
+  readonly cryptoReferralBonusEnabled: Prisma.FieldRef<"Settings", 'Boolean'>
 }
     
 
