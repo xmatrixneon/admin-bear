@@ -330,6 +330,13 @@ model Settings {
   // App branding
   appVersion    String? @default("v1.0.0")
   builtWithText String? @default("Built with 🇷🇺")
+  // Brand configuration
+  siteName        String  @default("MeowSMS")
+  siteDescription String  @default("Secure virtual SMS numbers via Telegram")
+  logoUrl         String  @default("https://i.ibb.co/kgBcLZsX/meow.png")
+  faviconUrl      String?
+  ogImageUrl      String?
+  contactEmail    String?
 
   // Crypto payment settings (Heleket)
   heleketApiKey            String?  @db.Text

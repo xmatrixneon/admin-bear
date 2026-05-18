@@ -92,6 +92,12 @@ export type SettingsMinAggregateOutputType = {
   announcementType: string | null
   appVersion: string | null
   builtWithText: string | null
+  siteName: string | null
+  siteDescription: string | null
+  logoUrl: string | null
+  faviconUrl: string | null
+  ogImageUrl: string | null
+  contactEmail: string | null
   heleketApiKey: string | null
   heleketMerchantId: string | null
   cryptoEnabled: boolean | null
@@ -133,6 +139,12 @@ export type SettingsMaxAggregateOutputType = {
   announcementType: string | null
   appVersion: string | null
   builtWithText: string | null
+  siteName: string | null
+  siteDescription: string | null
+  logoUrl: string | null
+  faviconUrl: string | null
+  ogImageUrl: string | null
+  contactEmail: string | null
   heleketApiKey: string | null
   heleketMerchantId: string | null
   cryptoEnabled: boolean | null
@@ -174,6 +186,12 @@ export type SettingsCountAggregateOutputType = {
   announcementType: number
   appVersion: number
   builtWithText: number
+  siteName: number
+  siteDescription: number
+  logoUrl: number
+  faviconUrl: number
+  ogImageUrl: number
+  contactEmail: number
   heleketApiKey: number
   heleketMerchantId: number
   heleketAllowedIps: number
@@ -257,6 +275,12 @@ export type SettingsMinAggregateInputType = {
   announcementType?: true
   appVersion?: true
   builtWithText?: true
+  siteName?: true
+  siteDescription?: true
+  logoUrl?: true
+  faviconUrl?: true
+  ogImageUrl?: true
+  contactEmail?: true
   heleketApiKey?: true
   heleketMerchantId?: true
   cryptoEnabled?: true
@@ -298,6 +322,12 @@ export type SettingsMaxAggregateInputType = {
   announcementType?: true
   appVersion?: true
   builtWithText?: true
+  siteName?: true
+  siteDescription?: true
+  logoUrl?: true
+  faviconUrl?: true
+  ogImageUrl?: true
+  contactEmail?: true
   heleketApiKey?: true
   heleketMerchantId?: true
   cryptoEnabled?: true
@@ -339,6 +369,12 @@ export type SettingsCountAggregateInputType = {
   announcementType?: true
   appVersion?: true
   builtWithText?: true
+  siteName?: true
+  siteDescription?: true
+  logoUrl?: true
+  faviconUrl?: true
+  ogImageUrl?: true
+  contactEmail?: true
   heleketApiKey?: true
   heleketMerchantId?: true
   heleketAllowedIps?: true
@@ -469,6 +505,12 @@ export type SettingsGroupByOutputType = {
   announcementType: string | null
   appVersion: string | null
   builtWithText: string | null
+  siteName: string
+  siteDescription: string
+  logoUrl: string
+  faviconUrl: string | null
+  ogImageUrl: string | null
+  contactEmail: string | null
   heleketApiKey: string | null
   heleketMerchantId: string | null
   heleketAllowedIps: runtime.JsonValue | null
@@ -535,6 +577,12 @@ export type SettingsWhereInput = {
   announcementType?: Prisma.StringNullableFilter<"Settings"> | string | null
   appVersion?: Prisma.StringNullableFilter<"Settings"> | string | null
   builtWithText?: Prisma.StringNullableFilter<"Settings"> | string | null
+  siteName?: Prisma.StringFilter<"Settings"> | string
+  siteDescription?: Prisma.StringFilter<"Settings"> | string
+  logoUrl?: Prisma.StringFilter<"Settings"> | string
+  faviconUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
+  ogImageUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Settings"> | string | null
   heleketApiKey?: Prisma.StringNullableFilter<"Settings"> | string | null
   heleketMerchantId?: Prisma.StringNullableFilter<"Settings"> | string | null
   heleketAllowedIps?: Prisma.JsonNullableFilter<"Settings">
@@ -578,6 +626,12 @@ export type SettingsOrderByWithRelationInput = {
   announcementType?: Prisma.SortOrderInput | Prisma.SortOrder
   appVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   builtWithText?: Prisma.SortOrderInput | Prisma.SortOrder
+  siteName?: Prisma.SortOrder
+  siteDescription?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  faviconUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  ogImageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   heleketApiKey?: Prisma.SortOrderInput | Prisma.SortOrder
   heleketMerchantId?: Prisma.SortOrderInput | Prisma.SortOrder
   heleketAllowedIps?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -624,6 +678,12 @@ export type SettingsWhereUniqueInput = Prisma.AtLeast<{
   announcementType?: Prisma.StringNullableFilter<"Settings"> | string | null
   appVersion?: Prisma.StringNullableFilter<"Settings"> | string | null
   builtWithText?: Prisma.StringNullableFilter<"Settings"> | string | null
+  siteName?: Prisma.StringFilter<"Settings"> | string
+  siteDescription?: Prisma.StringFilter<"Settings"> | string
+  logoUrl?: Prisma.StringFilter<"Settings"> | string
+  faviconUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
+  ogImageUrl?: Prisma.StringNullableFilter<"Settings"> | string | null
+  contactEmail?: Prisma.StringNullableFilter<"Settings"> | string | null
   heleketApiKey?: Prisma.StringNullableFilter<"Settings"> | string | null
   heleketMerchantId?: Prisma.StringNullableFilter<"Settings"> | string | null
   heleketAllowedIps?: Prisma.JsonNullableFilter<"Settings">
@@ -667,6 +727,12 @@ export type SettingsOrderByWithAggregationInput = {
   announcementType?: Prisma.SortOrderInput | Prisma.SortOrder
   appVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   builtWithText?: Prisma.SortOrderInput | Prisma.SortOrder
+  siteName?: Prisma.SortOrder
+  siteDescription?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  faviconUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  ogImageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   heleketApiKey?: Prisma.SortOrderInput | Prisma.SortOrder
   heleketMerchantId?: Prisma.SortOrderInput | Prisma.SortOrder
   heleketAllowedIps?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -718,6 +784,12 @@ export type SettingsScalarWhereWithAggregatesInput = {
   announcementType?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   appVersion?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   builtWithText?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  siteName?: Prisma.StringWithAggregatesFilter<"Settings"> | string
+  siteDescription?: Prisma.StringWithAggregatesFilter<"Settings"> | string
+  logoUrl?: Prisma.StringWithAggregatesFilter<"Settings"> | string
+  faviconUrl?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  ogImageUrl?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
+  contactEmail?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   heleketApiKey?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   heleketMerchantId?: Prisma.StringNullableWithAggregatesFilter<"Settings"> | string | null
   heleketAllowedIps?: Prisma.JsonNullableWithAggregatesFilter<"Settings">
@@ -761,6 +833,12 @@ export type SettingsCreateInput = {
   announcementType?: string | null
   appVersion?: string | null
   builtWithText?: string | null
+  siteName?: string
+  siteDescription?: string
+  logoUrl?: string
+  faviconUrl?: string | null
+  ogImageUrl?: string | null
+  contactEmail?: string | null
   heleketApiKey?: string | null
   heleketMerchantId?: string | null
   heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -804,6 +882,12 @@ export type SettingsUncheckedCreateInput = {
   announcementType?: string | null
   appVersion?: string | null
   builtWithText?: string | null
+  siteName?: string
+  siteDescription?: string
+  logoUrl?: string
+  faviconUrl?: string | null
+  ogImageUrl?: string | null
+  contactEmail?: string | null
   heleketApiKey?: string | null
   heleketMerchantId?: string | null
   heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -847,6 +931,12 @@ export type SettingsUpdateInput = {
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteName?: Prisma.StringFieldUpdateOperationsInput | string
+  siteDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  faviconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ogImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketMerchantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -890,6 +980,12 @@ export type SettingsUncheckedUpdateInput = {
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteName?: Prisma.StringFieldUpdateOperationsInput | string
+  siteDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  faviconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ogImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketMerchantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -933,6 +1029,12 @@ export type SettingsCreateManyInput = {
   announcementType?: string | null
   appVersion?: string | null
   builtWithText?: string | null
+  siteName?: string
+  siteDescription?: string
+  logoUrl?: string
+  faviconUrl?: string | null
+  ogImageUrl?: string | null
+  contactEmail?: string | null
   heleketApiKey?: string | null
   heleketMerchantId?: string | null
   heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -976,6 +1078,12 @@ export type SettingsUpdateManyMutationInput = {
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteName?: Prisma.StringFieldUpdateOperationsInput | string
+  siteDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  faviconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ogImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketMerchantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1019,6 +1127,12 @@ export type SettingsUncheckedUpdateManyInput = {
   announcementType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   appVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   builtWithText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  siteName?: Prisma.StringFieldUpdateOperationsInput | string
+  siteDescription?: Prisma.StringFieldUpdateOperationsInput | string
+  logoUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  faviconUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ogImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketApiKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketMerchantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   heleketAllowedIps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1062,6 +1176,12 @@ export type SettingsCountOrderByAggregateInput = {
   announcementType?: Prisma.SortOrder
   appVersion?: Prisma.SortOrder
   builtWithText?: Prisma.SortOrder
+  siteName?: Prisma.SortOrder
+  siteDescription?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  faviconUrl?: Prisma.SortOrder
+  ogImageUrl?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
   heleketApiKey?: Prisma.SortOrder
   heleketMerchantId?: Prisma.SortOrder
   heleketAllowedIps?: Prisma.SortOrder
@@ -1124,6 +1244,12 @@ export type SettingsMaxOrderByAggregateInput = {
   announcementType?: Prisma.SortOrder
   appVersion?: Prisma.SortOrder
   builtWithText?: Prisma.SortOrder
+  siteName?: Prisma.SortOrder
+  siteDescription?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  faviconUrl?: Prisma.SortOrder
+  ogImageUrl?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
   heleketApiKey?: Prisma.SortOrder
   heleketMerchantId?: Prisma.SortOrder
   cryptoEnabled?: Prisma.SortOrder
@@ -1165,6 +1291,12 @@ export type SettingsMinOrderByAggregateInput = {
   announcementType?: Prisma.SortOrder
   appVersion?: Prisma.SortOrder
   builtWithText?: Prisma.SortOrder
+  siteName?: Prisma.SortOrder
+  siteDescription?: Prisma.SortOrder
+  logoUrl?: Prisma.SortOrder
+  faviconUrl?: Prisma.SortOrder
+  ogImageUrl?: Prisma.SortOrder
+  contactEmail?: Prisma.SortOrder
   heleketApiKey?: Prisma.SortOrder
   heleketMerchantId?: Prisma.SortOrder
   cryptoEnabled?: Prisma.SortOrder
@@ -1235,6 +1367,12 @@ export type SettingsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   announcementType?: boolean
   appVersion?: boolean
   builtWithText?: boolean
+  siteName?: boolean
+  siteDescription?: boolean
+  logoUrl?: boolean
+  faviconUrl?: boolean
+  ogImageUrl?: boolean
+  contactEmail?: boolean
   heleketApiKey?: boolean
   heleketMerchantId?: boolean
   heleketAllowedIps?: boolean
@@ -1278,6 +1416,12 @@ export type SettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   announcementType?: boolean
   appVersion?: boolean
   builtWithText?: boolean
+  siteName?: boolean
+  siteDescription?: boolean
+  logoUrl?: boolean
+  faviconUrl?: boolean
+  ogImageUrl?: boolean
+  contactEmail?: boolean
   heleketApiKey?: boolean
   heleketMerchantId?: boolean
   heleketAllowedIps?: boolean
@@ -1321,6 +1465,12 @@ export type SettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   announcementType?: boolean
   appVersion?: boolean
   builtWithText?: boolean
+  siteName?: boolean
+  siteDescription?: boolean
+  logoUrl?: boolean
+  faviconUrl?: boolean
+  ogImageUrl?: boolean
+  contactEmail?: boolean
   heleketApiKey?: boolean
   heleketMerchantId?: boolean
   heleketAllowedIps?: boolean
@@ -1364,6 +1514,12 @@ export type SettingsSelectScalar = {
   announcementType?: boolean
   appVersion?: boolean
   builtWithText?: boolean
+  siteName?: boolean
+  siteDescription?: boolean
+  logoUrl?: boolean
+  faviconUrl?: boolean
+  ogImageUrl?: boolean
+  contactEmail?: boolean
   heleketApiKey?: boolean
   heleketMerchantId?: boolean
   heleketAllowedIps?: boolean
@@ -1379,7 +1535,7 @@ export type SettingsSelectScalar = {
   cryptoReferralBonusEnabled?: boolean
 }
 
-export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "referredUserPercent" | "minReferralDeposit" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maxPromoAmount" | "maintenanceMode" | "apiRateLimit" | "telegramHelpUrl" | "telegramSupportUsername" | "telegramChannelUrl" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText" | "heleketApiKey" | "heleketMerchantId" | "heleketAllowedIps" | "cryptoEnabled" | "cryptoSupportedCoins" | "cryptoMinAmount" | "cryptoMaxAmount" | "cryptoTargetCurrency" | "cryptoAccuracyPercent" | "cryptoAllowMultiple" | "usdToInrRate" | "cryptoBonusPercent" | "cryptoReferralBonusEnabled", ExtArgs["result"]["settings"]>
+export type SettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "bharatpeMerchantId" | "bharatpeToken" | "bharatpeQrImage" | "minRechargeAmount" | "maxRechargeAmount" | "upiId" | "referralPercent" | "referredUserPercent" | "minReferralDeposit" | "minRedeem" | "numberExpiryMinutes" | "currency" | "minCancelMinutes" | "maxDiscountPercent" | "maxPromoAmount" | "maintenanceMode" | "apiRateLimit" | "telegramHelpUrl" | "telegramSupportUsername" | "telegramChannelUrl" | "apiDocsBaseUrl" | "announcementEnabled" | "announcementMessage" | "announcementType" | "appVersion" | "builtWithText" | "siteName" | "siteDescription" | "logoUrl" | "faviconUrl" | "ogImageUrl" | "contactEmail" | "heleketApiKey" | "heleketMerchantId" | "heleketAllowedIps" | "cryptoEnabled" | "cryptoSupportedCoins" | "cryptoMinAmount" | "cryptoMaxAmount" | "cryptoTargetCurrency" | "cryptoAccuracyPercent" | "cryptoAllowMultiple" | "usdToInrRate" | "cryptoBonusPercent" | "cryptoReferralBonusEnabled", ExtArgs["result"]["settings"]>
 
 export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Settings"
@@ -1412,6 +1568,12 @@ export type $SettingsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     announcementType: string | null
     appVersion: string | null
     builtWithText: string | null
+    siteName: string
+    siteDescription: string
+    logoUrl: string
+    faviconUrl: string | null
+    ogImageUrl: string | null
+    contactEmail: string | null
     heleketApiKey: string | null
     heleketMerchantId: string | null
     heleketAllowedIps: runtime.JsonValue | null
@@ -1875,6 +2037,12 @@ export interface SettingsFieldRefs {
   readonly announcementType: Prisma.FieldRef<"Settings", 'String'>
   readonly appVersion: Prisma.FieldRef<"Settings", 'String'>
   readonly builtWithText: Prisma.FieldRef<"Settings", 'String'>
+  readonly siteName: Prisma.FieldRef<"Settings", 'String'>
+  readonly siteDescription: Prisma.FieldRef<"Settings", 'String'>
+  readonly logoUrl: Prisma.FieldRef<"Settings", 'String'>
+  readonly faviconUrl: Prisma.FieldRef<"Settings", 'String'>
+  readonly ogImageUrl: Prisma.FieldRef<"Settings", 'String'>
+  readonly contactEmail: Prisma.FieldRef<"Settings", 'String'>
   readonly heleketApiKey: Prisma.FieldRef<"Settings", 'String'>
   readonly heleketMerchantId: Prisma.FieldRef<"Settings", 'String'>
   readonly heleketAllowedIps: Prisma.FieldRef<"Settings", 'Json'>

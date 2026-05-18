@@ -53,6 +53,13 @@ const DEFAULT_SETTINGS = {
   // App branding
   appVersion: 'v1.0.0',
   builtWithText: 'Built with 🇷🇺',
+  // Brand configuration
+  siteName: 'MeowSMS',
+  siteDescription: 'Secure virtual SMS numbers via Telegram',
+  logoUrl: 'https://i.ibb.co/kgBcLZsX/meow.png',
+  faviconUrl: '',
+  ogImageUrl: '',
+  contactEmail: '',
   // Crypto payments (Heleket)
   cryptoEnabled: false,
   cryptoSupportedCoins: ['BTC', 'ETH', 'USDT', 'USDC'],
@@ -103,6 +110,13 @@ const settingsUpdateSchema = z
     // App branding
     appVersion: z.string().optional(),
     builtWithText: z.string().optional(),
+    // Brand configuration
+    siteName: z.string().optional(),
+    siteDescription: z.string().optional(),
+    logoUrl: z.string().url().optional(),
+    faviconUrl: z.string().url().optional(),
+    ogImageUrl: z.string().url().optional(),
+    contactEmail: z.string().email().optional(),
     // Crypto payments (Heleket)
     ...cryptoSettingsSchema.shape,
   })

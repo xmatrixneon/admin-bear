@@ -72,6 +72,13 @@ type SettingsData = {
   usdToInrRate: number | null;
   cryptoBonusPercent: number;
   cryptoReferralBonusEnabled: boolean;
+  // Brand configuration
+  siteName: string;
+  siteDescription: string;
+  logoUrl: string;
+  faviconUrl: string;
+  ogImageUrl: string;
+  contactEmail: string;
 };
 
 type SectionKey = "general" | "limits" | "timing" | "payment" | "crypto" | "api" | "support" | "announcement" | "branding" | "channel";
@@ -94,7 +101,7 @@ const SECTIONS: {
   fields: {
     key: keyof SettingsData;
     label: string;
-    type?: "text" | "number" | "password" | "url" | "switch" | "textarea" | "select";
+    type?: "text" | "number" | "password" | "url" | "switch" | "textarea" | "select" | "email";
     placeholder?: string;
     hint?: string;
     options?: string[];
@@ -211,8 +218,14 @@ const SECTIONS: {
     key: "branding",
     title: "App Branding",
     icon: <Settings2 size={16} />,
-    description: "Version and branding text shown on profile page",
+    description: "Brand identity - name, logo, and visual elements used across the app",
     fields: [
+      { key: "siteName", label: "Site Name", placeholder: "MeowSMS", hint: "Brand name shown in UI, page titles, and messages" },
+      { key: "siteDescription", label: "Site Description", type: "textarea", placeholder: "Secure virtual SMS numbers via Telegram", hint: "SEO description shown in meta tags and social previews" },
+      { key: "logoUrl", label: "Logo URL", type: "url", placeholder: "https://i.ibb.co/kgBcLZsX/meow.png", hint: "Main logo URL used in navbar, loading screens, and branding" },
+      { key: "faviconUrl", label: "Favicon URL", type: "url", placeholder: "https://i.ibb.co/...", hint: "Browser tab icon (leave empty to use default)" },
+      { key: "ogImageUrl", label: "OpenGraph Image URL", type: "url", placeholder: "https://i.ibb.co/...", hint: "Image shown when sharing on social media (defaults to logo)" },
+      { key: "contactEmail", label: "Contact Email", type: "email", placeholder: "support@example.com", hint: "Public contact email address" },
       { key: "appVersion", label: "App Version", placeholder: "v1.0.0", hint: "Version displayed on profile page" },
       { key: "builtWithText", label: "Built With Text", placeholder: "Built with ❤️", hint: "Branding text shown next to version" },
     ],
@@ -441,6 +454,13 @@ export default function SettingsPage() {
     usdToInrRate: rawSettings.usdToInrRate ? Number(rawSettings.usdToInrRate) : null,
     cryptoBonusPercent: Number(rawSettings.cryptoBonusPercent ?? 0),
     cryptoReferralBonusEnabled: rawSettings.cryptoReferralBonusEnabled ?? true,
+    // Brand configuration
+    siteName: rawSettings.siteName || 'MeowSMS',
+    siteDescription: rawSettings.siteDescription || 'Secure virtual SMS numbers via Telegram',
+    logoUrl: rawSettings.logoUrl || 'https://i.ibb.co/kgBcLZsX/meow.png',
+    faviconUrl: rawSettings.faviconUrl || '',
+    ogImageUrl: rawSettings.ogImageUrl || '',
+    contactEmail: rawSettings.contactEmail || '',
   } : null;
 
   // tRPC mutation for updating settings
