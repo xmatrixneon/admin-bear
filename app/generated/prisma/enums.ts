@@ -62,3 +62,44 @@ export const UserStatus = {
 } as const
 
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
+
+
+export const BroadcastType = {
+  INFO: 'INFO',
+  PROMO: 'PROMO',
+  WARNING: 'WARNING',
+  URGENT: 'URGENT'
+} as const
+
+export type BroadcastType = (typeof BroadcastType)[keyof typeof BroadcastType]
+
+
+export const TargetAudience = {
+  ALL: 'ALL',
+  ACTIVE: 'ACTIVE',
+  BLOCKED: 'BLOCKED',
+  SUSPENDED: 'SUSPENDED'
+} as const
+
+export type TargetAudience = (typeof TargetAudience)[keyof typeof TargetAudience]
+
+
+export const BroadcastStatus = {
+  PENDING: 'PENDING',
+  SENDING: 'SENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type BroadcastStatus = (typeof BroadcastStatus)[keyof typeof BroadcastStatus]
+
+
+export const LogStatus = {
+  PENDING: 'PENDING',
+  SENT: 'SENT',
+  FAILED: 'FAILED',
+  SKIPPED: 'SKIPPED'
+} as const
+
+export type LogStatus = (typeof LogStatus)[keyof typeof LogStatus]

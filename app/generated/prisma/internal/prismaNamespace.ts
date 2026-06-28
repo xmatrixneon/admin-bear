@@ -401,7 +401,9 @@ export const ModelName = {
   UserApi: 'UserApi',
   UserApiRefreshLog: 'UserApiRefreshLog',
   UserData: 'UserData',
-  UserAuditLog: 'UserAuditLog'
+  UserAuditLog: 'UserAuditLog',
+  BroadcastNotification: 'BroadcastNotification',
+  BroadcastLog: 'BroadcastLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -417,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verification" | "wallet" | "transaction" | "apiCredential" | "otpServer" | "service" | "activeNumber" | "promocode" | "promocodeHistory" | "customPrice" | "settings" | "userApi" | "userApiRefreshLog" | "userData" | "userAuditLog"
+    modelProps: "user" | "account" | "session" | "verification" | "wallet" | "transaction" | "apiCredential" | "otpServer" | "service" | "activeNumber" | "promocode" | "promocodeHistory" | "customPrice" | "settings" | "userApi" | "userApiRefreshLog" | "userData" | "userAuditLog" | "broadcastNotification" | "broadcastLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1753,6 +1755,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    BroadcastNotification: {
+      payload: Prisma.$BroadcastNotificationPayload<ExtArgs>
+      fields: Prisma.BroadcastNotificationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BroadcastNotificationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BroadcastNotificationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload>
+        }
+        findFirst: {
+          args: Prisma.BroadcastNotificationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BroadcastNotificationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload>
+        }
+        findMany: {
+          args: Prisma.BroadcastNotificationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload>[]
+        }
+        create: {
+          args: Prisma.BroadcastNotificationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload>
+        }
+        createMany: {
+          args: Prisma.BroadcastNotificationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BroadcastNotificationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload>[]
+        }
+        delete: {
+          args: Prisma.BroadcastNotificationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload>
+        }
+        update: {
+          args: Prisma.BroadcastNotificationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload>
+        }
+        deleteMany: {
+          args: Prisma.BroadcastNotificationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BroadcastNotificationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BroadcastNotificationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload>[]
+        }
+        upsert: {
+          args: Prisma.BroadcastNotificationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastNotificationPayload>
+        }
+        aggregate: {
+          args: Prisma.BroadcastNotificationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBroadcastNotification>
+        }
+        groupBy: {
+          args: Prisma.BroadcastNotificationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BroadcastNotificationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BroadcastNotificationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BroadcastNotificationCountAggregateOutputType> | number
+        }
+      }
+    }
+    BroadcastLog: {
+      payload: Prisma.$BroadcastLogPayload<ExtArgs>
+      fields: Prisma.BroadcastLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BroadcastLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BroadcastLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload>
+        }
+        findFirst: {
+          args: Prisma.BroadcastLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BroadcastLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload>
+        }
+        findMany: {
+          args: Prisma.BroadcastLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload>[]
+        }
+        create: {
+          args: Prisma.BroadcastLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload>
+        }
+        createMany: {
+          args: Prisma.BroadcastLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BroadcastLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload>[]
+        }
+        delete: {
+          args: Prisma.BroadcastLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload>
+        }
+        update: {
+          args: Prisma.BroadcastLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.BroadcastLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BroadcastLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BroadcastLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.BroadcastLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BroadcastLogPayload>
+        }
+        aggregate: {
+          args: Prisma.BroadcastLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBroadcastLog>
+        }
+        groupBy: {
+          args: Prisma.BroadcastLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BroadcastLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BroadcastLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BroadcastLogCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2108,6 +2258,39 @@ export const UserAuditLogScalarFieldEnum = {
 export type UserAuditLogScalarFieldEnum = (typeof UserAuditLogScalarFieldEnum)[keyof typeof UserAuditLogScalarFieldEnum]
 
 
+export const BroadcastNotificationScalarFieldEnum = {
+  id: 'id',
+  message: 'message',
+  type: 'type',
+  targetAudience: 'targetAudience',
+  sentCount: 'sentCount',
+  failedCount: 'failedCount',
+  skippedCount: 'skippedCount',
+  status: 'status',
+  scheduledAt: 'scheduledAt',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  sentById: 'sentById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BroadcastNotificationScalarFieldEnum = (typeof BroadcastNotificationScalarFieldEnum)[keyof typeof BroadcastNotificationScalarFieldEnum]
+
+
+export const BroadcastLogScalarFieldEnum = {
+  id: 'id',
+  broadcastId: 'broadcastId',
+  userId: 'userId',
+  telegramId: 'telegramId',
+  status: 'status',
+  errorMessage: 'errorMessage',
+  sentAt: 'sentAt'
+} as const
+
+export type BroadcastLogScalarFieldEnum = (typeof BroadcastLogScalarFieldEnum)[keyof typeof BroadcastLogScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2329,6 +2512,62 @@ export type EnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
 export type ListEnumUserStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserStatus[]'>
     
 
+
+/**
+ * Reference to a field of type 'BroadcastType'
+ */
+export type EnumBroadcastTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BroadcastType'>
+    
+
+
+/**
+ * Reference to a field of type 'BroadcastType[]'
+ */
+export type ListEnumBroadcastTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BroadcastType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TargetAudience'
+ */
+export type EnumTargetAudienceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TargetAudience'>
+    
+
+
+/**
+ * Reference to a field of type 'TargetAudience[]'
+ */
+export type ListEnumTargetAudienceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TargetAudience[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BroadcastStatus'
+ */
+export type EnumBroadcastStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BroadcastStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'BroadcastStatus[]'
+ */
+export type ListEnumBroadcastStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BroadcastStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'LogStatus'
+ */
+export type EnumLogStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LogStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'LogStatus[]'
+ */
+export type ListEnumLogStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LogStatus[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -2442,6 +2681,8 @@ export type GlobalOmitConfig = {
   userApiRefreshLog?: Prisma.UserApiRefreshLogOmit
   userData?: Prisma.UserDataOmit
   userAuditLog?: Prisma.UserAuditLogOmit
+  broadcastNotification?: Prisma.BroadcastNotificationOmit
+  broadcastLog?: Prisma.BroadcastLogOmit
 }
 
 /* Types for Logging */

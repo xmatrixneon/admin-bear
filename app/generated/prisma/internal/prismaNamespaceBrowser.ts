@@ -68,7 +68,9 @@ export const ModelName = {
   UserApi: 'UserApi',
   UserApiRefreshLog: 'UserApiRefreshLog',
   UserData: 'UserData',
-  UserAuditLog: 'UserAuditLog'
+  UserAuditLog: 'UserAuditLog',
+  BroadcastNotification: 'BroadcastNotification',
+  BroadcastLog: 'BroadcastLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -401,6 +403,39 @@ export const UserAuditLogScalarFieldEnum = {
 } as const
 
 export type UserAuditLogScalarFieldEnum = (typeof UserAuditLogScalarFieldEnum)[keyof typeof UserAuditLogScalarFieldEnum]
+
+
+export const BroadcastNotificationScalarFieldEnum = {
+  id: 'id',
+  message: 'message',
+  type: 'type',
+  targetAudience: 'targetAudience',
+  sentCount: 'sentCount',
+  failedCount: 'failedCount',
+  skippedCount: 'skippedCount',
+  status: 'status',
+  scheduledAt: 'scheduledAt',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  sentById: 'sentById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BroadcastNotificationScalarFieldEnum = (typeof BroadcastNotificationScalarFieldEnum)[keyof typeof BroadcastNotificationScalarFieldEnum]
+
+
+export const BroadcastLogScalarFieldEnum = {
+  id: 'id',
+  broadcastId: 'broadcastId',
+  userId: 'userId',
+  telegramId: 'telegramId',
+  status: 'status',
+  errorMessage: 'errorMessage',
+  sentAt: 'sentAt'
+} as const
+
+export type BroadcastLogScalarFieldEnum = (typeof BroadcastLogScalarFieldEnum)[keyof typeof BroadcastLogScalarFieldEnum]
 
 
 export const SortOrder = {

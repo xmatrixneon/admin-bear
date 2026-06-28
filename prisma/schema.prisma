@@ -84,6 +84,7 @@ model User {
   auditLogsAsPerformer UserAuditLog[] @relation("AuditPerformer")
   userApi         UserApi?
   userData        UserData?
+  sentBroadcasts  BroadcastNotification[] @relation("BroadcastSender")
 }
 
 model Account {
@@ -409,4 +410,71 @@ model UserAuditLog {
   @@index([userId])
   @@index([adminId])
   @@index([createdAt])
+}
+
+// Broadcast notification models
+model BroadcastNotification {
+  id              String   @id @default(cuid())
+  message         String   @db.Text
+  type            BroadcastType @default(INFO)
+  targetAudience  TargetAudience @default(ALL)
+  sentCount       Int      @default(0)
+  failedCount     Int      @default(0)
+  skippedCount    Int      @default(0)
+  status          BroadcastStatus @default(PENDING)
+  scheduledAt     DateTime?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  sentById        String
+  sentBy          User     @relation("BroadcastSender", fields: [sentById], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  logs            BroadcastLog[]
+
+  @@index([status, scheduledAt])
+  @@index([createdAt(sort: Desc)])
+}
+
+model BroadcastLog {
+  id              String   @id @default(cuid())
+  broadcastId     String
+  userId          String
+  telegramId      String
+  status          LogStatus
+  errorMessage    String?
+  sentAt          DateTime?
+  broadcast       BroadcastNotification @relation(fields: [broadcastId], references: [id], onDelete: Cascade)
+
+  @@index([broadcastId])
+  @@index([userId])
+  @@index([status])
+}
+
+enum BroadcastType {
+  INFO
+  PROMO
+  WARNING
+  URGENT
+}
+
+enum TargetAudience {
+  ALL
+  ACTIVE
+  BLOCKED
+  SUSPENDED
+}
+
+enum BroadcastStatus {
+  PENDING
+  SENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum LogStatus {
+  PENDING
+  SENT
+  FAILED
+  SKIPPED
 }

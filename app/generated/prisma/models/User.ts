@@ -406,6 +406,7 @@ export type UserWhereInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogListRelationFilter
   userApi?: Prisma.XOR<Prisma.UserApiNullableScalarRelationFilter, Prisma.UserApiWhereInput> | null
   userData?: Prisma.XOR<Prisma.UserDataNullableScalarRelationFilter, Prisma.UserDataWhereInput> | null
+  sentBroadcasts?: Prisma.BroadcastNotificationListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -446,6 +447,7 @@ export type UserOrderByWithRelationInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogOrderByRelationAggregateInput
   userApi?: Prisma.UserApiOrderByWithRelationInput
   userData?: Prisma.UserDataOrderByWithRelationInput
+  sentBroadcasts?: Prisma.BroadcastNotificationOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -489,6 +491,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   auditLogsAsPerformer?: Prisma.UserAuditLogListRelationFilter
   userApi?: Prisma.XOR<Prisma.UserApiNullableScalarRelationFilter, Prisma.UserApiWhereInput> | null
   userData?: Prisma.XOR<Prisma.UserDataNullableScalarRelationFilter, Prisma.UserDataWhereInput> | null
+  sentBroadcasts?: Prisma.BroadcastNotificationListRelationFilter
 }, "id" | "email" | "telegramId">
 
 export type UserOrderByWithAggregationInput = {
@@ -597,6 +600,7 @@ export type UserCreateInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -637,6 +641,7 @@ export type UserUncheckedCreateInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserUpdateInput = {
@@ -677,6 +682,7 @@ export type UserUpdateInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -717,6 +723,7 @@ export type UserUncheckedUpdateInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -1098,6 +1105,20 @@ export type UserUpdateOneRequiredWithoutAuditLogsAsPerformerNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuditLogsAsPerformerInput, Prisma.UserUpdateWithoutAuditLogsAsPerformerInput>, Prisma.UserUncheckedUpdateWithoutAuditLogsAsPerformerInput>
 }
 
+export type UserCreateNestedOneWithoutSentBroadcastsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSentBroadcastsInput, Prisma.UserUncheckedCreateWithoutSentBroadcastsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentBroadcastsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSentBroadcastsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSentBroadcastsInput, Prisma.UserUncheckedCreateWithoutSentBroadcastsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentBroadcastsInput
+  upsert?: Prisma.UserUpsertWithoutSentBroadcastsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSentBroadcastsInput, Prisma.UserUpdateWithoutSentBroadcastsInput>, Prisma.UserUncheckedUpdateWithoutSentBroadcastsInput>
+}
+
 export type UserCreateWithoutAccountsInput = {
   id?: string
   email?: string | null
@@ -1135,6 +1156,7 @@ export type UserCreateWithoutAccountsInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1174,6 +1196,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1229,6 +1252,7 @@ export type UserUpdateWithoutAccountsInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1268,6 +1292,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1307,6 +1332,7 @@ export type UserCreateWithoutSessionsInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1346,6 +1372,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1401,6 +1428,7 @@ export type UserUpdateWithoutSessionsInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1440,6 +1468,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserCreateWithoutWalletInput = {
@@ -1479,6 +1508,7 @@ export type UserCreateWithoutWalletInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateWithoutWalletInput = {
@@ -1518,6 +1548,7 @@ export type UserUncheckedCreateWithoutWalletInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserCreateOrConnectWithoutWalletInput = {
@@ -1573,6 +1604,7 @@ export type UserUpdateWithoutWalletInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWalletInput = {
@@ -1612,6 +1644,7 @@ export type UserUncheckedUpdateWithoutWalletInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserCreateWithoutNumbersInput = {
@@ -1651,6 +1684,7 @@ export type UserCreateWithoutNumbersInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateWithoutNumbersInput = {
@@ -1690,6 +1724,7 @@ export type UserUncheckedCreateWithoutNumbersInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserCreateOrConnectWithoutNumbersInput = {
@@ -1745,6 +1780,7 @@ export type UserUpdateWithoutNumbersInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNumbersInput = {
@@ -1784,6 +1820,7 @@ export type UserUncheckedUpdateWithoutNumbersInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserCreateWithoutPromoHistoryInput = {
@@ -1823,6 +1860,7 @@ export type UserCreateWithoutPromoHistoryInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateWithoutPromoHistoryInput = {
@@ -1862,6 +1900,7 @@ export type UserUncheckedCreateWithoutPromoHistoryInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserCreateOrConnectWithoutPromoHistoryInput = {
@@ -1917,6 +1956,7 @@ export type UserUpdateWithoutPromoHistoryInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPromoHistoryInput = {
@@ -1956,6 +1996,7 @@ export type UserUncheckedUpdateWithoutPromoHistoryInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserCreateWithoutCustomPricesInput = {
@@ -1995,6 +2036,7 @@ export type UserCreateWithoutCustomPricesInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateWithoutCustomPricesInput = {
@@ -2034,6 +2076,7 @@ export type UserUncheckedCreateWithoutCustomPricesInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserCreateOrConnectWithoutCustomPricesInput = {
@@ -2089,6 +2132,7 @@ export type UserUpdateWithoutCustomPricesInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCustomPricesInput = {
@@ -2128,6 +2172,7 @@ export type UserUncheckedUpdateWithoutCustomPricesInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserCreateWithoutUserApiInput = {
@@ -2167,6 +2212,7 @@ export type UserCreateWithoutUserApiInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogCreateNestedManyWithoutUserInput
   auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
   userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateWithoutUserApiInput = {
@@ -2206,6 +2252,7 @@ export type UserUncheckedCreateWithoutUserApiInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutUserInput
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
   userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserCreateOrConnectWithoutUserApiInput = {
@@ -2261,6 +2308,7 @@ export type UserUpdateWithoutUserApiInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogUpdateManyWithoutUserNestedInput
   auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
   userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserApiInput = {
@@ -2300,6 +2348,7 @@ export type UserUncheckedUpdateWithoutUserApiInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogUncheckedUpdateManyWithoutUserNestedInput
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
   userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserCreateWithoutUserDataInput = {
@@ -2339,6 +2388,7 @@ export type UserCreateWithoutUserDataInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogCreateNestedManyWithoutUserInput
   auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateWithoutUserDataInput = {
@@ -2378,6 +2428,7 @@ export type UserUncheckedCreateWithoutUserDataInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutUserInput
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserCreateOrConnectWithoutUserDataInput = {
@@ -2433,6 +2484,7 @@ export type UserUpdateWithoutUserDataInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogUpdateManyWithoutUserNestedInput
   auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserDataInput = {
@@ -2472,6 +2524,7 @@ export type UserUncheckedUpdateWithoutUserDataInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogUncheckedUpdateManyWithoutUserNestedInput
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserCreateWithoutAuditLogsAsTargetInput = {
@@ -2511,6 +2564,7 @@ export type UserCreateWithoutAuditLogsAsTargetInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsAsTargetInput = {
@@ -2550,6 +2604,7 @@ export type UserUncheckedCreateWithoutAuditLogsAsTargetInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
   userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsAsTargetInput = {
@@ -2594,6 +2649,7 @@ export type UserCreateWithoutAuditLogsAsPerformerInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogCreateNestedManyWithoutUserInput
   userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationCreateNestedManyWithoutSentByInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsAsPerformerInput = {
@@ -2633,6 +2689,7 @@ export type UserUncheckedCreateWithoutAuditLogsAsPerformerInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutUserInput
   userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
   userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedCreateNestedManyWithoutSentByInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsAsPerformerInput = {
@@ -2688,6 +2745,7 @@ export type UserUpdateWithoutAuditLogsAsTargetInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsAsTargetInput = {
@@ -2727,6 +2785,7 @@ export type UserUncheckedUpdateWithoutAuditLogsAsTargetInput = {
   auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
   userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUpsertWithoutAuditLogsAsPerformerInput = {
@@ -2777,6 +2836,7 @@ export type UserUpdateWithoutAuditLogsAsPerformerInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogUpdateManyWithoutUserNestedInput
   userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUpdateManyWithoutSentByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsAsPerformerInput = {
@@ -2816,6 +2876,183 @@ export type UserUncheckedUpdateWithoutAuditLogsAsPerformerInput = {
   auditLogsAsTarget?: Prisma.UserAuditLogUncheckedUpdateManyWithoutUserNestedInput
   userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
   userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
+  sentBroadcasts?: Prisma.BroadcastNotificationUncheckedUpdateManyWithoutSentByNestedInput
+}
+
+export type UserCreateWithoutSentBroadcastsInput = {
+  id?: string
+  email?: string | null
+  emailVerified?: boolean
+  name?: string | null
+  image?: string | null
+  telegramId: string
+  telegramUsername?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  languageCode?: string | null
+  isPremium?: boolean | null
+  allowsWriteToPm?: boolean | null
+  photoUrl?: string | null
+  addedToAttachmentMenu?: boolean | null
+  authDate?: Date | string | null
+  queryId?: string | null
+  chatInstance?: string | null
+  chatType?: string | null
+  startParam?: string | null
+  canSendAfter?: number | null
+  isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
+  deletedAt?: Date | string | null
+  deletedBy?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  wallet?: Prisma.WalletCreateNestedOneWithoutUserInput
+  numbers?: Prisma.ActiveNumberCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
+  promoHistory?: Prisma.PromocodeHistoryCreateNestedManyWithoutUserInput
+  auditLogsAsTarget?: Prisma.UserAuditLogCreateNestedManyWithoutUserInput
+  auditLogsAsPerformer?: Prisma.UserAuditLogCreateNestedManyWithoutAdminInput
+  userApi?: Prisma.UserApiCreateNestedOneWithoutUserInput
+  userData?: Prisma.UserDataCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSentBroadcastsInput = {
+  id?: string
+  email?: string | null
+  emailVerified?: boolean
+  name?: string | null
+  image?: string | null
+  telegramId: string
+  telegramUsername?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  languageCode?: string | null
+  isPremium?: boolean | null
+  allowsWriteToPm?: boolean | null
+  photoUrl?: string | null
+  addedToAttachmentMenu?: boolean | null
+  authDate?: Date | string | null
+  queryId?: string | null
+  chatInstance?: string | null
+  chatType?: string | null
+  startParam?: string | null
+  canSendAfter?: number | null
+  isAdmin?: boolean
+  defaultDiscount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: $Enums.DiscountType | null
+  deletedAt?: Date | string | null
+  deletedBy?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput
+  numbers?: Prisma.ActiveNumberUncheckedCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
+  promoHistory?: Prisma.PromocodeHistoryUncheckedCreateNestedManyWithoutUserInput
+  auditLogsAsTarget?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutUserInput
+  auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedCreateNestedManyWithoutAdminInput
+  userApi?: Prisma.UserApiUncheckedCreateNestedOneWithoutUserInput
+  userData?: Prisma.UserDataUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSentBroadcastsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSentBroadcastsInput, Prisma.UserUncheckedCreateWithoutSentBroadcastsInput>
+}
+
+export type UserUpsertWithoutSentBroadcastsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSentBroadcastsInput, Prisma.UserUncheckedUpdateWithoutSentBroadcastsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSentBroadcastsInput, Prisma.UserUncheckedCreateWithoutSentBroadcastsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSentBroadcastsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSentBroadcastsInput, Prisma.UserUncheckedUpdateWithoutSentBroadcastsInput>
+}
+
+export type UserUpdateWithoutSentBroadcastsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languageCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPremium?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  allowsWriteToPm?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addedToAttachmentMenu?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  authDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  queryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatInstance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  wallet?: Prisma.WalletUpdateOneWithoutUserNestedInput
+  numbers?: Prisma.ActiveNumberUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
+  promoHistory?: Prisma.PromocodeHistoryUpdateManyWithoutUserNestedInput
+  auditLogsAsTarget?: Prisma.UserAuditLogUpdateManyWithoutUserNestedInput
+  auditLogsAsPerformer?: Prisma.UserAuditLogUpdateManyWithoutAdminNestedInput
+  userApi?: Prisma.UserApiUpdateOneWithoutUserNestedInput
+  userData?: Prisma.UserDataUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSentBroadcastsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telegramId?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languageCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPremium?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  allowsWriteToPm?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addedToAttachmentMenu?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  authDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  queryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatInstance?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chatType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startParam?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  canSendAfter?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultDiscount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  defaultDiscountType?: Prisma.NullableEnumDiscountTypeFieldUpdateOperationsInput | $Enums.DiscountType | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  wallet?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput
+  numbers?: Prisma.ActiveNumberUncheckedUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
+  promoHistory?: Prisma.PromocodeHistoryUncheckedUpdateManyWithoutUserNestedInput
+  auditLogsAsTarget?: Prisma.UserAuditLogUncheckedUpdateManyWithoutUserNestedInput
+  auditLogsAsPerformer?: Prisma.UserAuditLogUncheckedUpdateManyWithoutAdminNestedInput
+  userApi?: Prisma.UserApiUncheckedUpdateOneWithoutUserNestedInput
+  userData?: Prisma.UserDataUncheckedUpdateOneWithoutUserNestedInput
 }
 
 
@@ -2831,6 +3068,7 @@ export type UserCountOutputType = {
   promoHistory: number
   auditLogsAsTarget: number
   auditLogsAsPerformer: number
+  sentBroadcasts: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2841,6 +3079,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   promoHistory?: boolean | UserCountOutputTypeCountPromoHistoryArgs
   auditLogsAsTarget?: boolean | UserCountOutputTypeCountAuditLogsAsTargetArgs
   auditLogsAsPerformer?: boolean | UserCountOutputTypeCountAuditLogsAsPerformerArgs
+  sentBroadcasts?: boolean | UserCountOutputTypeCountSentBroadcastsArgs
 }
 
 /**
@@ -2902,6 +3141,13 @@ export type UserCountOutputTypeCountAuditLogsAsPerformerArgs<ExtArgs extends run
   where?: Prisma.UserAuditLogWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSentBroadcastsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BroadcastNotificationWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2941,6 +3187,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   auditLogsAsPerformer?: boolean | Prisma.User$auditLogsAsPerformerArgs<ExtArgs>
   userApi?: boolean | Prisma.User$userApiArgs<ExtArgs>
   userData?: boolean | Prisma.User$userDataArgs<ExtArgs>
+  sentBroadcasts?: boolean | Prisma.User$sentBroadcastsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3046,6 +3293,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   auditLogsAsPerformer?: boolean | Prisma.User$auditLogsAsPerformerArgs<ExtArgs>
   userApi?: boolean | Prisma.User$userApiArgs<ExtArgs>
   userData?: boolean | Prisma.User$userDataArgs<ExtArgs>
+  sentBroadcasts?: boolean | Prisma.User$sentBroadcastsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3064,6 +3312,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     auditLogsAsPerformer: Prisma.$UserAuditLogPayload<ExtArgs>[]
     userApi: Prisma.$UserApiPayload<ExtArgs> | null
     userData: Prisma.$UserDataPayload<ExtArgs> | null
+    sentBroadcasts: Prisma.$BroadcastNotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3497,6 +3746,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   auditLogsAsPerformer<T extends Prisma.User$auditLogsAsPerformerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsAsPerformerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   userApi<T extends Prisma.User$userApiArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userApiArgs<ExtArgs>>): Prisma.Prisma__UserApiClient<runtime.Types.Result.GetResult<Prisma.$UserApiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   userData<T extends Prisma.User$userDataArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userDataArgs<ExtArgs>>): Prisma.Prisma__UserDataClient<runtime.Types.Result.GetResult<Prisma.$UserDataPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  sentBroadcasts<T extends Prisma.User$sentBroadcastsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentBroadcastsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BroadcastNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4163,6 +4413,30 @@ export type User$userDataArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.UserDataInclude<ExtArgs> | null
   where?: Prisma.UserDataWhereInput
+}
+
+/**
+ * User.sentBroadcasts
+ */
+export type User$sentBroadcastsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BroadcastNotification
+   */
+  select?: Prisma.BroadcastNotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BroadcastNotification
+   */
+  omit?: Prisma.BroadcastNotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BroadcastNotificationInclude<ExtArgs> | null
+  where?: Prisma.BroadcastNotificationWhereInput
+  orderBy?: Prisma.BroadcastNotificationOrderByWithRelationInput | Prisma.BroadcastNotificationOrderByWithRelationInput[]
+  cursor?: Prisma.BroadcastNotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BroadcastNotificationScalarFieldEnum | Prisma.BroadcastNotificationScalarFieldEnum[]
 }
 
 /**

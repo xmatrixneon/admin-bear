@@ -10,6 +10,7 @@ import { auditLogsRouter } from './audit-logs';
 import { settingsRouter } from './settings';
 import { walletsRouter } from './wallets';
 import { loginRouter } from './login';
+import { broadcastsRouter } from './broadcasts';
 
 /**
  * Main tRPC router for the admin panel
@@ -27,6 +28,7 @@ export const adminRouter = router({
   auditLogs: auditLogsRouter,
   settings: settingsRouter,
   wallets: walletsRouter,
+  broadcasts: broadcastsRouter,
 });
 
 /**

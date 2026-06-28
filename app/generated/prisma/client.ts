@@ -131,3 +131,13 @@ export type UserData = Prisma.UserDataModel
  * 
  */
 export type UserAuditLog = Prisma.UserAuditLogModel
+/**
+ * Model BroadcastNotification
+ * 
+ */
+export type BroadcastNotification = Prisma.BroadcastNotificationModel
+/**
+ * Model BroadcastLog
+ * 
+ */
+export type BroadcastLog = Prisma.BroadcastLogModel
