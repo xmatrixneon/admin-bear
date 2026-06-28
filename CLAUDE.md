@@ -47,6 +47,8 @@ server/
     ├── services.ts       # Service management
     ├── servers.ts        # OTP server config
     ├── promocodes.ts     # Promo code CRUD
+    ├── broadcasts.ts     # Telegram broadcast notifications
+    ├── custom-prices.ts   # Custom user pricing
     ├── settings.ts       # App settings
     ├── audit-logs.ts     # Audit trail
     └── login.ts          # Admin login
@@ -63,6 +65,16 @@ npm run lint              # Run ESLint
 npm run postinstall       # Generate Prisma client
 npx prisma db push        # Push schema changes to database
 npx prisma db seed        # Seed initial admin user
+```
+
+### PM2 Deployment
+The admin panel is managed via PM2 as `meowsms-admin`. **Always use `reload` for zero-downtime updates**:
+
+```bash
+pm2 reload meowsms-admin    # Zero-downtime reload (preferred)
+pm2 logs meowsms-admin      # View logs
+pm2 status                  # Check all PM2 processes
+pm2 list                    # List all processes with details
 ```
 
 ## tRPC API Architecture
@@ -116,6 +128,8 @@ Register new routers in `server/routers/index.ts`.
 - `services` - Service CRUD
 - `servers` - OTP server management
 - `promocodes` - Promo code CRUD
+- `broadcasts` - Telegram broadcast notifications (send, cancel, delete, getStats, list, getById)
+- `customPrices` - Custom user pricing CRUD
 - `settings` - App settings (singleton)
 - `auditLogs` - Audit log queries
 
@@ -140,6 +154,10 @@ NumberStatus: COMPLETED | PENDING | CANCELLED
 ActiveStatus: ACTIVE | CLOSED
 DiscountType: FLAT | PERCENT
 UserStatus: ACTIVE | BLOCKED | SUSPENDED  // Use enum, never raw strings
+
+BroadcastType: INFO | PROMO | WARNING | URGENT
+BroadcastStatus: PENDING | SENDING | COMPLETED | FAILED | CANCELLED
+BroadcastAudience: ALL | ACTIVE | BLOCKED | SUSPENDED
 ```
 
 ## Key Patterns

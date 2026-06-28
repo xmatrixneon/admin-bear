@@ -30,8 +30,10 @@ export const broadcastsRouter = router({
             sentBy: {
               select: {
                 id: true,
+                name: true,
                 firstName: true,
                 lastName: true,
+                telegramUsername: true,
               },
             },
             _count: {

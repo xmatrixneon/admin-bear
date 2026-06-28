@@ -445,6 +445,7 @@ model BroadcastLog {
   sentAt          DateTime?
   broadcast       BroadcastNotification @relation(fields: [broadcastId], references: [id], onDelete: Cascade)
 
+  @@unique([broadcastId, userId])
   @@index([broadcastId])
   @@index([userId])
   @@index([status])

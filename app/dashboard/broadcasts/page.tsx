@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { formatDateTime } from "@/lib/utils";
 import {
   Send,
-  Plus,
   RefreshCw,
   Loader2,
   Calendar,
@@ -13,7 +12,6 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  AlertCircle,
   Trash2,
   Eye,
   Megaphone,
@@ -57,30 +55,42 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { StatsCard } from "@/components/admin/stats-card";
+import { PageHeader } from "@/components/admin/page-header";
 
-const typeIcons = {
-  INFO: Info,
-  PROMO: PartyPopper,
-  WARNING: TriangleAlert,
-  URGENT: Ban,
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 14 },
+  animate: { opacity: 1, y: 0 },
+  transition: { type: "spring" as const, stiffness: 280, damping: 24, delay },
+});
+
+const typeConfig = {
+  INFO: { icon: Info, color: "text-blue-600", bgColor: "bg-blue-500/10", label: "Info" },
+  PROMO: { icon: PartyPopper, color: "text-green-600", bgColor: "bg-green-500/10", label: "Promo" },
+  WARNING: { icon: TriangleAlert, color: "text-yellow-600", bgColor: "bg-yellow-500/10", label: "Warning" },
+  URGENT: { icon: Ban, color: "text-red-600", bgColor: "bg-red-500/10", label: "Urgent" },
 };
 
-const statusColors = {
-  PENDING: "text-yellow-600 bg-yellow-50",
-  SENDING: "text-blue-600 bg-blue-50",
-  COMPLETED: "text-green-600 bg-green-50",
-  FAILED: "text-red-600 bg-red-50",
-  CANCELLED: "text-gray-600 bg-gray-50",
-};
-
-const typeColors = {
-  INFO: "text-blue-600 bg-blue-50",
-  PROMO: "text-green-600 bg-green-50",
-  WARNING: "text-yellow-600 bg-yellow-50",
-  URGENT: "text-red-600 bg-red-50",
-};
+function getStatusBadge(status: string) {
+  switch (status) {
+    case "PENDING":
+      return <Badge variant="outline" className="border-amber-500 text-amber-600">Pending</Badge>;
+    case "SENDING":
+      return <Badge className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20">Sending</Badge>;
+    case "COMPLETED":
+      return <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20">Completed</Badge>;
+    case "FAILED":
+      return <Badge variant="destructive">Failed</Badge>;
+    case "CANCELLED":
+      return <Badge variant="secondary">Cancelled</Badge>;
+    default:
+      return <Badge variant="secondary">{status}</Badge>;
+  }
+}
 
 export default function BroadcastsPage() {
   const [showSendDialog, setShowSendDialog] = useState(false);
@@ -190,212 +200,182 @@ export default function BroadcastsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Broadcasts</h1>
-          <p className="text-sm text-gray-500">
-            Send notifications to all users via Telegram
-          </p>
-        </div>
-        <Button
-          onClick={() => setShowSendDialog(true)}
-          className="gap-2"
-        >
-          <Send className="h-4 w-4" />
-          New Broadcast
-        </Button>
-      </div>
+      <PageHeader
+        title="Broadcasts"
+        description="Send notifications to users via Telegram"
+        actions={
+          <Button onClick={() => setShowSendDialog(true)} className="gap-2">
+            <Send className="h-4 w-4" />
+            New Broadcast
+          </Button>
+        }
+      />
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-white rounded-lg border p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <Megaphone className="h-5 w-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Total</p>
-              <p className="text-2xl font-bold">{stats?.totalBroadcasts || 0}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-yellow-50 rounded-lg">
-              <Clock className="h-5 w-5 text-yellow-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Pending</p>
-              <p className="text-2xl font-bold">{stats?.pendingBroadcasts || 0}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <RefreshCw className="h-5 w-5 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Sending</p>
-              <p className="text-2xl font-bold">{stats?.sendingBroadcasts || 0}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-50 rounded-lg">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Completed</p>
-              <p className="text-2xl font-bold">{stats?.completedBroadcasts || 0}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-red-50 rounded-lg">
-              <XCircle className="h-5 w-5 text-red-600" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Failed</p>
-              <p className="text-2xl font-bold">{stats?.failedBroadcasts || 0}</p>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <StatsCard
+          title="Total Broadcasts"
+          value={stats?.totalBroadcasts || 0}
+          icon={Megaphone}
+          color="text-blue-600"
+          bgColor="bg-blue-500/10"
+        />
+        <StatsCard
+          title="Pending"
+          value={stats?.pendingBroadcasts || 0}
+          icon={Clock}
+          color="text-yellow-600"
+          bgColor="bg-yellow-500/10"
+        />
+        <StatsCard
+          title="Sending"
+          value={stats?.sendingBroadcasts || 0}
+          icon={RefreshCw}
+          color="text-blue-600"
+          bgColor="bg-blue-500/10"
+        />
+        <StatsCard
+          title="Completed"
+          value={stats?.completedBroadcasts || 0}
+          icon={CheckCircle}
+          color="text-green-600"
+          bgColor="bg-green-500/10"
+        />
+        <StatsCard
+          title="Failed"
+          value={stats?.failedBroadcasts || 0}
+          icon={XCircle}
+          color="text-red-600"
+          bgColor="bg-red-500/10"
+        />
       </div>
 
       {/* Audience Stats */}
-      <div className="bg-white rounded-lg border p-4">
-        <h3 className="font-semibold mb-3 flex items-center gap-2">
-          <Users className="h-4 w-4" />
-          Audience Statistics
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <p className="text-sm text-gray-500">All Users</p>
-            <p className="text-lg font-bold">{audienceStats?.all || 0}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Active</p>
-            <p className="text-lg font-bold">{audienceStats?.active || 0}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Blocked</p>
-            <p className="text-lg font-bold">{audienceStats?.blocked || 0}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Suspended</p>
-            <p className="text-lg font-bold">{audienceStats?.suspended || 0}</p>
-          </div>
-        </div>
-      </div>
+      <motion.div {...fadeUp(0.1)}>
+        <Card className="border-border/50">
+          <CardContent className="p-4 md:p-5">
+            <h3 className="font-semibold mb-3 flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Audience Statistics
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <p className="text-xs text-muted-foreground">All Users</p>
+                <p className="text-lg font-bold">{audienceStats?.all || 0}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Active</p>
+                <p className="text-lg font-bold">{audienceStats?.active || 0}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Blocked</p>
+                <p className="text-lg font-bold">{audienceStats?.blocked || 0}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Suspended</p>
+                <p className="text-lg font-bold">{audienceStats?.suspended || 0}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Broadcasts List */}
-      <div className="bg-white rounded-lg border">
-        <div className="p-4 border-b flex items-center justify-between">
-          <h3 className="font-semibold">Recent Broadcasts</h3>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetchList()}
-            className="gap-2"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Refresh
-          </Button>
-        </div>
+      <motion.div {...fadeUp(0.2)}>
+        <Card className="border-border/50">
+          <div className="p-4 border-b border-border/50 flex items-center justify-between">
+            <h3 className="font-semibold">Recent Broadcasts</h3>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => refetchList()}
+              className="gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Refresh
+            </Button>
+          </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Type</TableHead>
-              <TableHead>Message</TableHead>
-              <TableHead>Audience</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Sent/Failed</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {broadcasts?.broadcasts.map((broadcast: any) => {
-              const TypeIcon = typeIcons[broadcast.type as keyof typeof typeIcons];
-              return (
-                <TableRow key={broadcast.id}>
-                  <TableCell>
-                    <div className={`inline-flex p-2 rounded-lg ${typeColors[broadcast.type as keyof typeof typeColors]}`}>
-                      <TypeIcon className="h-4 w-4" />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="max-w-md truncate">
-                      {broadcast.message}
-                    </div>
-                  </TableCell>
-                  <TableCell>{getAudienceLabel(broadcast.targetAudience)}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                        statusColors[broadcast.status as keyof typeof statusColors]
-                      }`}
-                    >
-                      {broadcast.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    {broadcast.sentCount} / {broadcast.failedCount}
-                  </TableCell>
-                  <TableCell>
-                    {formatDateTime(new Date(broadcast.createdAt))}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedBroadcast(broadcast);
-                          setShowDetailsDialog(true);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      {broadcast.status === "PENDING" && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleCancel(broadcast.id)}
-                        >
-                          <XCircle className="h-4 w-4" />
-                        </Button>
-                      )}
-                      {["COMPLETED", "FAILED", "CANCELLED"].includes(
-                        broadcast.status
-                      ) && (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Type</TableHead>
+                <TableHead>Message</TableHead>
+                <TableHead>Audience</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Sent/Failed</TableHead>
+                <TableHead>Created</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {broadcasts?.broadcasts.map((broadcast: any) => {
+                const config = typeConfig[broadcast.type as keyof typeof typeConfig];
+                const TypeIcon = config.icon;
+                return (
+                  <TableRow key={broadcast.id}>
+                    <TableCell>
+                      <div className={`inline-flex p-2 rounded-lg ${config.bgColor} ${config.color}`}>
+                        <TypeIcon className="h-4 w-4" />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-md truncate">
+                        {broadcast.message}
+                      </div>
+                    </TableCell>
+                    <TableCell>{getAudienceLabel(broadcast.targetAudience)}</TableCell>
+                    <TableCell>{getStatusBadge(broadcast.status)}</TableCell>
+                    <TableCell>
+                      {broadcast.sentCount} / {broadcast.failedCount}
+                    </TableCell>
+                    <TableCell>
+                      {formatDateTime(new Date(broadcast.createdAt))}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => {
                             setSelectedBroadcast(broadcast);
-                            setShowDeleteDialog(true);
+                            setShowDetailsDialog(true);
                           }}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Eye className="h-4 w-4" />
                         </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </div>
+                        {broadcast.status === "PENDING" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCancel(broadcast.id)}
+                          >
+                            <XCircle className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {["COMPLETED", "FAILED", "CANCELLED"].includes(
+                          broadcast.status
+                        ) && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedBroadcast(broadcast);
+                              setShowDeleteDialog(true);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Card>
+      </motion.div>
 
       {/* Send Broadcast Dialog */}
       <Dialog open={showSendDialog} onOpenChange={setShowSendDialog}>
@@ -478,7 +458,7 @@ export default function BroadcastsPage() {
                 rows={6}
                 maxLength={4096}
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 {message.length} / 4096 characters
               </p>
             </div>
@@ -552,60 +532,61 @@ export default function BroadcastsPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-gray-500">Type</Label>
+                  <Label className="text-muted-foreground">Type</Label>
                   <p className="font-medium">{broadcastDetails.type}</p>
                 </div>
                 <div>
-                  <Label className="text-gray-500">Status</Label>
+                  <Label className="text-muted-foreground">Status</Label>
                   <p className="font-medium">{broadcastDetails.status}</p>
                 </div>
                 <div>
-                  <Label className="text-gray-500">Target Audience</Label>
+                  <Label className="text-muted-foreground">Target Audience</Label>
                   <p className="font-medium">
                     {getAudienceLabel(broadcastDetails.targetAudience)}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-gray-500">Created By</Label>
+                  <Label className="text-muted-foreground">Created By</Label>
                   <p className="font-medium">
-                    {broadcastDetails.sentBy?.firstName ||
-                      "Unknown"}{" "}
-                    {broadcastDetails.sentBy?.lastName || ""}
+                    {broadcastDetails.sentBy?.name ||
+                      broadcastDetails.sentBy?.firstName ||
+                      broadcastDetails.sentBy?.telegramUsername ||
+                      "Unknown"}
                   </p>
                 </div>
               </div>
 
               <div>
-                <Label className="text-gray-500">Message</Label>
-                <p className="p-3 bg-gray-50 rounded-lg whitespace-pre-wrap">
+                <Label className="text-muted-foreground">Message</Label>
+                <p className="p-3 bg-muted rounded-lg whitespace-pre-wrap">
                   {broadcastDetails.message}
                 </p>
               </div>
 
               <div className="grid grid-cols-4 gap-4">
-                <div className="text-center p-3 bg-green-50 rounded-lg">
+                <div className="text-center p-3 bg-green-500/10 rounded-lg">
                   <p className="text-2xl font-bold text-green-600">
                     {broadcastDetails.stats?.sent || 0}
                   </p>
-                  <p className="text-sm text-gray-600">Sent</p>
+                  <p className="text-sm text-muted-foreground">Sent</p>
                 </div>
-                <div className="text-center p-3 bg-red-50 rounded-lg">
+                <div className="text-center p-3 bg-red-500/10 rounded-lg">
                   <p className="text-2xl font-bold text-red-600">
                     {broadcastDetails.stats?.failed || 0}
                   </p>
-                  <p className="text-sm text-gray-600">Failed</p>
+                  <p className="text-sm text-muted-foreground">Failed</p>
                 </div>
-                <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <p className="text-2xl font-bold text-gray-600">
+                <div className="text-center p-3 bg-muted rounded-lg">
+                  <p className="text-2xl font-bold">
                     {broadcastDetails.stats?.skipped || 0}
                   </p>
-                  <p className="text-sm text-gray-600">Skipped</p>
+                  <p className="text-sm text-muted-foreground">Skipped</p>
                 </div>
-                <div className="text-center p-3 bg-yellow-50 rounded-lg">
+                <div className="text-center p-3 bg-yellow-500/10 rounded-lg">
                   <p className="text-2xl font-bold text-yellow-600">
                     {broadcastDetails.stats?.pending || 0}
                   </p>
-                  <p className="text-sm text-gray-600">Pending</p>
+                  <p className="text-sm text-muted-foreground">Pending</p>
                 </div>
               </div>
 
